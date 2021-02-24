@@ -39,7 +39,7 @@
                 app:tint="#C3C8CD" />
 
             <TextView
-                android:id="@+id/notice_name_et"
+                android:id="@+id/notice_name_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
@@ -51,7 +51,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/notice_date_et"
+                android:id="@+id/notice_date_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
@@ -62,7 +62,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/notice_name_et" />
 
             <TextView
-                android:id="@+id/title_tv"
+                android:id="@+id/notice_title_tv"
                 android:layout_width="340dp"
                 android:layout_height="45dp"
                 android:layout_marginStart="14dp"
@@ -76,7 +76,7 @@
                 app:layout_constraintTop_toBottomOf="@+id/notice_date_et" />
 
             <TextView
-                android:id="@+id/contents_tv"
+                android:id="@+id/notice_contents_tv"
                 android:layout_width="335dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="14dp"

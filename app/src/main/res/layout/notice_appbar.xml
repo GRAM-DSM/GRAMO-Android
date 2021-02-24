@@ -24,7 +24,7 @@
         app:layout_anchorGravity="center">
 
         <TextView
-            android:id="@+id/notice_add_btn2"
+            android:id="@+id/notice_add_btn"
             android:layout_width="40dp"
             android:layout_height="wrap_content"
             android:layout_gravity="right|center"
