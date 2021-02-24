@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string-array name="majorList">
+        <item>분야선택</item>
+        <item>안드로이드</item>
+        <item>ios</item>
+        <item>서버</item>
+        <item>디자인</item>
+    </string-array>
+</resources>

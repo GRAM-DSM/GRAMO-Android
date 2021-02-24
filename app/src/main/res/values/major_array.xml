@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="register_major">
+        <item>iOS 개발자</item>
+        <item>안드로이드 개발자</item>
+        <item>서버 개발자</item>
+        <item>디자이너</item>
+    </string-array>
+</resources>

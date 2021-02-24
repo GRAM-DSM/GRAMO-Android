@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <group android:id="@+id/drawer_menu1" >
+        <item
+            android:id="@+id/notice_menu"
+            android:title="공지사항" />
+        <item
+            android:id="@+id/calender_menu"
+            android:title="캘린더" />
+        <item
+            android:id="@+id/assignment_menu"
+            android:title="숙제" />
+
+    </group>
+</menu>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.gramo">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="GRAMO"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity android:name="com.example.gramoproject.Activity.SignInUp.LoginActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name="com.example.gramoproject.Activity.MainActivity"/>
+        <activity android:name="com.example.gramoproject.Activity.SignInUp.RegisterActivity" />
+        <activity android:name="com.example.gramoproject.Activity.Notice.NoticeActivity" />
+        <activity android:name="com.example.gramoproject.Activity.Notice.NoticeAddActivity" />
+        <activity android:name="com.example.gramoproject.Activity.Calendar.CalendarActivity" />
+        <activity android:name="com.example.gramoproject.Activity.Homework.HomeworkAddActivity" />
+        <activity android:name="com.example.gramoproject.Activity.Homework.HomeworkShowActivity" />
+        <activity android:name="com.example.gramoproject.Activity.Homework.HomeworkMainActivity" />
+
+    </application>
+
+</manifest>
