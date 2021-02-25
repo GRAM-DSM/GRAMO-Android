@@ -11,9 +11,14 @@ import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gramo.BottomSheet.NoticeBottomSheetDialogFragment
 import com.example.gramo.R
+import com.example.gramoproject.Activity.Calendar.CalendarActivity
+import com.example.gramoproject.Activity.Homework.HomeworkMainActivity
+import com.example.gramoproject.Activity.SignInUp.LoginActivity
 import com.example.gramoproject.Adapter.NoticeRecyclerAdapter
 import com.example.gramoproject.DataClass.NoticeItem
 import com.google.android.material.navigation.NavigationView
+import kotlinx.android.synthetic.main.leave_custom_dialog.*
+import kotlinx.android.synthetic.main.logout_custom_dialog.*
 import kotlinx.android.synthetic.main.notice_activity.*
 import kotlinx.android.synthetic.main.notice_appbar.*
 
@@ -22,7 +27,8 @@ class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
     //현재 액티비티 확인
     private val currentActivity = javaClass.simpleName.trim()
     //로그아웃 알림창
-    private lateinit var dialog: Dialog
+    private lateinit var LogoutDialog: Dialog
+    private lateinit var LeaveDialog: Dialog
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,6 +70,23 @@ class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
             }
         })
+
+        //로그아웃 dialog 커스텀
+        LogoutDialog = Dialog(this)
+        LogoutDialog.setContentView(R.layout.logout_custom_dialog)
+        //로그아웃 클릭
+        side_logout_btn.setOnClickListener {
+            showLogoutDialog()
+        }
+
+        //탈퇴 dialog 커스텀
+        LeaveDialog = Dialog(this)
+        LeaveDialog.setContentView(R.layout.leave_custom_dialog)
+        //탈퇴 클릭
+        side_leave_btn.setOnClickListener{
+            showLeaveDialog()
+        }
+
     }
 
     //Navigation Drawer 설정
@@ -93,14 +116,72 @@ class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                 }
             }
             R.id.calender_menu -> {
-
+                if(currentActivity.equals("Calendar")){
+                    drawer_layout.closeDrawer(GravityCompat.START)
+                    return false
+                }
+                else{
+                    val intentToCalendar = Intent(this, CalendarActivity::class.java)
+                    startActivity(intentToCalendar)
+                }
             }
             R.id.assignment_menu -> {
-                TODO()
+                if(currentActivity.equals("HomeworkMainActivity")){
+                    drawer_layout.closeDrawer(GravityCompat.START)
+                    return false
+                }
+                else{
+                    val intentToHomework = Intent(this, HomeworkMainActivity::class.java)
+                    startActivity(intentToHomework)
+                }
             }
 
         }
         drawer_layout.closeDrawer(GravityCompat.START)
         return true
+    }
+
+    //뒤로가기 처리
+    override fun onBackPressed() {
+        //drawer가 열려있을 경우
+        if(drawer_layout.isDrawerOpen(GravityCompat.START)){
+            drawer_layout.closeDrawers()
+        } else{
+            super.onBackPressed()
+        }
+    }
+
+    //Logout Custom Dialog
+    private fun showLogoutDialog() {
+        LogoutDialog.show()
+
+        //Negative Button
+        LogoutDialog.logout_negative_btn.setOnClickListener{
+            LogoutDialog.dismiss()
+        }
+
+        //Positive Button
+        LogoutDialog.logout_positive_btn.setOnClickListener{
+            val intentToLogin = Intent(applicationContext, LoginActivity::class.java)
+            intentToLogin.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            startActivity(intentToLogin)
+        }
+    }
+
+    //Leave Custom Dialog
+    private fun showLeaveDialog(){
+        LeaveDialog.show()
+
+        //Negative Button
+        LeaveDialog.leave_negative_btn.setOnClickListener{
+            LeaveDialog.dismiss()
+        }
+
+        //Positive Button
+        LeaveDialog.leave_positive_btn.setOnClickListener{
+            val intentToLogin = Intent(applicationContext, LoginActivity::class.java)
+            intentToLogin.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            startActivity(intentToLogin)
+        }
     }
 }
