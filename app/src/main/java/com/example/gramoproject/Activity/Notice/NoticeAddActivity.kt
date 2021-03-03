@@ -47,7 +47,6 @@ class NoticeAddActivity : AppCompatActivity() {
                 finish()
             }
         }
-
     }
 
     fun getTime(): String{
