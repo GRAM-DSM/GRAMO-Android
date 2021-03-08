@@ -12,10 +12,12 @@ import androidx.core.view.GravityCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gramo.R
 import com.example.gramoproject.Activity.Calendar.CalendarActivity
+import com.example.gramoproject.Activity.Client.ApiClient
 import com.example.gramoproject.Activity.Homework.HomeworkMainActivity
 import com.example.gramoproject.Activity.SignInUp.LoginActivity
 import com.example.gramoproject.Adapter.NoticeRecyclerAdapter
 import com.example.gramoproject.DataClass.NoticeItem
+import com.example.gramoproject.Interface.NoticeInterface
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.leave_custom_dialog.*
@@ -29,6 +31,8 @@ class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
     //현재 액티비티 확인
     private val currentActivity = javaClass.simpleName.trim()
+    //리사이클러뷰 데이터를 담을 변수
+    private val list = ArrayList<NoticeItem>()
     //커스텀 알림창
     private lateinit var LogoutDialog: Dialog
     private lateinit var LeaveDialog: Dialog
@@ -71,9 +75,11 @@ class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
             startActivity(intentToNoticeAdd)
         }
 
+        //retrofit2
+        val noticeInterface: NoticeInterface = ApiClient().getClient().create(NoticeInterface::class.java)
+
         //리사이클러뷰
         val getIntent = intent
-        val list = ArrayList<NoticeItem>()
         val fragmentManager = supportFragmentManager
         val layoutManager = LinearLayoutManager(this)
         notice_recyclerview.layoutManager = layoutManager

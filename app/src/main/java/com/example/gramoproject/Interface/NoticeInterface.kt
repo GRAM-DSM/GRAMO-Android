@@ -7,7 +7,9 @@ import retrofit2.http.*
 interface NoticeInterface {
     @Headers("Authorization: your auth token")
     @GET("")
-    fun getNoticeList(@Query("size") size: Int) : Call<Int>
+    fun getNoticeList(
+            @Query("off_set") off_set: Int,
+            @Query("limit_num") limit_num: Int) : Call<Int>
 
     @Headers("Authorization: your auth token")
     @GET("")

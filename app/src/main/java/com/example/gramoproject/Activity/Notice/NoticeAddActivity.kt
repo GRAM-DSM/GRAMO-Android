@@ -2,10 +2,17 @@ package com.example.gramoproject.Activity.Notice
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.gramo.R
+import com.example.gramoproject.Activity.Client.ApiClient
+import com.example.gramoproject.DataClass.NoticeModel
+import com.example.gramoproject.Interface.NoticeInterface
 import kotlinx.android.synthetic.main.notice_add_activity.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -38,11 +45,23 @@ class NoticeAddActivity : AppCompatActivity() {
             }
             else {
                 val intentToNotice = Intent(applicationContext, NoticeActivity::class.java)
-                intentToNotice.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                intentToNotice.putExtra("name", notice_name_et.text.toString())
-                intentToNotice.putExtra("date", notice_date_et.text.toString())
-                intentToNotice.putExtra("title", notice_title_et.text.toString())
-                intentToNotice.putExtra("contents", notice_content_et.text.toString())
+//                intentToNotice.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+//                intentToNotice.putExtra("name", notice_name_et.text.toString())
+//                intentToNotice.putExtra("date", notice_date_et.text.toString())
+//                intentToNotice.putExtra("title", notice_title_et.text.toString())
+//                intentToNotice.putExtra("contents", notice_content_et.text.toString())
+                val noticeInterface = ApiClient().getClient().create(NoticeInterface::class.java)
+                val call = noticeInterface.getNotice(notice_title_et.text.toString(), notice_content_et.text.toString())
+                call.enqueue(object: Callback<NoticeModel> {
+                    override fun onResponse(call: Call<NoticeModel>, response: Response<NoticeModel>) {
+                        Log.d("NoticeAddActivity", response.body().toString())
+                    }
+
+                    override fun onFailure(call: Call<NoticeModel>, t: Throwable) {
+                        Log.d("NoticeAddActivity", t.toString())
+                    }
+                })
+
                 startActivity(intentToNotice)
                 finish()
             }
