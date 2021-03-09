@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.gramo.R
 import com.example.gramoproject.Activity.Calendar.CalendarActivity
 import com.example.gramoproject.Activity.Client.ApiClient
@@ -155,6 +156,23 @@ class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
             }
         })
     }
+    //스크롤 리스너
+    private fun initScrollListener(){
+        notice_recyclerview.addOnScrollListener(object: RecyclerView.OnScrollListener(){
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                super.onScrolled(recyclerView, dx, dy)
+
+                //마지막 체크
+               // if(!notice_recyclerview.canScrollVertically(1))
+            }
+        })
+    }
+
+    //리사이클러뷰의 데이터를 더 로드하는 경우
+    private fun loadMore(){
+
+    }
+
     //Navigation Drawer 설정
     private fun NavInitializeLayout() {
         //toolbar를 통해 Appbar 생성
