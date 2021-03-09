@@ -9,7 +9,7 @@ data class NoticeModel(
         val title: String,
         @SerializedName("content")
         val content: String,
-        @SerializedName("email")
-        val email: String,
-        @SerializedName("dateTime")
-        val dateTime: String)
+        @SerializedName("user_email")
+        val user_email: String,
+        @SerializedName("created_at")
+        val created_at: String)

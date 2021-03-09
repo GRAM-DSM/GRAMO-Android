@@ -9,7 +9,7 @@ interface NoticeInterface {
     @GET("")
     fun getNoticeList(
             @Query("off_set") off_set: Int,
-            @Query("limit_num") limit_num: Int) : Call<Int>
+            @Query("limit_num") limit_num: Int) : Call<NoticeModel>
 
     @Headers("Authorization: your auth token")
     @GET("")

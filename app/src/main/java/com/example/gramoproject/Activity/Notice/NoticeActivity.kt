@@ -3,12 +3,14 @@ package com.example.gramoproject.Activity.Notice
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gramo.R
 import com.example.gramoproject.Activity.Calendar.CalendarActivity
@@ -16,7 +18,7 @@ import com.example.gramoproject.Activity.Client.ApiClient
 import com.example.gramoproject.Activity.Homework.HomeworkMainActivity
 import com.example.gramoproject.Activity.SignInUp.LoginActivity
 import com.example.gramoproject.Adapter.NoticeRecyclerAdapter
-import com.example.gramoproject.DataClass.NoticeItem
+import com.example.gramoproject.DataClass.NoticeModel
 import com.example.gramoproject.Interface.NoticeInterface
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.navigation.NavigationView
@@ -26,13 +28,17 @@ import kotlinx.android.synthetic.main.notice_activity.*
 import kotlinx.android.synthetic.main.notice_appbar.*
 import kotlinx.android.synthetic.main.notice_bottomsheet.*
 import kotlinx.android.synthetic.main.notice_unload_dialog.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     //현재 액티비티 확인
     private val currentActivity = javaClass.simpleName.trim()
     //리사이클러뷰 데이터를 담을 변수
-    private val list = ArrayList<NoticeItem>()
+    private lateinit var getList : NoticeModel
+    private lateinit var recyclerList : ArrayList<NoticeModel>
     //커스텀 알림창
     private lateinit var LogoutDialog: Dialog
     private lateinit var LeaveDialog: Dialog
@@ -40,6 +46,14 @@ class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
     //마지막으로 뒤로 가기 버튼을 누른 시간 저장
     private var backKeyPressedTime : Long = 0
     private lateinit var toast: Toast
+    //리사이클러뷰 어댑터
+    private lateinit var adapter : NoticeRecyclerAdapter
+    //바텀시트
+    private lateinit var bottomSheetDialog : BottomSheetDialog
+
+    private var off_set = 0
+    private val limit_num = 5
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,34 +89,52 @@ class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
             startActivity(intentToNoticeAdd)
         }
 
+        //리사이클러뷰
+        var layoutManager : LinearLayoutManager
+        var fragmentManager : FragmentManager
+
         //retrofit2
         val noticeInterface: NoticeInterface = ApiClient().getClient().create(NoticeInterface::class.java)
+        val call = noticeInterface.getNoticeList(off_set,limit_num)
 
-        //리사이클러뷰
-        val getIntent = intent
-        val fragmentManager = supportFragmentManager
-        val layoutManager = LinearLayoutManager(this)
-        notice_recyclerview.layoutManager = layoutManager
-        if(getIntent.hasExtra("contents")) {
-            list.add(
-                    NoticeItem(
-                            getIntent.getStringExtra("name")!!, getIntent.getStringExtra("date")!!,
-                            getIntent.getStringExtra("title")!!, getIntent.getStringExtra("contents")!!
-                    )
-            )
-        }
-        val adapter = NoticeRecyclerAdapter(list, fragmentManager)
-        notice_recyclerview.adapter = adapter
+        call.enqueue(object: Callback<NoticeModel>{
+            override fun onResponse(call: Call<NoticeModel>, response: Response<NoticeModel>) {
+                getList = response.body()!!
+                Log.d("NoticeActivity", getList.toString())
 
-        //리사이클러뷰 아이템 클릭 이벤트
+                if(getList != null && response.isSuccessful) {
+                    recyclerList.add(getList)
+
+                    //리사이클러뷰 레이아웃 매니저
+                    fragmentManager = supportFragmentManager
+                    layoutManager = LinearLayoutManager(applicationContext)
+                    notice_recyclerview.layoutManager = layoutManager
+
+                    //리사이클러뷰 어댑터 설정
+                    adapter = NoticeRecyclerAdapter(recyclerList, fragmentManager)
+                    notice_recyclerview.adapter = adapter
+
+                    bottomSheetDialog = BottomSheetDialog(this@NoticeActivity)
+                    bottomSheetDialog.setContentView(R.layout.notice_bottomsheet)
+
+                    //바텀시트 데이터 바인딩
+                    bottomSheetDialog.notice_name_et.text = getList.id
+                    bottomSheetDialog.notice_date_et.text = getList.created_at
+                    bottomSheetDialog.notice_title_tv2.text = getList.title
+                    bottomSheetDialog.notice_contents_tv2.text = getList.content
+                }
+                else{}
+            }
+
+            override fun onFailure(call: Call<NoticeModel>, t: Throwable) {
+                Log.d("NoticeActivity", t.toString())
+            }
+        })
+
+        //리사이클러뷰 아이템 클릭 이벤트 (공지사항 상세보기)
         adapter.setOnItemClickListener(object : NoticeRecyclerAdapter.OnNoticeItemClickListener{
-            override fun onItemClick(v: View, data: NoticeItem, position: Int) {
+            override fun onItemClick(v: View, data: NoticeModel, position: Int) {
                 //bottom sheet 띄우기
-                val bottomSheetDialog = BottomSheetDialog(this@NoticeActivity)
-                bottomSheetDialog.setContentView(R.layout.notice_bottomsheet)
-                bottomSheetDialog.notice_date_et.text = getIntent.getStringExtra("date")
-                bottomSheetDialog.notice_title_tv2.text = getIntent.getStringExtra("title")
-                bottomSheetDialog.notice_contents_tv2.text = getIntent.getStringExtra("contents")
                 bottomSheetDialog.show()
 
                 //공지 내리기
@@ -123,7 +155,6 @@ class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
             }
         })
     }
-
     //Navigation Drawer 설정
     private fun NavInitializeLayout() {
         //toolbar를 통해 Appbar 생성

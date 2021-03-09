@@ -7,13 +7,14 @@ import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gramo.R
 import com.example.gramoproject.DataClass.NoticeItem
+import com.example.gramoproject.DataClass.NoticeModel
 import kotlinx.android.synthetic.main.notice_recycler_item.view.*
 
-class NoticeRecyclerAdapter(private val items: ArrayList<NoticeItem>, fragmentManager: FragmentManager) : RecyclerView.Adapter<NoticeRecyclerAdapter.ViewHolder>(){
+class NoticeRecyclerAdapter(private val items: ArrayList<NoticeModel>, fragmentManager: FragmentManager) : RecyclerView.Adapter<NoticeRecyclerAdapter.ViewHolder>(){
     private var mfragmentManager : FragmentManager = fragmentManager
 
     interface OnNoticeItemClickListener{
-        fun onItemClick(v: View, data: NoticeItem, position: Int)
+        fun onItemClick(v: View, data: NoticeModel, position: Int)
     }
     private var listener: OnNoticeItemClickListener? = null
     fun setOnItemClickListener(listener: OnNoticeItemClickListener){
@@ -47,11 +48,11 @@ class NoticeRecyclerAdapter(private val items: ArrayList<NoticeItem>, fragmentMa
 
     inner class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
         private val view : View = v
-        fun bind(item: NoticeItem, fragmentManager: FragmentManager){
-            view.notice_name_tv.text = item.name
-            view.notice_date_tv.text = item.date
+        fun bind(item: NoticeModel, fragmentManager: FragmentManager){
+            view.notice_name_tv.text = item.id
+            view.notice_date_tv.text = item.created_at
             view.notice_title_tv.text = item.title
-            view.notice_contents_tv.text = item.contents
+            view.notice_contents_tv.text = item.content
 
             val position = adapterPosition
             if(position != RecyclerView.NO_POSITION){
