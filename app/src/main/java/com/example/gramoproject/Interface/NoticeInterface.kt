@@ -13,17 +13,17 @@ interface NoticeInterface {
 
     @Headers("Authorization: your auth token")
     @GET("")
-    fun getNoticeDetail(@Path("id") id: Int) : Call<Int>
+    fun getNoticeDetail(@Path("id") id: Int) : Call<NoticeModel>
 
     @FormUrlEncoded
     @Headers("Authorization: your auth token")
     @POST("")
-    fun getNotice(
+    fun CreateNotice(
         @Field("title") title:String,
         @Field("content") content: String
     ): Call<NoticeModel>
 
     @Headers("Authorization: your auth token")
     @DELETE("")
-    fun deleteNotice(@Path("id") id: Int) : Call<Int>
+    fun deleteNotice(@Path("id") id: Int) : Call<NoticeModel>
 }

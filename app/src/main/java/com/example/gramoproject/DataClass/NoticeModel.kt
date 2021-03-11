@@ -4,7 +4,9 @@ import com.google.gson.annotations.SerializedName
 
 data class NoticeModel(
         @SerializedName("id")
-        val id: String,
+        val id: Int,
+        @SerializedName("name")
+        val name: String,
         @SerializedName("title")
         val title: String,
         @SerializedName("content")

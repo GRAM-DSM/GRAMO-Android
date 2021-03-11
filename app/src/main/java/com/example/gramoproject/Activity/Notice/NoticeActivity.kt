@@ -29,17 +29,24 @@ import kotlinx.android.synthetic.main.notice_activity.*
 import kotlinx.android.synthetic.main.notice_appbar.*
 import kotlinx.android.synthetic.main.notice_bottomsheet.*
 import kotlinx.android.synthetic.main.notice_unload_dialog.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     //현재 액티비티 확인
     private val currentActivity = javaClass.simpleName.trim()
     //리사이클러뷰 데이터를 담을 변수
     private lateinit var getList : NoticeModel
-    private lateinit var recyclerList : ArrayList<NoticeModel>
+    //어댑터에서도 사용하기 위해 companion object 선언
+    companion object {
+        lateinit var recyclerList: ArrayList<NoticeModel>
+    }
     //커스텀 알림창
     private lateinit var LogoutDialog: Dialog
     private lateinit var LeaveDialog: Dialog
@@ -51,16 +58,20 @@ class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
     private lateinit var adapter : NoticeRecyclerAdapter
     //바텀시트
     private lateinit var bottomSheetDialog : BottomSheetDialog
-
-    private var off_set = 0
+    //APIClient
+    private lateinit var noticeInterface : NoticeInterface
+    //페이지 수, 아이템 개수
+    private var off_set = -5
     private val limit_num = 5
+    //현재 페이지
+    private var page = 1
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.notice_activity)
 
-        //Navigation Drawer
+        //Navigation Drawer init
         NavInitializeLayout()
         notice_nav_view.setNavigationItemSelectedListener(this)
 
@@ -91,14 +102,15 @@ class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         }
 
         //리사이클러뷰
+        initScrollListener()
         var layoutManager : LinearLayoutManager
         var fragmentManager : FragmentManager
 
         //retrofit2
-        val noticeInterface: NoticeInterface = ApiClient().getClient().create(NoticeInterface::class.java)
-        val call = noticeInterface.getNoticeList(off_set,limit_num)
+        noticeInterface = ApiClient.getClient().create(NoticeInterface::class.java)
+        val recyclerCall = noticeInterface.getNoticeList(getOffSet(),limit_num)
 
-        call.enqueue(object: Callback<NoticeModel>{
+        recyclerCall.enqueue(object: Callback<NoticeModel>{
             override fun onResponse(call: Call<NoticeModel>, response: Response<NoticeModel>) {
                 getList = response.body()!!
                 Log.d("NoticeActivity", getList.toString())
@@ -114,15 +126,6 @@ class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                     //리사이클러뷰 어댑터 설정
                     adapter = NoticeRecyclerAdapter(recyclerList, fragmentManager)
                     notice_recyclerview.adapter = adapter
-
-                    bottomSheetDialog = BottomSheetDialog(this@NoticeActivity)
-                    bottomSheetDialog.setContentView(R.layout.notice_bottomsheet)
-
-                    //바텀시트 데이터 바인딩
-                    bottomSheetDialog.notice_name_et.text = getList.id
-                    bottomSheetDialog.notice_date_et.text = getList.created_at
-                    bottomSheetDialog.notice_title_tv2.text = getList.title
-                    bottomSheetDialog.notice_contents_tv2.text = getList.content
                 }
                 else{}
             }
@@ -130,6 +133,29 @@ class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
             override fun onFailure(call: Call<NoticeModel>, t: Throwable) {
                 Log.d("NoticeActivity", t.toString())
             }
+        })
+
+        val bottomSheetCall = noticeInterface.getNoticeDetail(getList.id)
+        bottomSheetCall.enqueue(object : Callback<NoticeModel>{
+            override fun onResponse(call: Call<NoticeModel>, response: Response<NoticeModel>) {
+                val getDetail = response.body()
+                if(getDetail != null && response.isSuccessful){
+                    bottomSheetDialog = BottomSheetDialog(this@NoticeActivity)
+                    bottomSheetDialog.setContentView(R.layout.notice_bottomsheet)
+
+                    bottomSheetDialog.notice_name_et.text = getDetail.name
+                    bottomSheetDialog.notice_date_et.text = getDetail.created_at
+                    bottomSheetDialog.notice_title_tv2.text = getDetail.title
+                    bottomSheetDialog.notice_contents_tv2.text = getDetail.content
+                }
+                else{
+                }
+            }
+
+            override fun onFailure(call: Call<NoticeModel>, t: Throwable) {
+                Log.d("NoticeActivity", t.toString())
+            }
+
         })
 
         //리사이클러뷰 아이템 클릭 이벤트 (공지사항 상세보기)
@@ -147,6 +173,16 @@ class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                     }
                     //Positive Button
                     UnloadDialog.unload_positive_btn.setOnClickListener{
+                        val dismissCall = noticeInterface.deleteNotice(getList.id)
+                        dismissCall.enqueue(object: Callback<NoticeModel>{
+                            override fun onResponse(call: Call<NoticeModel>, response: Response<NoticeModel>) {
+                            }
+
+                            override fun onFailure(call: Call<NoticeModel>, t: Throwable) {
+                                Log.d("NoticeActivity", t.toString())
+                            }
+
+                        })
                         UnloadDialog.dismiss()
                         bottomSheetDialog.dismiss()
                         adapter.removeItem(position)
@@ -162,15 +198,47 @@ class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
 
-                //마지막 체크
-               // if(!notice_recyclerview.canScrollVertically(1))
+                //스크롤이 끝에 도달했는지 확인
+                if(!notice_recyclerview.canScrollVertically(1)){
+                    recyclerList.removeAt(recyclerList.lastIndex)
+
+                    //리스트 업데이트 하는 것이 느리기 때문에 코루틴을 통해 UI 변경을 천천히 하게 만듦
+                    CoroutineScope(Dispatchers.Main).launch {
+                        val temp = CoroutineScope(Dispatchers.IO).async {
+                            loadMorePage()
+                        }.await()
+
+                        adapter.notifyDataSetChanged()
+                    }
+                }
             }
         })
     }
 
     //리사이클러뷰의 데이터를 더 로드하는 경우
-    private fun loadMore(){
+    private fun loadMorePage(){
+        val call = noticeInterface.getNoticeList(getOffSet(), limit_num)
+        call.enqueue(object : Callback<NoticeModel> {
+            override fun onResponse(call: Call<NoticeModel>, response: Response<NoticeModel>) {
+                val getLoadList = response.body()
+                if(getLoadList != null && response.isSuccessful){
+                    adapter.add(getLoadList)
+                }
+                else{
+                }
+            }
 
+            override fun onFailure(call: Call<NoticeModel>, t: Throwable) {
+                Log.d("NoticeActivity", t.toString())
+            }
+
+        })
+    }
+
+    private fun getOffSet(): Int{
+        off_set += limit_num
+
+        return off_set
     }
 
     //Navigation Drawer 설정

@@ -50,15 +50,13 @@ class NoticeAddActivity : AppCompatActivity() {
 //                intentToNotice.putExtra("date", notice_date_et.text.toString())
 //                intentToNotice.putExtra("title", notice_title_et.text.toString())
 //                intentToNotice.putExtra("contents", notice_content_et.text.toString())
-                val noticeInterface = ApiClient().getClient().create(NoticeInterface::class.java)
-                val call = noticeInterface.getNotice(notice_title_et.text.toString(), notice_content_et.text.toString())
+                val noticeInterface = ApiClient.getClient().create(NoticeInterface::class.java)
+                val call = noticeInterface.CreateNotice(notice_title_et.text.toString(), notice_content_et.text.toString())
                 call.enqueue(object: Callback<NoticeModel> {
                     override fun onResponse(call: Call<NoticeModel>, response: Response<NoticeModel>) {
-                        Log.d("NoticeAddActivity", response.body().toString())
                     }
 
                     override fun onFailure(call: Call<NoticeModel>, t: Throwable) {
-                        Log.d("NoticeAddActivity", t.toString())
                     }
                 })
 
