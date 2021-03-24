@@ -17,17 +17,9 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class NoticeAddActivity : AppCompatActivity() {
-
-    //현재 날짜 저장
-    private val format = SimpleDateFormat("yyyy년 MM월 dd일")
-    private val now = System.currentTimeMillis()
-    private lateinit var date : Date
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.notice_add_activity)
-
-        notice_date_et.setText(getTime())
 
         //취소 클릭
         notice_cancel_tv.setOnClickListener{
@@ -45,11 +37,7 @@ class NoticeAddActivity : AppCompatActivity() {
             }
             else {
                 val intentToNotice = Intent(applicationContext, NoticeActivity::class.java)
-//                intentToNotice.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-//                intentToNotice.putExtra("name", notice_name_et.text.toString())
-//                intentToNotice.putExtra("date", notice_date_et.text.toString())
-//                intentToNotice.putExtra("title", notice_title_et.text.toString())
-//                intentToNotice.putExtra("contents", notice_content_et.text.toString())
+                intentToNotice.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 val noticeInterface = ApiClient.getClient().create(NoticeInterface::class.java)
                 val call = noticeInterface.CreateNotice(notice_title_et.text.toString(), notice_content_et.text.toString())
                 call.enqueue(object: Callback<NoticeModel> {
@@ -64,10 +52,5 @@ class NoticeAddActivity : AppCompatActivity() {
                 finish()
             }
         }
-    }
-
-    fun getTime(): String{
-        date = Date(now)
-        return format.format(date)
     }
 }
