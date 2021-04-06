@@ -9,7 +9,7 @@ import kotlinx.android.synthetic.main.homework_main_activity.*
 class HomeworkMainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.homework_main_activity)
 
     }
 }
