@@ -39,12 +39,13 @@ class NoticeAddActivity : AppCompatActivity() {
                 val intentToNotice = Intent(applicationContext, NoticeActivity::class.java)
                 intentToNotice.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 val noticeInterface = ApiClient.getClient().create(NoticeInterface::class.java)
-                val call = noticeInterface.CreateNotice(notice_title_et.text.toString(), notice_content_et.text.toString())
-                call.enqueue(object: Callback<NoticeModel> {
-                    override fun onResponse(call: Call<NoticeModel>, response: Response<NoticeModel>) {
+                val call = noticeInterface.createNotice(notice_title_et.text.toString(), notice_content_et.text.toString())
+                call.enqueue(object: Callback<Unit> {
+                    override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
                     }
 
-                    override fun onFailure(call: Call<NoticeModel>, t: Throwable) {
+                    override fun onFailure(call: Call<Unit>, t: Throwable) {
+                        Log.d("NoticeAddActivity", t.toString())
                     }
                 })
 

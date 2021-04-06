@@ -14,6 +14,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gramo.R
+import com.example.gramo.Sharedpreferences.SharedPreferencesHelper
 import com.example.gramoproject.Activity.Calendar.CalendarActivity
 import com.example.gramoproject.Activity.Client.ApiClient
 import com.example.gramoproject.Activity.Homework.HomeworkMainActivity
@@ -42,28 +43,35 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
 
     //현재 액티비티 확인
     private val currentActivity = javaClass.simpleName.trim()
-    //리사이클러뷰 데이터를 담을 변수
-    private lateinit var getList : NoticeModel
     //어댑터에서도 사용하기 위해 companion object 선언
     companion object {
         lateinit var recyclerList: ArrayList<NoticeModel>
+        var id : Int = 0
     }
     //커스텀 알림창
     private lateinit var LogoutDialog: Dialog
     private lateinit var LeaveDialog: Dialog
     private lateinit var UnloadDialog: Dialog
+
     //마지막으로 뒤로 가기 버튼을 누른 시간 저장
     private var backKeyPressedTime : Long = 0
     private lateinit var toast: Toast
+
     //리사이클러뷰 어댑터
     private lateinit var adapter : NoticeRecyclerAdapter
+
     //바텀시트
     private lateinit var bottomSheetDialog : BottomSheetDialog
+
     //API interface
     private lateinit var noticeInterface : NoticeInterface
+
     //페이지 수, 아이템 개수
     private var off_set = -5
     private val limit_num = 5
+    private var ExistList = false
+
+    private val sharedPreferencesHelper = SharedPreferencesHelper.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,22 +82,21 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
 
         //리사이클러뷰
         initScrollListener()
-        var layoutManager : LinearLayoutManager
-        var fragmentManager : FragmentManager
+        var layoutManager: LinearLayoutManager
+        var fragmentManager: FragmentManager
 
         //retrofit2
         noticeInterface = ApiClient.getClient().create(NoticeInterface::class.java)
-        val recyclerCall = noticeInterface.getNoticeList(getOffSet(),limit_num)
-        
-        recyclerCall.enqueue(object: Callback<NoticeModel> {
-            override fun onResponse(call: Call<NoticeModel>, response: Response<NoticeModel>) {
-                when (response.code()){
-                    200 -> {
-                        getList = response.body()!!
-                        Log.d("NoticeActivity", getList.toString())
+        val recyclerCall = noticeInterface.getNoticeList(sharedPreferencesHelper.accessToken!! ,getOffSet(), limit_num)
 
-                        if (getList != null && response.isSuccessful) {
-                            recyclerList.add(getList)
+        recyclerCall.enqueue(object : Callback<NoticeModel> {
+            override fun onResponse(call: Call<NoticeModel>, response: Response<NoticeModel>) {
+                when (response.code()) {
+                    200 -> {
+                        Log.d("NoticeActivity", response.body().toString())
+
+                        if (response.isSuccessful) {
+                            recyclerList.add(response.body()!!)
 
                             //리사이클러뷰 레이아웃 매니저
                             fragmentManager = supportFragmentManager
@@ -100,36 +107,11 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                             adapter = NoticeRecyclerAdapter(recyclerList, fragmentManager)
                             notice_recyclerview.adapter = adapter
                         }
+
+                        ExistList = true
                     }
                     404 -> {
                         Toast.makeText(applicationContext, "공지사항이 존재하지 않습니다.", Toast.LENGTH_SHORT).show()
-                    }
-            }
-        }
-
-            override fun onFailure(call: Call<NoticeModel>, t: Throwable) {
-                Log.d("NoticeActivity", t.toString())
-            }
-        })
-
-        val bottomSheetCall = noticeInterface.getNoticeDetail(getList.id)
-        bottomSheetCall.enqueue(object : Callback<NoticeModel>{
-            override fun onResponse(call: Call<NoticeModel>, response: Response<NoticeModel>) {
-                when(response.code()) {
-                    200 -> {
-                        val getDetail = response.body()
-                        if (getDetail != null && response.isSuccessful) {
-                            bottomSheetDialog = BottomSheetDialog(this@NoticeActivity)
-                            bottomSheetDialog.setContentView(R.layout.notice_bottomsheet)
-
-                            bottomSheetDialog.notice_name_et.text = getDetail.name
-                            bottomSheetDialog.notice_date_et.text = getDetail.created_at
-                            bottomSheetDialog.notice_title_tv2.text = getDetail.title
-                            bottomSheetDialog.notice_contents_tv2.text = getDetail.content
-                        }
-                    }
-                    404 -> {
-                        Toast.makeText(applicationContext, "이 아이디와 일치하는 공지사항을 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
@@ -137,42 +119,35 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
             override fun onFailure(call: Call<NoticeModel>, t: Throwable) {
                 Log.d("NoticeActivity", t.toString())
             }
-
         })
 
         //notice_add로 이동
-        notice_add_btn.setOnClickListener{
+        notice_add_btn.setOnClickListener {
             val intentToNoticeAdd = Intent(applicationContext, NoticeAddActivity::class.java)
             startActivity(intentToNoticeAdd)
         }
 
         //리사이클러뷰 아이템 클릭 이벤트 (공지사항 상세보기)
-        adapter.setOnItemClickListener(object : NoticeRecyclerAdapter.OnNoticeItemClickListener{
-            override fun onItemClick(v: View, data: NoticeModel, position: Int) {
-                //bottom sheet 띄우기
-                bottomSheetDialog.show()
-
-                //공지 내리기
-                bottomSheetDialog.notice_unload_btn.setOnClickListener{
-                    UnloadDialog.show()
-                    //Negative Button
-                    UnloadDialog.unload_negative_btn.setOnClickListener{
-                        UnloadDialog.dismiss()
-                    }
-                    //Positive Button
-                    UnloadDialog.unload_positive_btn.setOnClickListener{
-                        val dismissCall = noticeInterface.deleteNotice(getList.id)
-                        dismissCall.enqueue(object: Callback<NoticeModel>{
+        if (ExistList) {
+            adapter.setOnItemClickListener(object : NoticeRecyclerAdapter.OnNoticeItemClickListener {
+                override fun onItemClick(v: View, data: NoticeModel, position: Int) {
+                    id = position
+                    val bottomSheetCall = noticeInterface.getNoticeDetail(sharedPreferencesHelper.accessToken!! ,position)
+                    if (ExistList) {
+                        bottomSheetCall.enqueue(object : Callback<NoticeModel> {
                             override fun onResponse(call: Call<NoticeModel>, response: Response<NoticeModel>) {
-                                when(response.code()){
-                                    204 -> {
-                                        UnloadDialog.dismiss()
-                                        bottomSheetDialog.dismiss()
-                                        adapter.removeItem(position)
-                                        Toast.makeText(applicationContext, "공지사항이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
-                                    }
-                                    403 -> {
-                                        Toast.makeText(applicationContext, "다른 사용자가 만든 공지사항을 삭제할 수 없습니다.", Toast.LENGTH_SHORT).show()
+                                when (response.code()) {
+                                    200 -> {
+                                        val getDetail = response.body()
+                                        if (getDetail != null && response.isSuccessful) {
+                                            bottomSheetDialog = BottomSheetDialog(this@NoticeActivity)
+                                            bottomSheetDialog.setContentView(R.layout.notice_bottomsheet)
+
+                                            bottomSheetDialog.notice_name_et.text = getDetail.name
+                                            bottomSheetDialog.notice_date_et.text = getDetail.created_at
+                                            bottomSheetDialog.notice_title_tv2.text = getDetail.title
+                                            bottomSheetDialog.notice_contents_tv2.text = getDetail.content
+                                        }
                                     }
                                     404 -> {
                                         Toast.makeText(applicationContext, "이 아이디와 일치하는 공지사항을 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
@@ -183,11 +158,50 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                             override fun onFailure(call: Call<NoticeModel>, t: Throwable) {
                                 Log.d("NoticeActivity", t.toString())
                             }
+
                         })
                     }
+
+                    //bottom sheet 띄우기
+                    bottomSheetDialog.show()
+
+                    //공지 내리기
+                    bottomSheetDialog.notice_unload_btn.setOnClickListener {
+                        UnloadDialog.show()
+                        //Negative Button
+                        UnloadDialog.unload_negative_btn.setOnClickListener {
+                            UnloadDialog.dismiss()
+                        }
+                        //Positive Button
+                        UnloadDialog.unload_positive_btn.setOnClickListener {
+                            val dismissCall = noticeInterface.deleteNotice(sharedPreferencesHelper.accessToken!!, position)
+                            dismissCall.enqueue(object : Callback<NoticeModel> {
+                                override fun onResponse(call: Call<NoticeModel>, response: Response<NoticeModel>) {
+                                    when (response.code()) {
+                                        204 -> {
+                                            UnloadDialog.dismiss()
+                                            bottomSheetDialog.dismiss()
+                                            adapter.removeItem(position)
+                                            Toast.makeText(applicationContext, "공지사항이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
+                                        }
+                                        403 -> {
+                                            Toast.makeText(applicationContext, "다른 사용자가 만든 공지사항을 삭제할 수 없습니다.", Toast.LENGTH_SHORT).show()
+                                        }
+                                        404 -> {
+                                            Toast.makeText(applicationContext, "이 아이디와 일치하는 공지사항을 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
+                                        }
+                                    }
+                                }
+
+                                override fun onFailure(call: Call<NoticeModel>, t: Throwable) {
+                                    Log.d("NoticeActivity", t.toString())
+                                }
+                            })
+                        }
+                    }
                 }
-            }
-        })
+            })
+        }
     }
     //스크롤 리스너
     private fun initScrollListener(){
@@ -214,7 +228,7 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
 
     //리사이클러뷰의 데이터를 더 로드하는 경우
     private fun loadMorePage(){
-        val call = noticeInterface.getNoticeList(getOffSet(), limit_num)
+        val call = noticeInterface.getNoticeList(sharedPreferencesHelper.accessToken!!, getOffSet(), limit_num)
         call.enqueue(object : Callback<NoticeModel> {
             override fun onResponse(call: Call<NoticeModel>, response: Response<NoticeModel>) {
                 when(response.code()) {

@@ -5,25 +5,28 @@ import retrofit2.Call
 import retrofit2.http.*
 
 interface NoticeInterface {
-    @Headers("Authorization: your auth token")
-    @GET("")
+    @GET("/notice")
     fun getNoticeList(
+            @Header("Authorization") header: String,
             @Query("off_set") off_set: Int,
             @Query("limit_num") limit_num: Int) : Call<NoticeModel>
 
     @Headers("Authorization: your auth token")
-    @GET("")
-    fun getNoticeDetail(@Path("id") id: Int) : Call<NoticeModel>
+    @GET("/notice/\$id")
+    fun getNoticeDetail(
+            @Header("Authorization") header: String,
+            @Path("id") id: Int) : Call<NoticeModel>
 
     @FormUrlEncoded
-    @Headers("Authorization: your auth token")
-    @POST("")
-    fun CreateNotice(
-        @Field("title") title:String,
-        @Field("content") content: String
-    ): Call<NoticeModel>
+    @POST("/notice")
+    fun createNotice(
+            @Header("Authorization") header: String,
+            @Field("title") title:String,
+            @Field("content") content: String
+    ): Call<Unit>
 
-    @Headers("Authorization: your auth token")
-    @DELETE("")
-    fun deleteNotice(@Path("id") id: Int) : Call<NoticeModel>
+    @DELETE("/notice/\$id")
+    fun deleteNotice(
+            @Header("Authorization") header: String,
+            @Path("id") id: Int) : Call<NoticeModel>
 }
