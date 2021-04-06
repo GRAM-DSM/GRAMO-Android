@@ -6,6 +6,7 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.gramo.R
+import com.example.gramo.Sharedpreferences.SharedPreferencesHelper
 import com.example.gramoproject.Activity.Client.ApiClient
 import com.example.gramoproject.DataClass.NoticeModel
 import com.example.gramoproject.Interface.NoticeInterface
@@ -17,6 +18,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class NoticeAddActivity : AppCompatActivity() {
+    val sharedPreferencesHelper = SharedPreferencesHelper.getInstance()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.notice_add_activity)
@@ -39,7 +41,7 @@ class NoticeAddActivity : AppCompatActivity() {
                 val intentToNotice = Intent(applicationContext, NoticeActivity::class.java)
                 intentToNotice.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 val noticeInterface = ApiClient.getClient().create(NoticeInterface::class.java)
-                val call = noticeInterface.createNotice(notice_title_et.text.toString(), notice_content_et.text.toString())
+                val call = noticeInterface.createNotice(sharedPreferencesHelper.accessToken!!, notice_title_et.text.toString(), notice_content_et.text.toString())
                 call.enqueue(object: Callback<Unit> {
                     override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
                     }
