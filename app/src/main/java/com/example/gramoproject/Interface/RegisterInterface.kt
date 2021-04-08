@@ -1,4 +1,4 @@
-package com.example.gramoproject.Interface
+package com.example.gramoproject.`interface`
 
 interface RegisterInterface {
 }

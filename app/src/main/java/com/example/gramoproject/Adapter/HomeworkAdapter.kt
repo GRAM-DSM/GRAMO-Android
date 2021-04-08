@@ -1,10 +1,10 @@
-package com.example.gramoproject.Adapter
+package com.example.gramoproject.adapter
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import com.example.gramo.R
-import com.example.gramoproject.Activity.Homework.CriteriaViewHolder
-import com.example.gramoproject.Activity.Homework.ListViewHolder
+import com.example.gramoproject.activity.homework.CriteriaViewHolder
+import com.example.gramoproject.activity.homework.ListViewHolder
 import com.thoughtbot.expandablerecyclerview.ExpandableRecyclerViewAdapter
 import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup
 

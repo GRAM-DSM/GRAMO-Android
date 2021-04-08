@@ -1,6 +1,6 @@
-package com.example.gramoproject.Interface
+package com.example.gramoproject.`interface`
 
-import com.example.gramoproject.DataClass.NoticeModel
+import com.example.gramoproject.dataclass.NoticeModel
 import retrofit2.Call
 import retrofit2.http.*
 

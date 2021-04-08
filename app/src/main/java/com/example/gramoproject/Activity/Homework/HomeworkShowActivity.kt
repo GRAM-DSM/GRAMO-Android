@@ -1,8 +1,7 @@
-package com.example.gramoproject.Activity.Homework
+package com.example.gramoproject.activity.homework
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.ArrayAdapter
 import com.example.gramo.R
 
 class HomeworkShowActivity : AppCompatActivity() {

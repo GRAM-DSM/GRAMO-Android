@@ -1,4 +1,4 @@
-package com.example.gramoproject.Activity.Calendar
+package com.example.gramoproject.activity.calendar
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity

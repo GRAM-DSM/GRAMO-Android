@@ -1,4 +1,4 @@
-package com.example.gramoproject.Adapter
+package com.example.gramoproject.adapter
 
 import android.view.LayoutInflater
 import android.view.View
@@ -6,8 +6,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gramo.R
-import com.example.gramoproject.Activity.Notice.NoticeActivity.Companion.recyclerList
-import com.example.gramoproject.DataClass.NoticeModel
+import com.example.gramoproject.activity.notice.NoticeActivity.Companion.recyclerList
+import com.example.gramoproject.dataclass.NoticeModel
 import kotlinx.android.synthetic.main.notice_recycler_item.view.*
 import kotlinx.android.synthetic.main.progressbar.view.*
 
