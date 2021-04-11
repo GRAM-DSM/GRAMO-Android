@@ -1,6 +1,7 @@
 package com.example.gramoproject.activity.sign
 
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
@@ -27,6 +28,13 @@ class RegisterActivity : AppCompatActivity() {
         activityInit()
         spinnerInit()
 
+        //로그인 버튼 클릭시 로그인 페이지로 이동
+        register_login_tv2.setOnClickListener {
+            loginIntent()
+        }
+        register_back_btn.setOnClickListener {
+            loginIntent()
+        }
     }
 
     //EditText 입력 변화
@@ -103,5 +111,12 @@ class RegisterActivity : AppCompatActivity() {
             }
 
         }
+    }
+
+    private fun loginIntent(){
+        val intent = Intent(this@RegisterActivity, LoginActivity::class.java)
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intent)
+        finish()
     }
 }
