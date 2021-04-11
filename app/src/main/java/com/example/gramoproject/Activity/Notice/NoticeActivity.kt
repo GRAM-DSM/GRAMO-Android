@@ -15,13 +15,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gramo.R
 import com.example.gramo.Sharedpreferences.SharedPreferencesHelper
-import com.example.gramoproject.activity.calendar.CalendarActivity
 import com.example.gramoproject.activity.client.ApiClient
 import com.example.gramoproject.activity.homework.HomeworkMainActivity
 import com.example.gramoproject.activity.sign.LoginActivity
 import com.example.gramoproject.adapter.NoticeRecyclerAdapter
 import com.example.gramoproject.dataclass.NoticeModel
 import com.example.gramoproject.`interface`.NoticeInterface
+import com.example.gramoproject.activity.calendar.CalendarActivity
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.leave_custom_dialog.*
@@ -85,6 +85,7 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
 
         //retrofit2
         noticeInterface = ApiClient.getClient().create(NoticeInterface::class.java)
+
         val recyclerCall = noticeInterface.getNoticeList(sharedPreferencesHelper.accessToken!! ,getOffSet(), limit_num)
 
         recyclerCall.enqueue(object : Callback<NoticeModel> {

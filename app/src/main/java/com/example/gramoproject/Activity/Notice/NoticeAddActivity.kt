@@ -9,6 +9,7 @@ import com.example.gramo.R
 import com.example.gramo.Sharedpreferences.SharedPreferencesHelper
 import com.example.gramoproject.activity.client.ApiClient
 import com.example.gramoproject.`interface`.NoticeInterface
+import com.example.gramoproject.dataclass.NoticeItem
 import kotlinx.android.synthetic.main.notice_add_activity.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -36,11 +37,22 @@ class NoticeAddActivity : AppCompatActivity() {
             }
             else {
                 val intent = Intent(this@NoticeAddActivity, NoticeActivity::class.java)
+                val notice = NoticeItem(notice_title_et.text.toString(), notice_content_et.text.toString())
                 intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 val noticeInterface = ApiClient.getClient().create(NoticeInterface::class.java)
-                val call = noticeInterface.createNotice(sharedPreferencesHelper.accessToken!!, notice_title_et.text.toString(), notice_content_et.text.toString())
+                val call = noticeInterface.createNotice(sharedPreferencesHelper.accessToken!!, notice)
                 call.enqueue(object: Callback<Unit> {
                     override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
+                        when(response.code()){
+                            201 -> {
+                                Toast.makeText(this@NoticeAddActivity, "공지사항이 등록되었습니다.", Toast.LENGTH_SHORT).show()
+                                startActivity(intent)
+                                finish()
+                            }
+                            400 -> {
+                                Toast.makeText(this@NoticeAddActivity, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+                            }
+                        }
                     }
 
                     override fun onFailure(call: Call<Unit>, t: Throwable) {
@@ -48,8 +60,7 @@ class NoticeAddActivity : AppCompatActivity() {
                     }
                 })
 
-                startActivity(intent)
-                finish()
+
             }
         }
     }
