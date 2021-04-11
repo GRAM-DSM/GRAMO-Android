@@ -6,14 +6,24 @@ import android.graphics.Color
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.gramo.R
+import com.example.gramoproject.`interface`.RegisterInterface
+import com.example.gramoproject.activity.client.ApiClient
 import com.example.gramoproject.adapter.HintAdapter
+import com.example.gramoproject.dataclass.EmailAuth
+import com.example.gramoproject.dataclass.UserModel
+import com.google.gson.JsonObject
 import kotlinx.android.synthetic.main.register_activity.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class RegisterActivity : AppCompatActivity() {
 
@@ -34,6 +44,19 @@ class RegisterActivity : AppCompatActivity() {
         }
         register_back_btn.setOnClickListener {
             loginIntent()
+        }
+
+        //이메일 인증 버튼
+        register_certificate_btn.setOnClickListener {
+            emailAuth()
+        }
+        //인증 확인 버튼
+        register_check_btn.setOnClickListener {
+            checkCode()
+        }
+        //회원가입 버튼 클릭
+        register_register_btn.setOnClickListener {
+            register()
         }
     }
 
@@ -118,5 +141,99 @@ class RegisterActivity : AppCompatActivity() {
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
         startActivity(intent)
         finish()
+    }
+
+    private fun emailAuth(){
+        val registerInterface = ApiClient.getClient().create(RegisterInterface::class.java)
+        var emailObject = JsonObject()
+        var email = register_email_et.text.toString()
+
+        if (email.equals("")) {
+            Toast.makeText(this@RegisterActivity, "이메일을 입력해주세요.", Toast.LENGTH_SHORT).show()
+        } else {
+            email = register_email_et.text.toString()
+            emailObject.addProperty("email", email)
+            val registerAuth = registerInterface.sendEmail(emailObject)
+            registerAuth.enqueue(object : Callback<Unit> {
+                override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
+                    when (response.code()) {
+                        200 -> {
+                            Toast.makeText(this@RegisterActivity, "$email 으로 보내진 인증코드를 확인해주세요.", Toast.LENGTH_SHORT).show()
+                        }
+                        400 -> {
+                            Toast.makeText(this@RegisterActivity, "잘못된 요청입니다.", Toast.LENGTH_SHORT).show()
+                            Log.d("RegisterActivity", response.message())
+                        }
+                        409 -> {
+                            Toast.makeText(this@RegisterActivity, "이미 사용 중인 이메일 입니다.", Toast.LENGTH_SHORT).show()
+
+                        }
+                    }
+                }
+
+                override fun onFailure(call: Call<Unit>, t: Throwable) {
+                    Log.d("RegisterActivity", t.toString())
+                }
+
+            })
+        }
+    }
+
+    private fun checkCode(){
+        if (register_code_et.text.toString() == "") {
+            Toast.makeText(this@RegisterActivity, "인증번호를 입력해주세요.", Toast.LENGTH_SHORT).show()
+        } else {
+            val authInfo = EmailAuth(register_email_et.text.toString(), Integer.parseInt(register_code_et.text.toString()))
+            val registerInterface = ApiClient.getClient().create(RegisterInterface::class.java)
+            val registerConfirm = registerInterface.checkEmailAuthenticationCode(authInfo)
+
+            registerConfirm.enqueue(object : Callback<Unit> {
+                override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
+                    when (response.code()) {
+                        200 -> {
+                            authCheck = true
+                            Toast.makeText(this@RegisterActivity, "인증되었습니다.", Toast.LENGTH_SHORT).show()
+                        }
+                        404, 409 -> {
+                            authCheck = false
+                            Toast.makeText(this@RegisterActivity, "인증번호가 일치하지 않습니다.", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+
+                override fun onFailure(call: Call<Unit>, t: Throwable) {
+                    Log.d("RegisterActivity", t.toString())
+                }
+
+            })
+        }
+    }
+
+    private fun register(){
+        //비밀번호가 일치하지 않을 때
+        if (!register_pass_edit2.text.toString().equals(register_passOverlap_edit.text.toString()))
+            register_error_tv.text = "비밀번호가 일치하지 않습니다"
+        else if (authCheck == false) {
+            register_error_tv.text = "인증번호가 일치하지 않습니다"
+        } else {
+            register_error_tv.text = ""
+            val user = UserModel(register_email_et.text.toString(), register_pass_edit2.text.toString(), register_name_et.text.toString(), major.toString())
+            val registerInterface = ApiClient.getClient().create(RegisterInterface::class.java)
+            val registerCall = registerInterface.signUp(user)
+
+            registerCall.enqueue(object : Callback<Unit> {
+                override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
+                    val intent = Intent(this@RegisterActivity, LoginActivity::class.java)
+                    Toast.makeText(this@RegisterActivity, "회원가입에 성공했습니다.", Toast.LENGTH_SHORT).show()
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    startActivity(intent)
+                }
+
+                override fun onFailure(call: Call<Unit>, t: Throwable) {
+                    Log.d("RegisterActivity", t.toString())
+                }
+
+            })
+        }
     }
 }
