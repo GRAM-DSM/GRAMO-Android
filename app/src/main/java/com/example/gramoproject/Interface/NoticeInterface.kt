@@ -1,6 +1,7 @@
-package com.example.gramoproject.Interface
+package com.example.gramoproject.`interface`
 
-import com.example.gramoproject.DataClass.NoticeModel
+import com.example.gramoproject.dataclass.NoticeItem
+import com.example.gramoproject.dataclass.NoticeModel
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -8,8 +9,8 @@ interface NoticeInterface {
     @GET("/notice")
     fun getNoticeList(
             @Header("Authorization") header: String,
-            @Query("off_set") off_set: Int,
-            @Query("limit_num") limit_num: Int) : Call<NoticeModel>
+            @Path("off_set") off_set: Int,
+            @Path("limit_num") limit_num: Int) : Call<NoticeModel>
 
     @Headers("Authorization: your auth token")
     @GET("/notice/\$id")
@@ -21,8 +22,7 @@ interface NoticeInterface {
     @POST("/notice")
     fun createNotice(
             @Header("Authorization") header: String,
-            @Field("title") title:String,
-            @Field("content") content: String
+            @Body notice : NoticeItem
     ): Call<Unit>
 
     @DELETE("/notice/\$id")

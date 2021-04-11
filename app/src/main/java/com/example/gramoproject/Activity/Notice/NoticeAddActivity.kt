@@ -1,4 +1,4 @@
-package com.example.gramoproject.Activity.Notice
+package com.example.gramoproject.activity.notice
 
 import android.content.Intent
 import android.os.Bundle
@@ -7,15 +7,13 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.gramo.R
 import com.example.gramo.Sharedpreferences.SharedPreferencesHelper
-import com.example.gramoproject.Activity.Client.ApiClient
-import com.example.gramoproject.DataClass.NoticeModel
-import com.example.gramoproject.Interface.NoticeInterface
+import com.example.gramoproject.activity.client.ApiClient
+import com.example.gramoproject.`interface`.NoticeInterface
+import com.example.gramoproject.dataclass.NoticeItem
 import kotlinx.android.synthetic.main.notice_add_activity.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.text.SimpleDateFormat
-import java.util.*
 
 class NoticeAddActivity : AppCompatActivity() {
     val sharedPreferencesHelper = SharedPreferencesHelper.getInstance()
@@ -25,9 +23,9 @@ class NoticeAddActivity : AppCompatActivity() {
 
         //취소 클릭
         notice_cancel_tv.setOnClickListener{
-            val intentToNotice = Intent(applicationContext, NoticeActivity::class.java)
-            intentToNotice.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
-            startActivity(intentToNotice)
+            val intent = Intent(this@NoticeAddActivity, NoticeActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
+            startActivity(intent)
             finish()
         }
 
@@ -35,15 +33,26 @@ class NoticeAddActivity : AppCompatActivity() {
         notice_complete_tv.setOnClickListener{
             //제목, 내용이 비어있을 경우 경고문 표시
             if(notice_title_et.text.toString().equals("") || notice_content_et.text.toString().equals("")){
-                Toast.makeText(applicationContext, "제목 또는 내용을 입력해주세요", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@NoticeAddActivity, "제목 또는 내용을 입력해주세요", Toast.LENGTH_SHORT).show()
             }
             else {
-                val intentToNotice = Intent(applicationContext, NoticeActivity::class.java)
-                intentToNotice.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+                val intent = Intent(this@NoticeAddActivity, NoticeActivity::class.java)
+                val notice = NoticeItem(notice_title_et.text.toString(), notice_content_et.text.toString())
+                intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
                 val noticeInterface = ApiClient.getClient().create(NoticeInterface::class.java)
-                val call = noticeInterface.createNotice(sharedPreferencesHelper.accessToken!!, notice_title_et.text.toString(), notice_content_et.text.toString())
+                val call = noticeInterface.createNotice(sharedPreferencesHelper.accessToken!!, notice)
                 call.enqueue(object: Callback<Unit> {
                     override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
+                        when(response.code()){
+                            201 -> {
+                                Toast.makeText(this@NoticeAddActivity, "공지사항이 등록되었습니다.", Toast.LENGTH_SHORT).show()
+                                startActivity(intent)
+                                finish()
+                            }
+                            400 -> {
+                                Toast.makeText(this@NoticeAddActivity, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+                            }
+                        }
                     }
 
                     override fun onFailure(call: Call<Unit>, t: Throwable) {
@@ -51,8 +60,7 @@ class NoticeAddActivity : AppCompatActivity() {
                     }
                 })
 
-                startActivity(intentToNotice)
-                finish()
+
             }
         }
     }

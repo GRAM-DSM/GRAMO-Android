@@ -1,4 +1,4 @@
-package com.example.gramoproject.Activity.Notice
+package com.example.gramoproject.activity.notice
 
 import android.app.Dialog
 import android.content.Intent
@@ -15,13 +15,13 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gramo.R
 import com.example.gramo.Sharedpreferences.SharedPreferencesHelper
-import com.example.gramoproject.Activity.Calendar.CalendarActivity
-import com.example.gramoproject.Activity.Client.ApiClient
-import com.example.gramoproject.Activity.Homework.HomeworkMainActivity
-import com.example.gramoproject.Activity.SignInUp.LoginActivity
-import com.example.gramoproject.Adapter.NoticeRecyclerAdapter
-import com.example.gramoproject.DataClass.NoticeModel
-import com.example.gramoproject.Interface.NoticeInterface
+import com.example.gramoproject.activity.client.ApiClient
+import com.example.gramoproject.activity.homework.HomeworkMainActivity
+import com.example.gramoproject.activity.sign.LoginActivity
+import com.example.gramoproject.adapter.NoticeRecyclerAdapter
+import com.example.gramoproject.dataclass.NoticeModel
+import com.example.gramoproject.`interface`.NoticeInterface
+import com.example.gramoproject.activity.calendar.CalendarActivity
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.leave_custom_dialog.*
@@ -46,7 +46,6 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     //어댑터에서도 사용하기 위해 companion object 선언
     companion object {
         lateinit var recyclerList: ArrayList<NoticeModel>
-        var id : Int = 0
     }
     //커스텀 알림창
     private lateinit var LogoutDialog: Dialog
@@ -69,7 +68,7 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     //페이지 수, 아이템 개수
     private var off_set = -5
     private val limit_num = 5
-    private var ExistList = false
+    private var existList = false
 
     private val sharedPreferencesHelper = SharedPreferencesHelper.getInstance()
 
@@ -80,13 +79,13 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         //custom dialog
         initDialog()
 
-        //리사이클러뷰
         initScrollListener()
         var layoutManager: LinearLayoutManager
         var fragmentManager: FragmentManager
 
         //retrofit2
         noticeInterface = ApiClient.getClient().create(NoticeInterface::class.java)
+
         val recyclerCall = noticeInterface.getNoticeList(sharedPreferencesHelper.accessToken!! ,getOffSet(), limit_num)
 
         recyclerCall.enqueue(object : Callback<NoticeModel> {
@@ -100,7 +99,7 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
 
                             //리사이클러뷰 레이아웃 매니저
                             fragmentManager = supportFragmentManager
-                            layoutManager = LinearLayoutManager(applicationContext)
+                            layoutManager = LinearLayoutManager(this@NoticeActivity)
                             notice_recyclerview.layoutManager = layoutManager
 
                             //리사이클러뷰 어댑터 설정
@@ -108,10 +107,10 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                             notice_recyclerview.adapter = adapter
                         }
 
-                        ExistList = true
+                        existList = true
                     }
                     404 -> {
-                        Toast.makeText(applicationContext, "공지사항이 존재하지 않습니다.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@NoticeActivity, "공지사항이 존재하지 않습니다.", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
@@ -123,17 +122,16 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
 
         //notice_add로 이동
         notice_add_btn.setOnClickListener {
-            val intentToNoticeAdd = Intent(applicationContext, NoticeAddActivity::class.java)
+            val intentToNoticeAdd = Intent(this@NoticeActivity, NoticeAddActivity::class.java)
             startActivity(intentToNoticeAdd)
         }
 
         //리사이클러뷰 아이템 클릭 이벤트 (공지사항 상세보기)
-        if (ExistList) {
+        if (existList) {
             adapter.setOnItemClickListener(object : NoticeRecyclerAdapter.OnNoticeItemClickListener {
                 override fun onItemClick(v: View, data: NoticeModel, position: Int) {
-                    id = position
                     val bottomSheetCall = noticeInterface.getNoticeDetail(sharedPreferencesHelper.accessToken!! ,position)
-                    if (ExistList) {
+                    if (existList){
                         bottomSheetCall.enqueue(object : Callback<NoticeModel> {
                             override fun onResponse(call: Call<NoticeModel>, response: Response<NoticeModel>) {
                                 when (response.code()) {
@@ -150,7 +148,7 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                                         }
                                     }
                                     404 -> {
-                                        Toast.makeText(applicationContext, "이 아이디와 일치하는 공지사항을 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(this@NoticeActivity, "이 아이디와 일치하는 공지사항을 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
                                     }
                                 }
                             }
@@ -182,13 +180,13 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                                             UnloadDialog.dismiss()
                                             bottomSheetDialog.dismiss()
                                             adapter.removeItem(position)
-                                            Toast.makeText(applicationContext, "공지사항이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(this@NoticeActivity, "공지사항이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
                                         }
                                         403 -> {
-                                            Toast.makeText(applicationContext, "다른 사용자가 만든 공지사항을 삭제할 수 없습니다.", Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(this@NoticeActivity, "다른 사용자가 만든 공지사항을 삭제할 수 없습니다.", Toast.LENGTH_SHORT).show()
                                         }
                                         404 -> {
-                                            Toast.makeText(applicationContext, "이 아이디와 일치하는 공지사항을 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(this@NoticeActivity, "이 아이디와 일치하는 공지사항을 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
                                         }
                                     }
                                 }
@@ -239,7 +237,7 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                         }
                     }
                     404 -> {
-                        Toast.makeText(applicationContext, "공지사항이 존재하지 않습니다.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@NoticeActivity, "공지사항이 존재하지 않습니다.", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
@@ -319,7 +317,7 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
             //마지막으로 뒤로가기를 누른 후 2.5초가 지났을 경우
             if (System.currentTimeMillis() > backKeyPressedTime + 2500) { //2500ms = 2.5s
                 backKeyPressedTime = System.currentTimeMillis()
-                toast = Toast.makeText(applicationContext, "뒤로 가기 버튼을 한 번 더 누르시면 종료됩니다.", Toast.LENGTH_SHORT)
+                toast = Toast.makeText(this@NoticeActivity, "뒤로 가기 버튼을 한 번 더 누르시면 종료됩니다.", Toast.LENGTH_SHORT)
                 toast.show()
                 return
             }
@@ -369,7 +367,7 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
 
         //Positive Button
         LogoutDialog.logout_positive_btn.setOnClickListener{
-            val intentToLogin = Intent(applicationContext, LoginActivity::class.java)
+            val intentToLogin = Intent(this@NoticeActivity, LoginActivity::class.java)
             intentToLogin.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
             startActivity(intentToLogin)
         }
@@ -386,7 +384,7 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
 
         //Positive Button
         LeaveDialog.leave_positive_btn.setOnClickListener{
-            val intentToLogin = Intent(applicationContext, LoginActivity::class.java)
+            val intentToLogin = Intent(this@NoticeActivity, LoginActivity::class.java)
             intentToLogin.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
             startActivity(intentToLogin)
         }

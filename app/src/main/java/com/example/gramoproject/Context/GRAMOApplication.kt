@@ -2,16 +2,19 @@ package com.example.gramo.Context
 
 import android.app.Application
 import android.content.Context
+import com.example.gramo.Sharedpreferences.SharedPreferencesHelper
 
 class GRAMOApplication : Application() {
+    private var context: Context? = null
     override fun onCreate() {
-        instance = this
+
+        sharedPreferencesHelper.prefs = applicationContext!!.getSharedPreferences("Gramo-prefs", Context.MODE_PRIVATE)
         super.onCreate()
     }
 
     companion object{
-        var instance : GRAMOApplication? = null
-        val context: Context?
-            get() = instance
+        var context: Context? = null
+            private set
+        val sharedPreferencesHelper = SharedPreferencesHelper
     }
 }

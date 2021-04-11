@@ -1,4 +1,4 @@
-package com.example.gramoproject.DataClass
+package com.example.gramoproject.dataclass
 
 data class HomeworkModel(
     var homeworkID : Int = 0,

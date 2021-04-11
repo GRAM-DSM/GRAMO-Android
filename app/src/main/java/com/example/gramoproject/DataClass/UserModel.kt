@@ -1,4 +1,4 @@
-package com.example.gramoproject.DataClass
+package com.example.gramoproject.dataclass
 
 import com.google.gson.annotations.SerializedName
 

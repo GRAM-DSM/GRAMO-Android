@@ -1,13 +1,8 @@
 package com.example.gramo.Sharedpreferences
 
-import android.content.Context
 import android.content.SharedPreferences
-import com.example.gramo.Context.GRAMOApplication
 
 class SharedPreferencesHelper {
-    private val prefs : SharedPreferences = GRAMOApplication.context!!.getSharedPreferences(
-            "myPrefs", Context.MODE_PRIVATE
-    )
 
     var accessToken : String?
         get() = prefs.getString(TOKEN, null)
@@ -30,6 +25,7 @@ class SharedPreferencesHelper {
         private const val TOKEN = "access_Token"
         private const val REFRESH = "refresh_Token"
         private var instance: SharedPreferencesHelper? = null
+        lateinit var prefs : SharedPreferences
 
         @Synchronized
         fun getInstance() : SharedPreferencesHelper {

@@ -1,4 +1,4 @@
-package com.example.gramoproject.Activity.Client
+package com.example.gramoproject.activity.client
 
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
