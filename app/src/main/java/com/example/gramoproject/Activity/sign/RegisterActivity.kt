@@ -185,7 +185,7 @@ class RegisterActivity : AppCompatActivity() {
     private fun checkCode(){
         val imm = this@RegisterActivity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(register_email_et.windowToken, 0)
-        
+
         if (register_code_et.text.toString() == "") {
             Toast.makeText(this@RegisterActivity, "인증번호를 입력해주세요.", Toast.LENGTH_SHORT).show()
         } else {
