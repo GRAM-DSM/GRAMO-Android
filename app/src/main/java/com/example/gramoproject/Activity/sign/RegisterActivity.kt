@@ -144,6 +144,9 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun emailAuth(){
+        val imm = this@RegisterActivity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(register_email_et.windowToken, 0)
+
         val registerInterface = ApiClient.getClient().create(RegisterInterface::class.java)
         var emailObject = JsonObject()
         var email = register_email_et.text.toString()
@@ -158,6 +161,7 @@ class RegisterActivity : AppCompatActivity() {
                 override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
                     when (response.code()) {
                         200 -> {
+                            register_error_tv.text = ""
                             Toast.makeText(this@RegisterActivity, "$email 으로 보내진 인증코드를 확인해주세요.", Toast.LENGTH_SHORT).show()
                         }
                         400 -> {
@@ -165,8 +169,7 @@ class RegisterActivity : AppCompatActivity() {
                             Log.d("RegisterActivity", response.message())
                         }
                         409 -> {
-                            Toast.makeText(this@RegisterActivity, "이미 사용 중인 이메일 입니다.", Toast.LENGTH_SHORT).show()
-
+                            register_error_tv.text = "이미 사용 중인 이메일 입니다."
                         }
                     }
                 }
@@ -180,6 +183,9 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun checkCode(){
+        val imm = this@RegisterActivity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(register_email_et.windowToken, 0)
+        
         if (register_code_et.text.toString() == "") {
             Toast.makeText(this@RegisterActivity, "인증번호를 입력해주세요.", Toast.LENGTH_SHORT).show()
         } else {
@@ -196,7 +202,7 @@ class RegisterActivity : AppCompatActivity() {
                         }
                         404, 409 -> {
                             authCheck = false
-                            Toast.makeText(this@RegisterActivity, "인증번호가 일치하지 않습니다.", Toast.LENGTH_SHORT).show()
+                            register_error_tv.text = "인증번호가 일치하지 않습니다."
                         }
                     }
                 }
@@ -213,9 +219,7 @@ class RegisterActivity : AppCompatActivity() {
         //비밀번호가 일치하지 않을 때
         if (!register_pass_edit2.text.toString().equals(register_passOverlap_edit.text.toString()))
             register_error_tv.text = "비밀번호가 일치하지 않습니다"
-        else if (authCheck == false) {
-            register_error_tv.text = "인증번호가 일치하지 않습니다"
-        } else {
+        else {
             register_error_tv.text = ""
             val user = UserModel(register_email_et.text.toString(), register_pass_edit2.text.toString(), register_name_et.text.toString(), major.toString())
             val registerInterface = ApiClient.getClient().create(RegisterInterface::class.java)
