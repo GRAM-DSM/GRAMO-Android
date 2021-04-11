@@ -14,6 +14,7 @@ import android.widget.AdapterView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.gramo.R
+import com.example.gramo.Sharedpreferences.SharedPreferencesHelper
 import com.example.gramoproject.`interface`.RegisterInterface
 import com.example.gramoproject.activity.client.ApiClient
 import com.example.gramoproject.adapter.HintAdapter
@@ -30,6 +31,7 @@ class RegisterActivity : AppCompatActivity() {
     private val spinnerArray = arrayOf("iOS 개발자", "안드로이드 개발자", "서버 개발자", "디자이너", "분야를 선택해주세요")
     private var authCheck = false //이메일 코드 인증 여부
     private var major: String? = null //전공을 담기 위한 변수
+    private val sharedPreferencesHelper = SharedPreferencesHelper.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,14 +50,17 @@ class RegisterActivity : AppCompatActivity() {
 
         //이메일 인증 버튼
         register_certificate_btn.setOnClickListener {
+            register_error_tv.text = ""
             emailAuth()
         }
         //인증 확인 버튼
         register_check_btn.setOnClickListener {
+            register_error_tv.text = ""
             checkCode()
         }
         //회원가입 버튼 클릭
         register_register_btn.setOnClickListener {
+            register_error_tv.text = ""
             register()
         }
     }
@@ -227,6 +232,9 @@ class RegisterActivity : AppCompatActivity() {
 
             registerCall.enqueue(object : Callback<Unit> {
                 override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
+                    sharedPreferencesHelper.name = register_name_et.text.toString()
+                    sharedPreferencesHelper.major = major
+
                     val intent = Intent(this@RegisterActivity, LoginActivity::class.java)
                     Toast.makeText(this@RegisterActivity, "회원가입에 성공했습니다.", Toast.LENGTH_SHORT).show()
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)

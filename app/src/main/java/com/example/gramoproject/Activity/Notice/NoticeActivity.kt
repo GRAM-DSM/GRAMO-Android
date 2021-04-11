@@ -30,6 +30,7 @@ import kotlinx.android.synthetic.main.logout_custom_dialog.*
 import kotlinx.android.synthetic.main.notice_activity.*
 import kotlinx.android.synthetic.main.notice_appbar.*
 import kotlinx.android.synthetic.main.notice_bottomsheet.*
+import kotlinx.android.synthetic.main.notice_drawer.*
 import kotlinx.android.synthetic.main.notice_drawer.view.*
 import kotlinx.android.synthetic.main.notice_unload_dialog.*
 import kotlinx.coroutines.CoroutineScope
@@ -267,6 +268,11 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
 
         val actionBarDrawerToggle = ActionBarDrawerToggle(this, drawer_layout, notice_toolbar2, R.string.open, R.string.closed)
         drawer_layout.addDrawerListener(actionBarDrawerToggle)
+
+        val header = notice_nav_view.getHeaderView(0)
+
+        header.notice_name_et3.text = sharedPreferencesHelper.name
+        header.notice_major_tv.text = sharedPreferencesHelper.major
     }
 
     //상단 메뉴바의 아이템 클릭시 활동
