@@ -374,9 +374,9 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
 
         //Positive Button
         LogoutDialog.logout_positive_btn.setOnClickListener{
-            val accessToken = "Bearer " + SharedPreferencesHelper.getInstance().accessToken
+            val accessToken = "Bearer " + sharedPreferencesHelper.accessToken
             val logoutInterface = ApiClient.getClient().create(LoginInterface::class.java)
-            val logoutCall = logoutInterface.logout(accessToken!!)
+            val logoutCall = logoutInterface.logout(accessToken)
 
             logoutCall.enqueue(object : Callback<Unit>{
                 override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
@@ -384,6 +384,10 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                         200 -> {
                             Toast.makeText(this@NoticeActivity, "로그아웃 되었습니다.", Toast.LENGTH_SHORT).show()
 
+                            sharedPreferencesHelper.accessToken = ""
+                            sharedPreferencesHelper.refreshToken = ""
+
+                            LogoutDialog.dismiss()
                             val intent = Intent(this@NoticeActivity, LoginActivity::class.java)
                             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
                             startActivity(intent)

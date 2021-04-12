@@ -56,6 +56,11 @@ class LoginActivity : AppCompatActivity() {
                     getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(login_email_et.windowToken, 0)
         }
+
+        if(sharedPreferencesHelper.accessToken!!.isNotEmpty()){
+            noticeIntent()
+        }
+
     }
 
     private fun login(){
@@ -82,9 +87,7 @@ class LoginActivity : AppCompatActivity() {
                                 sharedPreferencesHelper.refreshToken = saveRefresh
 
                                 Toast.makeText(this@LoginActivity, "로그인에 성공했습니다.", Toast.LENGTH_SHORT).show()
-                                val intent = Intent(this@LoginActivity, NoticeActivity::class.java)
-                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-                                startActivity(intent)
+                                noticeIntent()
 
                             } catch (e: JSONException){
                                 e.printStackTrace()
@@ -100,6 +103,30 @@ class LoginActivity : AppCompatActivity() {
                     Log.d("LoginActivity", t.toString())
                 }
             })
+        }
+    }
+
+    private fun noticeIntent(){
+        val intent = Intent(this@LoginActivity, NoticeActivity::class.java)
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intent)
+    }
+
+    //뒤로 가기 버튼 오버라이드
+    override fun onBackPressed() {
+        //super.onBackPressed()
+        //마지막으로 뒤로가기를 누른 후 2.5초가 지났을 경우
+        if (System.currentTimeMillis() > backKeyPressedTime + 2500) { //2500ms = 2.5s
+            backKeyPressedTime = System.currentTimeMillis()
+            toast = Toast.makeText(this@LoginActivity, "뒤로 가기 버튼을 한 번 더 누르시면 종료됩니다.", Toast.LENGTH_SHORT)
+            toast.show()
+            return
+        }
+
+        //마지막으로 뒤로가기를 누른 후 2.5초가 지나지 않았을 경우
+        if(System.currentTimeMillis() <= backKeyPressedTime + 2500){ //2500ms = 2.5s
+            finishAffinity()
+            toast.cancel()
         }
     }
 }
