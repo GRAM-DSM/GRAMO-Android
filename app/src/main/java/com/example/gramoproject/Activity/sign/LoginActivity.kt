@@ -41,6 +41,7 @@ class LoginActivity : AppCompatActivity() {
         }
 
         login_btn.setOnClickListener{
+            login_error_tv.text = ""
             login()
         }
     }
