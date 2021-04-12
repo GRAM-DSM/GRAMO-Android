@@ -59,7 +59,7 @@ class LoginActivity : AppCompatActivity() {
         }
 
         if(sharedPreferencesHelper.accessToken!!.isNotEmpty()){
-            noticeIntent()
+           noticeIntent()
         }
 
     }
@@ -67,7 +67,7 @@ class LoginActivity : AppCompatActivity() {
     private fun login(){
         //빈칸 확인
         if(login_email_et.text.toString() == "" || login_pass_et.text.toString() == "")
-            login_error_tv.text = "이메일 또는 비밀번호를 입력해주세요."
+            login_error_tv.text = R.string.login_input_email_pass.toString()
         else {
             val login = Login(login_email_et.text.toString(), login_pass_et.text.toString())
             val loginInterface = ApiClient.getClient().create(LoginInterface::class.java)
@@ -87,7 +87,7 @@ class LoginActivity : AppCompatActivity() {
                                 sharedPreferencesHelper.accessToken = saveAccess
                                 sharedPreferencesHelper.refreshToken = saveRefresh
 
-                                Toast.makeText(this@LoginActivity, "로그인에 성공했습니다.", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(this@LoginActivity, R.string.login_success, Toast.LENGTH_SHORT).show()
                                 noticeIntent()
 
                             } catch (e: JSONException){
@@ -95,7 +95,7 @@ class LoginActivity : AppCompatActivity() {
                             }
                         }
                         400, 404 -> {
-                            login_error_tv.text = "아이디 또는 비밀번호가 올바르지 않습니다"
+                            login_error_tv.text = R.string.login_not_correct.toString()
                         }
                     }
                 }
@@ -119,7 +119,7 @@ class LoginActivity : AppCompatActivity() {
         //마지막으로 뒤로가기를 누른 후 2.5초가 지났을 경우
         if (System.currentTimeMillis() > backKeyPressedTime + 2500) { //2500ms = 2.5s
             backKeyPressedTime = System.currentTimeMillis()
-            toast = Toast.makeText(this@LoginActivity, "뒤로 가기 버튼을 한 번 더 누르시면 종료됩니다.", Toast.LENGTH_SHORT)
+            toast = Toast.makeText(this@LoginActivity, R.string.login_back_pressed, Toast.LENGTH_SHORT)
             toast.show()
             return
         }

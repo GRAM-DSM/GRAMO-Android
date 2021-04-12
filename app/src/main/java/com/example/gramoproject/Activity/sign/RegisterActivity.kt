@@ -157,7 +157,7 @@ class RegisterActivity : AppCompatActivity() {
         var email = register_email_et.text.toString()
 
         if (email.equals("")) {
-            Toast.makeText(this@RegisterActivity, "이메일을 입력해주세요.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@RegisterActivity, R.string.register_input_email, Toast.LENGTH_SHORT).show()
         } else {
             email = register_email_et.text.toString()
             emailObject.addProperty("email", email)
@@ -167,14 +167,14 @@ class RegisterActivity : AppCompatActivity() {
                     when (response.code()) {
                         200 -> {
                             register_error_tv.text = ""
-                            Toast.makeText(this@RegisterActivity, "$email 으로 보내진 인증코드를 확인해주세요.", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@RegisterActivity, "$email " + R.string.register_check_emailAuth, Toast.LENGTH_SHORT).show()
                         }
                         400 -> {
-                            Toast.makeText(this@RegisterActivity, "잘못된 요청입니다.", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@RegisterActivity, R.string.register_bad_request, Toast.LENGTH_SHORT).show()
                             Log.d("RegisterActivity", response.message())
                         }
                         409 -> {
-                            register_error_tv.text = "이미 사용 중인 이메일 입니다."
+                            register_error_tv.text = R.string.register_already_used_email.toString()
                         }
                     }
                 }
@@ -192,7 +192,7 @@ class RegisterActivity : AppCompatActivity() {
         imm.hideSoftInputFromWindow(register_email_et.windowToken, 0)
 
         if (register_code_et.text.toString() == "") {
-            Toast.makeText(this@RegisterActivity, "인증번호를 입력해주세요.", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@RegisterActivity, R.string.register_inputCode, Toast.LENGTH_SHORT).show()
         } else {
             val authInfo = EmailAuth(register_email_et.text.toString(), Integer.parseInt(register_code_et.text.toString()))
             val registerInterface = ApiClient.getClient().create(RegisterInterface::class.java)
@@ -203,11 +203,11 @@ class RegisterActivity : AppCompatActivity() {
                     when (response.code()) {
                         200 -> {
                             authCheck = true
-                            Toast.makeText(this@RegisterActivity, "인증되었습니다.", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@RegisterActivity, R.string.register_auth_success, Toast.LENGTH_SHORT).show()
                         }
                         404, 409 -> {
                             authCheck = false
-                            register_error_tv.text = "인증번호가 일치하지 않습니다."
+                            register_error_tv.text = R.string.register_code_not_match.toString()
                         }
                     }
                 }
@@ -221,9 +221,11 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun register(){
-        //비밀번호가 일치하지 않을 때
-        if (!register_pass_edit2.text.toString().equals(register_passOverlap_edit.text.toString()))
-            register_error_tv.text = "비밀번호가 일치하지 않습니다"
+        if (register_pass_edit2.text.length < 5 || register_pass_edit2.text.length > 20){
+            register_error_tv.text = R.string.register_password_length.toString()
+        }
+        else if (!register_pass_edit2.text.toString().equals(register_passOverlap_edit.text.toString()))
+            register_error_tv.text = R.string.register_code_not_match.toString()
         else {
             register_error_tv.text = ""
             val user = UserModel(register_email_et.text.toString(), register_pass_edit2.text.toString(), register_name_et.text.toString(), major.toString())
@@ -236,7 +238,7 @@ class RegisterActivity : AppCompatActivity() {
                     sharedPreferencesHelper.major = major
 
                     val intent = Intent(this@RegisterActivity, LoginActivity::class.java)
-                    Toast.makeText(this@RegisterActivity, "회원가입에 성공했습니다.", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@RegisterActivity, R.string.register_success, Toast.LENGTH_SHORT).show()
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
                     startActivity(intent)
                 }
