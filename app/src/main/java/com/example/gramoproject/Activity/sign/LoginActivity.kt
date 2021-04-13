@@ -13,7 +13,7 @@ import com.example.gramoproject.`interface`.LoginInterface
 import com.example.gramoproject.activity.client.ApiClient
 import com.example.gramoproject.activity.notice.NoticeActivity
 import com.example.gramoproject.dataclass.Login
-import com.example.gramoproject.dataclass.TokenModel
+import com.example.gramoproject.dataclass.LoginUser
 import kotlinx.android.synthetic.main.login_activity.*
 import org.json.JSONException
 import retrofit2.Call
@@ -67,27 +67,31 @@ class LoginActivity : AppCompatActivity() {
     private fun login(){
         //빈칸 확인
         if(login_email_et.text.toString() == "" || login_pass_et.text.toString() == "")
-            login_error_tv.text = R.string.login_input_email_pass.toString()
+            login_error_tv.text = getString(R.string.login_input_email_pass)
         else {
             val login = Login(login_email_et.text.toString(), login_pass_et.text.toString())
             val loginInterface = ApiClient.getClient().create(LoginInterface::class.java)
             var loginCall = loginInterface.signIn(login)
 
-            loginCall.enqueue(object: Callback<TokenModel> {
-                override fun onResponse(call: Call<TokenModel>, response: Response<TokenModel>) {
+            loginCall.enqueue(object: Callback<LoginUser> {
+                override fun onResponse(call: Call<LoginUser>, response: Response<LoginUser>) {
                     when(response.code()){
                         201 -> {
                             try {
                                 val saveAccess = response.body()?.access_token
                                 val saveRefresh = response.body()?.refresh_token
+                                val saveName = response.body()?.name
+                                val saveMajor = response.body()?.major
 
                                 Log.i("LoginActivity", saveAccess!!)
                                 Log.i("LoginActivity", saveRefresh!!)
 
                                 sharedPreferencesHelper.accessToken = saveAccess
                                 sharedPreferencesHelper.refreshToken = saveRefresh
+                                sharedPreferencesHelper.name = saveName
+                                sharedPreferencesHelper.major = saveMajor
 
-                                Toast.makeText(this@LoginActivity, R.string.login_success, Toast.LENGTH_SHORT).show()
+                                Toast.makeText(this@LoginActivity, getString(R.string.login_success), Toast.LENGTH_SHORT).show()
                                 noticeIntent()
 
                             } catch (e: JSONException){
@@ -95,12 +99,12 @@ class LoginActivity : AppCompatActivity() {
                             }
                         }
                         400, 404 -> {
-                            login_error_tv.text = R.string.login_not_correct.toString()
+                            login_error_tv.text = getString(R.string.login_not_correct).toString()
                         }
                     }
                 }
 
-                override fun onFailure(call: Call<TokenModel>, t: Throwable) {
+                override fun onFailure(call: Call<LoginUser>, t: Throwable) {
                     Log.d("LoginActivity", t.toString())
                 }
             })
@@ -119,7 +123,7 @@ class LoginActivity : AppCompatActivity() {
         //마지막으로 뒤로가기를 누른 후 2.5초가 지났을 경우
         if (System.currentTimeMillis() > backKeyPressedTime + 2500) { //2500ms = 2.5s
             backKeyPressedTime = System.currentTimeMillis()
-            toast = Toast.makeText(this@LoginActivity, R.string.login_back_pressed, Toast.LENGTH_SHORT)
+            toast = Toast.makeText(this@LoginActivity, getString(R.string.back_pressed), Toast.LENGTH_SHORT)
             toast.show()
             return
         }

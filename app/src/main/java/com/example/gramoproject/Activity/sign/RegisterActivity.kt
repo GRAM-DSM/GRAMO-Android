@@ -14,12 +14,11 @@ import android.widget.AdapterView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.gramo.R
-import com.example.gramo.Sharedpreferences.SharedPreferencesHelper
 import com.example.gramoproject.`interface`.RegisterInterface
 import com.example.gramoproject.activity.client.ApiClient
 import com.example.gramoproject.adapter.HintAdapter
 import com.example.gramoproject.dataclass.EmailAuth
-import com.example.gramoproject.dataclass.UserModel
+import com.example.gramoproject.dataclass.RegisterUser
 import com.google.gson.JsonObject
 import kotlinx.android.synthetic.main.register_activity.*
 import retrofit2.Call
@@ -31,7 +30,6 @@ class RegisterActivity : AppCompatActivity() {
     private val spinnerArray = arrayOf("iOS 개발자", "안드로이드 개발자", "서버 개발자", "디자이너", "분야를 선택해주세요")
     private var authCheck = false //이메일 코드 인증 여부
     private var major: String? = null //전공을 담기 위한 변수
-    private val sharedPreferencesHelper = SharedPreferencesHelper.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -132,7 +130,14 @@ class RegisterActivity : AppCompatActivity() {
         register_major_spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
                 if (position != 4)
-                    major = spinnerArray[position]
+                {
+                    when(position){
+                        0 -> major = "IOS"
+                        1 -> major = "ANDROID"
+                        2 -> major = "BACKEND"
+                        3 -> major = "DESIGN"
+                    }
+                }
             }
 
             override fun onNothingSelected(parent: AdapterView<*>?) {
@@ -157,7 +162,7 @@ class RegisterActivity : AppCompatActivity() {
         var email = register_email_et.text.toString()
 
         if (email.equals("")) {
-            Toast.makeText(this@RegisterActivity, R.string.register_input_email, Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@RegisterActivity, getString(R.string.register_input_email), Toast.LENGTH_SHORT).show()
         } else {
             email = register_email_et.text.toString()
             emailObject.addProperty("email", email)
@@ -167,14 +172,14 @@ class RegisterActivity : AppCompatActivity() {
                     when (response.code()) {
                         200 -> {
                             register_error_tv.text = ""
-                            Toast.makeText(this@RegisterActivity, "$email " + R.string.register_check_emailAuth, Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@RegisterActivity, "$email " + getString(R.string.register_check_emailAuth), Toast.LENGTH_SHORT).show()
                         }
                         400 -> {
-                            Toast.makeText(this@RegisterActivity, R.string.register_bad_request, Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@RegisterActivity, getString(R.string.register_bad_request), Toast.LENGTH_SHORT).show()
                             Log.d("RegisterActivity", response.message())
                         }
                         409 -> {
-                            register_error_tv.text = R.string.register_already_used_email.toString()
+                            register_error_tv.text = getString(R.string.register_already_used_email)
                         }
                     }
                 }
@@ -192,7 +197,7 @@ class RegisterActivity : AppCompatActivity() {
         imm.hideSoftInputFromWindow(register_email_et.windowToken, 0)
 
         if (register_code_et.text.toString() == "") {
-            Toast.makeText(this@RegisterActivity, R.string.register_inputCode, Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@RegisterActivity, getString(R.string.register_inputCode), Toast.LENGTH_SHORT).show()
         } else {
             val authInfo = EmailAuth(register_email_et.text.toString(), Integer.parseInt(register_code_et.text.toString()))
             val registerInterface = ApiClient.getClient().create(RegisterInterface::class.java)
@@ -203,11 +208,11 @@ class RegisterActivity : AppCompatActivity() {
                     when (response.code()) {
                         200 -> {
                             authCheck = true
-                            Toast.makeText(this@RegisterActivity, R.string.register_auth_success, Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@RegisterActivity, getString(R.string.register_auth_success), Toast.LENGTH_SHORT).show()
                         }
                         404, 409 -> {
                             authCheck = false
-                            register_error_tv.text = R.string.register_code_not_match.toString()
+                            register_error_tv.text = getString(R.string.register_code_not_match)
                         }
                     }
                 }
@@ -222,23 +227,21 @@ class RegisterActivity : AppCompatActivity() {
 
     private fun register(){
         if (register_pass_edit2.text.length < 5 || register_pass_edit2.text.length > 20){
-            register_error_tv.text = R.string.register_password_length.toString()
+            register_error_tv.text = getString(R.string.register_password_length)
         }
         else if (!register_pass_edit2.text.toString().equals(register_passOverlap_edit.text.toString()))
-            register_error_tv.text = R.string.register_code_not_match.toString()
+            register_error_tv.text = getString(R.string.register_code_not_match)
         else {
             register_error_tv.text = ""
-            val user = UserModel(register_email_et.text.toString(), register_pass_edit2.text.toString(), register_name_et.text.toString(), major.toString())
+            val user = RegisterUser(register_email_et.text.toString(), register_pass_edit2.text.toString(), register_name_et.text.toString(), major!!  )
             val registerInterface = ApiClient.getClient().create(RegisterInterface::class.java)
             val registerCall = registerInterface.signUp(user)
 
             registerCall.enqueue(object : Callback<Unit> {
                 override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
-                    sharedPreferencesHelper.name = register_name_et.text.toString()
-                    sharedPreferencesHelper.major = major
 
                     val intent = Intent(this@RegisterActivity, LoginActivity::class.java)
-                    Toast.makeText(this@RegisterActivity, R.string.register_success, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@RegisterActivity, getString(R.string.register_success), Toast.LENGTH_SHORT).show()
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
                     startActivity(intent)
                 }
