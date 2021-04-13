@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gramo.R
 import com.example.gramo.Sharedpreferences.SharedPreferencesHelper
+import com.example.gramoproject.`interface`.LoginInterface
 import com.example.gramoproject.activity.client.ApiClient
 import com.example.gramoproject.activity.homework.HomeworkMainActivity
 import com.example.gramoproject.activity.sign.LoginActivity
@@ -29,6 +30,7 @@ import kotlinx.android.synthetic.main.logout_custom_dialog.*
 import kotlinx.android.synthetic.main.notice_activity.*
 import kotlinx.android.synthetic.main.notice_appbar.*
 import kotlinx.android.synthetic.main.notice_bottomsheet.*
+import kotlinx.android.synthetic.main.notice_drawer.*
 import kotlinx.android.synthetic.main.notice_drawer.view.*
 import kotlinx.android.synthetic.main.notice_unload_dialog.*
 import kotlinx.coroutines.CoroutineScope
@@ -84,41 +86,41 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         var fragmentManager: FragmentManager
 
         //retrofit2
-        noticeInterface = ApiClient.getClient().create(NoticeInterface::class.java)
-
-        val recyclerCall = noticeInterface.getNoticeList(sharedPreferencesHelper.accessToken!! ,getOffSet(), limit_num)
-
-        recyclerCall.enqueue(object : Callback<NoticeModel> {
-            override fun onResponse(call: Call<NoticeModel>, response: Response<NoticeModel>) {
-                when (response.code()) {
-                    200 -> {
-                        Log.d("NoticeActivity", response.body().toString())
-
-                        if (response.isSuccessful) {
-                            recyclerList.add(response.body()!!)
-
-                            //리사이클러뷰 레이아웃 매니저
-                            fragmentManager = supportFragmentManager
-                            layoutManager = LinearLayoutManager(this@NoticeActivity)
-                            notice_recyclerview.layoutManager = layoutManager
-
-                            //리사이클러뷰 어댑터 설정
-                            adapter = NoticeRecyclerAdapter(recyclerList, fragmentManager)
-                            notice_recyclerview.adapter = adapter
-                        }
-
-                        existList = true
-                    }
-                    404 -> {
-                        Toast.makeText(this@NoticeActivity, "공지사항이 존재하지 않습니다.", Toast.LENGTH_SHORT).show()
-                    }
-                }
-            }
-
-            override fun onFailure(call: Call<NoticeModel>, t: Throwable) {
-                Log.d("NoticeActivity", t.toString())
-            }
-        })
+//        noticeInterface = ApiClient.getClient().create(NoticeInterface::class.java)
+//
+//        val recyclerCall = noticeInterface.getNoticeList(sharedPreferencesHelper.accessToken!! ,getOffSet(), limit_num)
+//
+//        recyclerCall.enqueue(object : Callback<NoticeModel> {
+//            override fun onResponse(call: Call<NoticeModel>, response: Response<NoticeModel>) {
+//                when (response.code()) {
+//                    200 -> {
+//                        Log.d("NoticeActivity", response.body().toString())
+//
+//                        if (response.isSuccessful) {
+//                            recyclerList.add(response.body()!!)
+//
+//                            //리사이클러뷰 레이아웃 매니저
+//                            fragmentManager = supportFragmentManager
+//                            layoutManager = LinearLayoutManager(this@NoticeActivity)
+//                            notice_recyclerview.layoutManager = layoutManager
+//
+//                            //리사이클러뷰 어댑터 설정
+//                            adapter = NoticeRecyclerAdapter(recyclerList, fragmentManager)
+//                            notice_recyclerview.adapter = adapter
+//                        }
+//
+//                        existList = true
+//                    }
+//                    404 -> {
+//                        Toast.makeText(this@NoticeActivity, "공지사항이 존재하지 않습니다.", Toast.LENGTH_SHORT).show()
+//                    }
+//                }
+//            }
+//
+//            override fun onFailure(call: Call<NoticeModel>, t: Throwable) {
+//                Log.d("NoticeActivity", t.toString())
+//            }
+//        })
 
         //notice_add로 이동
         notice_add_btn.setOnClickListener {
@@ -266,6 +268,11 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
 
         val actionBarDrawerToggle = ActionBarDrawerToggle(this, drawer_layout, notice_toolbar2, R.string.open, R.string.closed)
         drawer_layout.addDrawerListener(actionBarDrawerToggle)
+
+        val header = notice_nav_view.getHeaderView(0)
+
+        header.notice_name_et3.text = sharedPreferencesHelper.name
+        header.notice_major_tv.text = sharedPreferencesHelper.major
     }
 
     //상단 메뉴바의 아이템 클릭시 활동
@@ -367,9 +374,36 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
 
         //Positive Button
         LogoutDialog.logout_positive_btn.setOnClickListener{
-            val intentToLogin = Intent(this@NoticeActivity, LoginActivity::class.java)
-            intentToLogin.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            startActivity(intentToLogin)
+            val accessToken = "Bearer " + sharedPreferencesHelper.accessToken
+            val logoutInterface = ApiClient.getClient().create(LoginInterface::class.java)
+            val logoutCall = logoutInterface.logout(accessToken)
+
+            logoutCall.enqueue(object : Callback<Unit>{
+                override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
+                    when(response.code()){
+                        200 -> {
+                            Toast.makeText(this@NoticeActivity, "로그아웃 되었습니다.", Toast.LENGTH_SHORT).show()
+
+                            sharedPreferencesHelper.accessToken = ""
+                            sharedPreferencesHelper.refreshToken = ""
+
+                            LogoutDialog.dismiss()
+                            val intent = Intent(this@NoticeActivity, LoginActivity::class.java)
+                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                            startActivity(intent)
+                        }
+                        401 -> {
+                            Toast.makeText(this@NoticeActivity, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+
+                override fun onFailure(call: Call<Unit>, t: Throwable) {
+                    Log.e("NoticeActivity", t.toString())
+                }
+
+            })
+
         }
     }
 

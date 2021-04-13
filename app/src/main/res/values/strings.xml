@@ -2,4 +2,20 @@
     <string name="app_name" />
     <string name="open" />
     <string name="closed" />
+
+    <string name="register_input_email">이메일을 입력해주세요.</string>
+    <string name="register_bad_request">잘못된 요청입니다.</string>
+    <string name="register_already_used_email">이미 사용 중인 이메일 입니다.</string>
+    <string name="register_code_not_match">인증번호가 일치하지 않습니다.</string>
+    <string name="register_password_length">비밀번호는 5~20자리까지 가능합니다.</string>
+    <string name="register_password_not_match">비밀번호가 일치하지 않습니다.</string>
+    <string name="register_check_emailAuth">으로 보내진 인증코드를 확인해주세요.</string>
+    <string name="register_inputCode">인증번호를 입력해주세요.</string>
+    <string name="register_auth_success">인증되었습니다.</string>
+    <string name="register_success">회원가입에 성공했습니다.</string>
+
+    <string name="login_input_email_pass">이메일 또는 비밀번호를 입력해주세요.</string>
+    <string name="login_success">로그인에 성공했습니다.</string>
+    <string name="login_not_correct">아이디 또는 비밀번호가 올바르지 않습니다.</string>
+    <string name="back_pressed">뒤로 가기 버튼을 한 번 더 누르시면 종료됩니다.</string>
 </resources>
