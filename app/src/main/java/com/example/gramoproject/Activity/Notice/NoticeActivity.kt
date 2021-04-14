@@ -85,42 +85,41 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         var layoutManager: LinearLayoutManager
         var fragmentManager: FragmentManager
 
-        //retrofit2
-//        noticeInterface = ApiClient.getClient().create(NoticeInterface::class.java)
-//
-//        val recyclerCall = noticeInterface.getNoticeList(sharedPreferencesHelper.accessToken!! ,getOffSet(), limit_num)
-//
-//        recyclerCall.enqueue(object : Callback<NoticeModel> {
-//            override fun onResponse(call: Call<NoticeModel>, response: Response<NoticeModel>) {
-//                when (response.code()) {
-//                    200 -> {
-//                        Log.d("NoticeActivity", response.body().toString())
-//
-//                        if (response.isSuccessful) {
-//                            recyclerList.add(response.body()!!)
-//
-//                            //리사이클러뷰 레이아웃 매니저
-//                            fragmentManager = supportFragmentManager
-//                            layoutManager = LinearLayoutManager(this@NoticeActivity)
-//                            notice_recyclerview.layoutManager = layoutManager
-//
-//                            //리사이클러뷰 어댑터 설정
-//                            adapter = NoticeRecyclerAdapter(recyclerList, fragmentManager)
-//                            notice_recyclerview.adapter = adapter
-//                        }
-//
-//                        existList = true
-//                    }
-//                    404 -> {
-//                        Toast.makeText(this@NoticeActivity, "공지사항이 존재하지 않습니다.", Toast.LENGTH_SHORT).show()
-//                    }
-//                }
-//            }
-//
-//            override fun onFailure(call: Call<NoticeModel>, t: Throwable) {
-//                Log.d("NoticeActivity", t.toString())
-//            }
-//        })
+        noticeInterface = ApiClient.getClient().create(NoticeInterface::class.java)
+
+        val recyclerCall = noticeInterface.getNoticeList(sharedPreferencesHelper.accessToken!! ,getOffSet(), limit_num)
+
+        recyclerCall.enqueue(object : Callback<NoticeModel> {
+            override fun onResponse(call: Call<NoticeModel>, response: Response<NoticeModel>) {
+                when (response.code()) {
+                    200 -> {
+                        Log.d("NoticeActivity", response.body().toString())
+
+                        if (response.isSuccessful) {
+                            recyclerList.add(response.body()!!)
+
+                            //리사이클러뷰 레이아웃 매니저
+                            fragmentManager = supportFragmentManager
+                            layoutManager = LinearLayoutManager(this@NoticeActivity)
+                            notice_recyclerview.layoutManager = layoutManager
+
+                            //리사이클러뷰 어댑터 설정
+                            adapter = NoticeRecyclerAdapter(recyclerList, fragmentManager)
+                            notice_recyclerview.adapter = adapter
+                        }
+
+                        existList = true
+                    }
+                    404 -> {
+                        Toast.makeText(this@NoticeActivity, getString(R.string.notice_not_exist), Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<NoticeModel>, t: Throwable) {
+                Log.d("NoticeActivity", t.toString())
+            }
+        })
 
         //notice_add로 이동
         notice_add_btn.setOnClickListener {
@@ -150,7 +149,7 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                                         }
                                     }
                                     404 -> {
-                                        Toast.makeText(this@NoticeActivity, "이 아이디와 일치하는 공지사항을 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
+                                        Toast.makeText(this@NoticeActivity, getString(R.string.notice_not_match_to_id), Toast.LENGTH_SHORT).show()
                                     }
                                 }
                             }
@@ -182,13 +181,13 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                                             UnloadDialog.dismiss()
                                             bottomSheetDialog.dismiss()
                                             adapter.removeItem(position)
-                                            Toast.makeText(this@NoticeActivity, "공지사항이 삭제되었습니다.", Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(this@NoticeActivity, getString(R.string.notice_delete), Toast.LENGTH_SHORT).show()
                                         }
                                         403 -> {
-                                            Toast.makeText(this@NoticeActivity, "다른 사용자가 만든 공지사항을 삭제할 수 없습니다.", Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(this@NoticeActivity, getString(R.string.notice_other_user_delete), Toast.LENGTH_SHORT).show()
                                         }
                                         404 -> {
-                                            Toast.makeText(this@NoticeActivity, "이 아이디와 일치하는 공지사항을 찾을 수 없습니다.", Toast.LENGTH_SHORT).show()
+                                            Toast.makeText(this@NoticeActivity, getString(R.string.notice_not_match_to_id), Toast.LENGTH_SHORT).show()
                                         }
                                     }
                                 }
@@ -239,7 +238,7 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                         }
                     }
                     404 -> {
-                        Toast.makeText(this@NoticeActivity, "공지사항이 존재하지 않습니다.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this@NoticeActivity, getString(R.string.notice_not_exist), Toast.LENGTH_SHORT).show()
                     }
                 }
             }
@@ -324,7 +323,7 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
             //마지막으로 뒤로가기를 누른 후 2.5초가 지났을 경우
             if (System.currentTimeMillis() > backKeyPressedTime + 2500) { //2500ms = 2.5s
                 backKeyPressedTime = System.currentTimeMillis()
-                toast = Toast.makeText(this@NoticeActivity, "뒤로 가기 버튼을 한 번 더 누르시면 종료됩니다.", Toast.LENGTH_SHORT)
+                toast = Toast.makeText(this@NoticeActivity, getString(R.string.back_pressed),Toast.LENGTH_SHORT)
                 toast.show()
                 return
             }
@@ -382,7 +381,7 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                 override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
                     when(response.code()){
                         200 -> {
-                            Toast.makeText(this@NoticeActivity, "로그아웃 되었습니다.", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@NoticeActivity, getString(R.string.logout_success), Toast.LENGTH_SHORT).show()
 
                             sharedPreferencesHelper.accessToken = ""
                             sharedPreferencesHelper.refreshToken = ""
@@ -393,7 +392,7 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                             startActivity(intent)
                         }
                         401 -> {
-                            Toast.makeText(this@NoticeActivity, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@NoticeActivity, getString(R.string.logout_error), Toast.LENGTH_SHORT).show()
                         }
                     }
                 }

@@ -33,7 +33,7 @@ class NoticeAddActivity : AppCompatActivity() {
         notice_complete_tv.setOnClickListener{
             //제목, 내용이 비어있을 경우 경고문 표시
             if(notice_title_et.text.toString().equals("") || notice_content_et.text.toString().equals("")){
-                Toast.makeText(this@NoticeAddActivity, "제목 또는 내용을 입력해주세요", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@NoticeAddActivity, getString(R.string.notice_add_insert), Toast.LENGTH_SHORT).show()
             }
             else {
                 val intent = Intent(this@NoticeAddActivity, NoticeActivity::class.java)
@@ -45,12 +45,12 @@ class NoticeAddActivity : AppCompatActivity() {
                     override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
                         when(response.code()){
                             201 -> {
-                                Toast.makeText(this@NoticeAddActivity, "공지사항이 등록되었습니다.", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(this@NoticeAddActivity, getString(R.string.notice_add_success), Toast.LENGTH_SHORT).show()
                                 startActivity(intent)
                                 finish()
                             }
                             400 -> {
-                                Toast.makeText(this@NoticeAddActivity, "오류가 발생했습니다.", Toast.LENGTH_SHORT).show()
+                                Toast.makeText(this@NoticeAddActivity, getString(R.string.notice_add_error), Toast.LENGTH_SHORT).show()
                             }
                         }
                     }
