@@ -18,7 +18,6 @@ interface NoticeInterface {
             @Header("Authorization") header: String,
             @Path("id") id: Int) : Call<NoticeModel>
 
-    @FormUrlEncoded
     @POST("/notice")
     fun createNotice(
             @Header("Authorization") header: String,

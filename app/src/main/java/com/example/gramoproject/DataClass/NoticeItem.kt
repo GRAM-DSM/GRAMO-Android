@@ -1,4 +1,3 @@
 package com.example.gramoproject.dataclass
 
-class NoticeItem(val title: String,
-                 val contents: String)
+data class NoticeItem(val title: String, val content: String)

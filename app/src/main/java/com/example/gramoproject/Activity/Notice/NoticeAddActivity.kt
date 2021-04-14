@@ -14,12 +14,16 @@ import kotlinx.android.synthetic.main.notice_add_activity.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.text.SimpleDateFormat
+import java.util.*
 
 class NoticeAddActivity : AppCompatActivity() {
     val sharedPreferencesHelper = SharedPreferencesHelper.getInstance()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.notice_add_activity)
+
+        noticeAddInit()
 
         //취소 클릭
         notice_cancel_tv.setOnClickListener{
@@ -37,14 +41,15 @@ class NoticeAddActivity : AppCompatActivity() {
             }
             else {
                 val intent = Intent(this@NoticeAddActivity, NoticeActivity::class.java)
-                val notice = NoticeItem(notice_title_et.text.toString(), notice_content_et.text.toString())
                 intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+
+                val notice = NoticeItem(notice_title_et.text.toString(), notice_content_et.text.toString())
                 val noticeInterface = ApiClient.getClient().create(NoticeInterface::class.java)
-                val call = noticeInterface.createNotice(sharedPreferencesHelper.accessToken!!, notice)
+                val call = noticeInterface.createNotice("Bearer " + sharedPreferencesHelper.accessToken!!, notice)
                 call.enqueue(object: Callback<Unit> {
                     override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
                         when(response.code()){
-                            201 -> {
+                            200 -> {
                                 Toast.makeText(this@NoticeAddActivity, getString(R.string.notice_add_success), Toast.LENGTH_SHORT).show()
                                 startActivity(intent)
                                 finish()
@@ -63,5 +68,14 @@ class NoticeAddActivity : AppCompatActivity() {
 
             }
         }
+    }
+    fun noticeAddInit(){
+        val now = System.currentTimeMillis()
+        val date = Date(now)
+        val dateFormat = SimpleDateFormat("yyyy년 MM월 dd일")
+        val getDate = dateFormat.format(date)
+
+        notice_name_et.text = sharedPreferencesHelper.name
+        notice_date_et.text = getDate
     }
 }

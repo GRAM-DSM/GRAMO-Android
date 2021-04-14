@@ -1,4 +1,4 @@
-package com.example.gramoproject.adapter;
+package com.example.gramoproject.Adapter;
 
 import android.content.Context;
 import android.widget.ArrayAdapter;

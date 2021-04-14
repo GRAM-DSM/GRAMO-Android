@@ -87,39 +87,39 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
 
         noticeInterface = ApiClient.getClient().create(NoticeInterface::class.java)
 
-        val recyclerCall = noticeInterface.getNoticeList(sharedPreferencesHelper.accessToken!! ,getOffSet(), limit_num)
-
-        recyclerCall.enqueue(object : Callback<NoticeModel> {
-            override fun onResponse(call: Call<NoticeModel>, response: Response<NoticeModel>) {
-                when (response.code()) {
-                    200 -> {
-                        Log.d("NoticeActivity", response.body().toString())
-
-                        if (response.isSuccessful) {
-                            recyclerList.add(response.body()!!)
-
-                            //리사이클러뷰 레이아웃 매니저
-                            fragmentManager = supportFragmentManager
-                            layoutManager = LinearLayoutManager(this@NoticeActivity)
-                            notice_recyclerview.layoutManager = layoutManager
-
-                            //리사이클러뷰 어댑터 설정
-                            adapter = NoticeRecyclerAdapter(recyclerList, fragmentManager)
-                            notice_recyclerview.adapter = adapter
-                        }
-
-                        existList = true
-                    }
-                    404 -> {
-                        Toast.makeText(this@NoticeActivity, getString(R.string.notice_not_exist), Toast.LENGTH_SHORT).show()
-                    }
-                }
-            }
-
-            override fun onFailure(call: Call<NoticeModel>, t: Throwable) {
-                Log.d("NoticeActivity", t.toString())
-            }
-        })
+//        val recyclerCall = noticeInterface.getNoticeList(sharedPreferencesHelper.accessToken!! ,getOffSet(), limit_num)
+//
+//        recyclerCall.enqueue(object : Callback<NoticeModel> {
+//            override fun onResponse(call: Call<NoticeModel>, response: Response<NoticeModel>) {
+//                when (response.code()) {
+//                    200 -> {
+//                        Log.d("NoticeActivity", response.body().toString())
+//
+//                        if (response.isSuccessful) {
+//                            recyclerList.add(response.body()!!)
+//
+//                            //리사이클러뷰 레이아웃 매니저
+//                            fragmentManager = supportFragmentManager
+//                            layoutManager = LinearLayoutManager(this@NoticeActivity)
+//                            notice_recyclerview.layoutManager = layoutManager
+//
+//                            //리사이클러뷰 어댑터 설정
+//                            adapter = NoticeRecyclerAdapter(recyclerList, fragmentManager)
+//                            notice_recyclerview.adapter = adapter
+//                        }
+//
+//                        existList = true
+//                    }
+//                    404 -> {
+//                        Toast.makeText(this@NoticeActivity, getString(R.string.notice_not_exist), Toast.LENGTH_SHORT).show()
+//                    }
+//                }
+//            }
+//
+//            override fun onFailure(call: Call<NoticeModel>, t: Throwable) {
+//                Log.d("NoticeActivity", t.toString())
+//            }
+//        })
 
         //notice_add로 이동
         notice_add_btn.setOnClickListener {
