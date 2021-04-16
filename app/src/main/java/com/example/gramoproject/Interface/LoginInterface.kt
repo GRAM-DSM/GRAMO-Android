@@ -2,6 +2,7 @@ package com.example.gramoproject.`interface`
 
 import com.example.gramoproject.DataClass.Login
 import com.example.gramoproject.DataClass.LoginUser
+import com.example.gramoproject.DataClass.TokenRefresh
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -17,5 +18,5 @@ interface LoginInterface {
 
     @GET("/auth")
     fun tokenRefresh(
-            @Header("Authorization")header: String) : Call<String>
+            @Header("Authorization")header: String) : Call<TokenRefresh>
 }

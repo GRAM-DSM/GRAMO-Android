@@ -59,6 +59,7 @@ class NoticeRecyclerAdapter(private val items: NoticeList, fragmentManager: Frag
         items.notice.removeAt(position)
         notifyItemRemoved(position)
         notifyDataSetChanged()
+        notifyItemChanged(position)
     }
 
     inner class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {

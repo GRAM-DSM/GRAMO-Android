@@ -162,7 +162,7 @@ class RegisterActivity : AppCompatActivity() {
         var email = register_email_et.text.toString()
 
         if (email.equals("")) {
-            Toast.makeText(this@RegisterActivity, getString(R.string.register_input_email), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@RegisterActivity, getString(R.string.register_input_email), Toast.LENGTH_LONG).show()
         } else {
             email = register_email_et.text.toString()
             emailObject.addProperty("email", email)
@@ -172,10 +172,10 @@ class RegisterActivity : AppCompatActivity() {
                     when (response.code()) {
                         200 -> {
                             register_error_tv.text = ""
-                            Toast.makeText(this@RegisterActivity, "$email " + getString(R.string.register_check_emailAuth), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@RegisterActivity, "$email " + getString(R.string.register_check_emailAuth), Toast.LENGTH_LONG).show()
                         }
                         400 -> {
-                            Toast.makeText(this@RegisterActivity, getString(R.string.register_bad_request), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@RegisterActivity, getString(R.string.register_bad_request), Toast.LENGTH_LONG).show()
                             Log.d("RegisterActivity", response.message())
                         }
                         409 -> {
@@ -197,7 +197,7 @@ class RegisterActivity : AppCompatActivity() {
         imm.hideSoftInputFromWindow(register_email_et.windowToken, 0)
 
         if (register_code_et.text.toString() == "") {
-            Toast.makeText(this@RegisterActivity, getString(R.string.register_inputCode), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@RegisterActivity, getString(R.string.register_inputCode), Toast.LENGTH_LONG).show()
         } else {
             val authInfo = EmailAuth(register_email_et.text.toString(), Integer.parseInt(register_code_et.text.toString()))
             val registerInterface = ApiClient.getClient().create(RegisterInterface::class.java)
@@ -208,7 +208,7 @@ class RegisterActivity : AppCompatActivity() {
                     when (response.code()) {
                         200 -> {
                             authCheck = true
-                            Toast.makeText(this@RegisterActivity, getString(R.string.register_auth_success), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@RegisterActivity, getString(R.string.register_auth_success), Toast.LENGTH_LONG).show()
                         }
                         404, 409 -> {
                             authCheck = false

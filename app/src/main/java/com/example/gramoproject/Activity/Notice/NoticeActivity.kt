@@ -9,10 +9,12 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.gramo.R
 import com.example.gramo.Sharedpreferences.SharedPreferencesHelper
 import com.example.gramoproject.DataClass.NoticeList
@@ -38,6 +40,7 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
+import okhttp3.internal.notifyAll
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -80,58 +83,20 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.notice_activity)
-
-        //custom dialog
-        initDialog()
-
-        initScrollListener()
-        var layoutManager: LinearLayoutManager
-        var fragmentManager: FragmentManager
-
         noticeInterface = ApiClient.getClient().create(NoticeInterface::class.java)
 
-        val recyclerCall = noticeInterface.getNoticeList("Bearer " + sharedPreferencesHelper.accessToken!!, getOffSet(), limit_num)
+        initDialog()
+        initScrollListener()
+        swipeRefresh()
+        getNotice()
 
-        recyclerCall.enqueue(object : Callback<NoticeList> {
-            override fun onResponse(call: Call<NoticeList>, response: Response<NoticeList>) {
-                when (response.code()) {
-                    200 -> {
-                        Log.d("NoticeActivity", response.body().toString())
-                        Log.d("NoticeActivity", response.code().toString())
-                        if (response.body() != null && response.isSuccessful) {
-                            // recyclerList.notice.addAll(listOf(response.body() as Notice.GetNotice))
-                            recyclerList = response.body()!!
 
-                            //리사이클러뷰 레이아웃 매니저
-                            fragmentManager = supportFragmentManager
-                            layoutManager = LinearLayoutManager(this@NoticeActivity)
-                            notice_recyclerview.layoutManager = layoutManager
-
-                            //리사이클러뷰 어댑터 설정
-                            adapter = NoticeRecyclerAdapter(recyclerList, fragmentManager)
-                            notice_recyclerview.adapter = adapter
-
-                            rvItemClick()
-                        } else {
-                            Toast.makeText(this@NoticeActivity, getString(R.string.notice_not_exist), Toast.LENGTH_LONG).show()
-                        }
-                    }
-                }
-            }
-
-            override fun onFailure(call: Call<NoticeList>, t: Throwable) {
-                Log.d("NoticeActivity", t.toString())
-            }
-        })
 
         //notice_add로 이동
         notice_add_btn.setOnClickListener {
             val intentToNoticeAdd = Intent(this@NoticeActivity, NoticeAddActivity::class.java)
             startActivity(intentToNoticeAdd)
         }
-
-        //리사이클러뷰 아이템 클릭 이벤트 (공지사항 상세보기)
-
     }
 
 
@@ -354,11 +319,55 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         }
     }
 
+    private fun getNotice(){
+        var layoutManager: LinearLayoutManager
+        var fragmentManager: FragmentManager
+
+        val recyclerCall = noticeInterface.getNoticeList("Bearer " + sharedPreferencesHelper.accessToken!!, getOffSet(), limit_num)
+
+        recyclerCall.enqueue(object : Callback<NoticeList> {
+            override fun onResponse(call: Call<NoticeList>, response: Response<NoticeList>) {
+                when (response.code()) {
+                    200 -> {
+                        Log.d("NoticeActivity", response.body().toString())
+                        Log.d("NoticeActivity", response.code().toString())
+                        if (response.body() != null && response.isSuccessful) {
+                            // recyclerList.notice.addAll(listOf(response.body() as Notice.GetNotice))
+                            recyclerList = response.body()!!
+
+                            //리사이클러뷰 레이아웃 매니저
+                            fragmentManager = supportFragmentManager
+                            layoutManager = LinearLayoutManager(this@NoticeActivity)
+                            notice_recyclerview.layoutManager = layoutManager
+
+                            //리사이클러뷰 어댑터 설정
+                            adapter = NoticeRecyclerAdapter(recyclerList, fragmentManager)
+                            notice_recyclerview.adapter = adapter
+
+                            rvItemClick()
+                        } else {
+                            Toast.makeText(this@NoticeActivity, getString(R.string.notice_not_exist), Toast.LENGTH_LONG).show()
+                        }
+                    }
+                    401 -> {
+                        Toast.makeText(this@NoticeActivity, getString(R.string.notice_add_error), Toast.LENGTH_LONG).show()
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<NoticeList>, t: Throwable) {
+                Log.d("NoticeActivity", t.toString())
+            }
+        })
+    }
+
     private fun rvItemClick() {
         adapter.setOnItemClickListener(object : NoticeRecyclerAdapter.OnNoticeItemClickListener {
             override fun onItemClick(v: View, data: NoticeList.GetNotice, position: Int) {
                 val id = recyclerList.notice.get(position).id
                 val bottomSheetDialog = BottomSheetDialog(this@NoticeActivity)
+                bottomSheetDialog.setContentView(R.layout.notice_bottomsheet)
+
                 val bottomSheetCall = noticeInterface.getNoticeDetail("Bearer " + sharedPreferencesHelper.accessToken!!, id)
                 bottomSheetCall.enqueue(object : Callback<GetDetailNotice> {
                     override fun onResponse(call: Call<GetDetailNotice>, response: Response<GetDetailNotice>) {
@@ -367,7 +376,6 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                                 val getDetail = response.body()!!
                                 if (getDetail != null && response.isSuccessful) {
 
-                                    bottomSheetDialog.setContentView(R.layout.notice_bottomsheet)
 
                                     bottomSheetDialog.notice_name_et.text = getDetail.notice.name
                                     bottomSheetDialog.notice_date_et.text = getDetail.notice.created_at
@@ -388,42 +396,52 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                     }
 
                 })
-                //bottom sheet 띄우기
+                bottomSheetDialog.notice_unload_btn.setOnClickListener {
+                    UnloadDialog.show()
+                    //Negative Button
+                    UnloadDialog.unload_negative_btn.setOnClickListener {
+                        UnloadDialog.dismiss()
+                    }
+                    //Positive Button
+                    UnloadDialog.unload_positive_btn.setOnClickListener {
+                        val dismissCall = noticeInterface.deleteNotice("Bearer " + sharedPreferencesHelper.accessToken!!, id)
+                        dismissCall.enqueue(object : Callback<Unit> {
+                            override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
+                                when (response.code()) {
+                                    200 -> {
+                                        UnloadDialog.dismiss()
+                                        bottomSheetDialog.dismiss()
+                                        adapter.removeItem(position)
 
-                //공지 내리기
-//                bottomSheetDialog.notice_unload_btn.setOnClickListener {
-//                    UnloadDialog.show()
-//                    //Negative Button
-//                    UnloadDialog.unload_negative_btn.setOnClickListener {
-//                        UnloadDialog.dismiss()
-//                    }
-//                    //Positive Button
-//                    UnloadDialog.unload_positive_btn.setOnClickListener {
-//                        val dismissCall = noticeInterface.deleteNotice("Bearer " + sharedPreferencesHelper.accessToken!!, position)
-//                        dismissCall.enqueue(object : Callback<Unit> {
-//                            override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
-//                                when (response.code()) {
-//                                    204 -> {
-//                                        UnloadDialog.dismiss()
-//                                        bottomSheetDialog.dismiss()
-//                                        adapter.removeItem(position)
-//                                        Toast.makeText(this@NoticeActivity, getString(R.string.notice_delete), Toast.LENGTH_SHORT).show()
-//                                    }
-//                                    403 -> {
-//                                        Toast.makeText(this@NoticeActivity, getString(R.string.notice_other_user_delete), Toast.LENGTH_SHORT).show()
-//                                    }
-//                                    404 -> {
-//                                        Toast.makeText(this@NoticeActivity, getString(R.string.notice_not_match_to_id), Toast.LENGTH_SHORT).show()
-//                                    }
-//                                }
-//                            }
-//
-//                            override fun onFailure(call: Call<Unit>, t: Throwable) {
-//                                Log.d("NoticeActivity", t.toString())
-//                            }
-//                        })
-//                    }
-//                }
+                                        Toast.makeText(this@NoticeActivity, getString(R.string.notice_delete), Toast.LENGTH_SHORT).show()
+                                    }
+                                    403 -> {
+                                        UnloadDialog.dismiss()
+                                        Toast.makeText(this@NoticeActivity, getString(R.string.notice_other_user_delete), Toast.LENGTH_SHORT).show()
+                                    }
+                                    404 -> {
+                                        UnloadDialog.dismiss()
+                                        Toast.makeText(this@NoticeActivity, getString(R.string.notice_not_match_to_id), Toast.LENGTH_SHORT).show()
+                                        adapter.notifyItemChanged(id)
+                                    }
+                                }
+                            }
+
+                            override fun onFailure(call: Call<Unit>, t: Throwable) {
+                                Log.d("NoticeActivity", t.toString())
+                            }
+                        })
+                    }
+                }
+            }
+        })
+    }
+
+    private fun swipeRefresh(){
+        swipe_refresh_layout.setOnRefreshListener(object: SwipeRefreshLayout.OnRefreshListener{
+            override fun onRefresh() {
+                getNotice()
+                swipe_refresh_layout.isRefreshing = false
             }
         })
     }
