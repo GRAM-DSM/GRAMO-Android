@@ -101,7 +101,7 @@ class RegisterActivity : AppCompatActivity() {
             imm.hideSoftInputFromWindow(register_name_et.windowToken, 0)
         }
 
-        //editText입력 변화 이벤트 받기
+        //editText 입력 변화 이벤트 받기
         register_name_et.addTextChangedListener(textWatcher)
         register_email_et.addTextChangedListener(textWatcher)
         register_code_et.addTextChangedListener(textWatcher)

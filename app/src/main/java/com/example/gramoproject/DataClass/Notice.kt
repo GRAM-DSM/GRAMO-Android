@@ -1,8 +1,8 @@
 package com.example.gramoproject.DataClass
 
-data class NoticeDetail(
+data class notice(
         val name: String,
-        val create_at: String,
+        val created_at: String,
         val title: String,
         val content: String
 )

@@ -1,6 +1,6 @@
 package com.example.gramoproject.DataClass
 
-data class Notice(val notice: ArrayList<GetNotice>) {
+data class NoticeList(val notice: ArrayList<GetNotice>) {
         data class GetNotice(
                 val id: Int,
                 val name: String,

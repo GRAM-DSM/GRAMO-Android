@@ -3,22 +3,21 @@ package com.example.gramoproject.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gramo.R
 import com.example.gramoproject.activity.notice.NoticeActivity.Companion.recyclerList
-import com.example.gramoproject.DataClass.Notice
+import com.example.gramoproject.DataClass.NoticeList
 import kotlinx.android.synthetic.main.notice_recycler_item.view.*
 import kotlinx.android.synthetic.main.progressbar.view.*
 
-class NoticeRecyclerAdapter(private val items: Notice, fragmentManager: FragmentManager) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class NoticeRecyclerAdapter(private val items: NoticeList, fragmentManager: FragmentManager) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var mfragmentManager : FragmentManager = fragmentManager
     private val VIEW_TYPE_ITEM = 0
     private val VIEW_TYPE_LOADING = 1
 
     interface OnNoticeItemClickListener{
-        fun onItemClick(v: View, data: Notice.GetNotice, position: Int)
+        fun onItemClick(v: View, data: NoticeList.GetNotice, position: Int)
     }
 
     private var listener: OnNoticeItemClickListener? = null
@@ -64,7 +63,7 @@ class NoticeRecyclerAdapter(private val items: Notice, fragmentManager: Fragment
 
     inner class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
         private val view : View = v
-        fun bind(item: Notice.GetNotice, fragmentManager: FragmentManager){
+        fun bind(item: NoticeList.GetNotice, fragmentManager: FragmentManager){
             view.notice_name_tv.text = item.user_name
             view.notice_date_tv.text = item.created_at
             view.notice_title_tv.text = item.title

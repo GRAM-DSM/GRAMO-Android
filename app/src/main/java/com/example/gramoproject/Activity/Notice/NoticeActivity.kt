@@ -3,7 +3,6 @@ package com.example.gramoproject.activity.notice
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
@@ -16,14 +15,14 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gramo.R
 import com.example.gramo.Sharedpreferences.SharedPreferencesHelper
+import com.example.gramoproject.DataClass.NoticeList
 import com.example.gramoproject.activity.sign.LoginActivity
-import com.example.gramoproject.DataClass.NoticeDetail
+import com.example.gramoproject.DataClass.GetDetailNotice
 import com.example.gramoproject.activity.client.ApiClient
 import com.example.gramoproject.activity.homework.HomeworkMainActivity
 import com.example.gramoproject.adapter.NoticeRecyclerAdapter
 import com.example.gramoproject.`interface`.NoticeInterface
 import com.example.gramoproject.activity.calendar.CalendarActivity
-import com.example.gramoproject.DataClass.Notice
 import com.example.gramoproject.`interface`.LoginInterface
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.navigation.NavigationView
@@ -42,7 +41,6 @@ import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import kotlin.system.exitProcess
 
 open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -51,7 +49,7 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
 
     //어댑터에서도 사용하기 위해 companion object 선언
     companion object {
-        lateinit var recyclerList: Notice
+        lateinit var recyclerList: NoticeList
         var logoutCheck: Boolean = false
     }
 
@@ -68,7 +66,7 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     private lateinit var adapter: NoticeRecyclerAdapter
 
     //바텀시트
-    private lateinit var bottomSheetDialog: BottomSheetDialog
+    //private lateinit var bottomSheetDialog: BottomSheetDialog
 
     //API interface
     private lateinit var noticeInterface: NoticeInterface
@@ -76,7 +74,6 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     //페이지 수, 아이템 개수
     private var off_set = -10
     private val limit_num = 10
-    private var existList: Boolean = false
 
     private val sharedPreferencesHelper = SharedPreferencesHelper.getInstance()
 
@@ -95,8 +92,8 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
 
         val recyclerCall = noticeInterface.getNoticeList("Bearer " + sharedPreferencesHelper.accessToken!!, getOffSet(), limit_num)
 
-        recyclerCall.enqueue(object : Callback<Notice> {
-            override fun onResponse(call: Call<Notice>, response: Response<Notice>) {
+        recyclerCall.enqueue(object : Callback<NoticeList> {
+            override fun onResponse(call: Call<NoticeList>, response: Response<NoticeList>) {
                 when (response.code()) {
                     200 -> {
                         Log.d("NoticeActivity", response.body().toString())
@@ -114,10 +111,7 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                             adapter = NoticeRecyclerAdapter(recyclerList, fragmentManager)
                             notice_recyclerview.adapter = adapter
 
-                            existList = true
-
-                            Log.d("NoticeActivity", existList.toString())
-
+                            rvItemClick()
                         } else {
                             Toast.makeText(this@NoticeActivity, getString(R.string.notice_not_exist), Toast.LENGTH_LONG).show()
                         }
@@ -125,7 +119,7 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                 }
             }
 
-            override fun onFailure(call: Call<Notice>, t: Throwable) {
+            override fun onFailure(call: Call<NoticeList>, t: Throwable) {
                 Log.d("NoticeActivity", t.toString())
             }
         })
@@ -137,77 +131,7 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         }
 
         //리사이클러뷰 아이템 클릭 이벤트 (공지사항 상세보기)
-        if (existList) {
-            Log.e("NoticeActivity", existList.toString())
-            adapter.setOnItemClickListener(object : NoticeRecyclerAdapter.OnNoticeItemClickListener {
-                override fun onItemClick(v: View, data: Notice.GetNotice, position: Int) {
-                    val bottomSheetCall = noticeInterface.getNoticeDetail("Bearer " + sharedPreferencesHelper.accessToken!!, position)
-                    bottomSheetCall.enqueue(object : Callback<NoticeDetail> {
-                        override fun onResponse(call: Call<NoticeDetail>, response: Response<NoticeDetail>) {
-                            when (response.code()) {
-                                200 -> {
-                                    val getDetail = response.body()
-                                    if (getDetail != null && response.isSuccessful) {
-                                        bottomSheetDialog = BottomSheetDialog(this@NoticeActivity)
-                                        bottomSheetDialog.setContentView(R.layout.notice_bottomsheet)
 
-                                        bottomSheetDialog.notice_name_et.text = getDetail.name
-                                        bottomSheetDialog.notice_date_et.text = getDetail.create_at
-                                        bottomSheetDialog.notice_title_tv2.text = getDetail.title
-                                        bottomSheetDialog.notice_contents_tv2.text = getDetail.content
-                                    }
-                                }
-                                404 -> {
-                                    Toast.makeText(this@NoticeActivity, getString(R.string.notice_not_match_to_id), Toast.LENGTH_SHORT).show()
-                                }
-                            }
-                        }
-
-                        override fun onFailure(call: Call<NoticeDetail>, t: Throwable) {
-                            Log.d("NoticeActivity", t.toString())
-                        }
-
-                    })
-                    //bottom sheet 띄우기
-                    bottomSheetDialog.show()
-
-                    //공지 내리기
-                    bottomSheetDialog.notice_unload_btn.setOnClickListener {
-                        UnloadDialog.show()
-                        //Negative Button
-                        UnloadDialog.unload_negative_btn.setOnClickListener {
-                            UnloadDialog.dismiss()
-                        }
-                        //Positive Button
-                        UnloadDialog.unload_positive_btn.setOnClickListener {
-                            val dismissCall = noticeInterface.deleteNotice("Bearer " + sharedPreferencesHelper.accessToken!!, position)
-                            dismissCall.enqueue(object : Callback<Unit> {
-                                override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
-                                    when (response.code()) {
-                                        204 -> {
-                                            UnloadDialog.dismiss()
-                                            bottomSheetDialog.dismiss()
-                                            adapter.removeItem(position)
-                                            Toast.makeText(this@NoticeActivity, getString(R.string.notice_delete), Toast.LENGTH_SHORT).show()
-                                        }
-                                        403 -> {
-                                            Toast.makeText(this@NoticeActivity, getString(R.string.notice_other_user_delete), Toast.LENGTH_SHORT).show()
-                                        }
-                                        404 -> {
-                                            Toast.makeText(this@NoticeActivity, getString(R.string.notice_not_match_to_id), Toast.LENGTH_SHORT).show()
-                                        }
-                                    }
-                                }
-
-                                override fun onFailure(call: Call<Unit>, t: Throwable) {
-                                    Log.d("NoticeActivity", t.toString())
-                                }
-                            })
-                        }
-                    }
-                }
-            })
-        }
     }
 
 
@@ -237,11 +161,11 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     //리사이클러뷰의 데이터를 더 로드하는 경우
     private fun loadMorePage() {
         val call = noticeInterface.getNoticeList("Bearer " + sharedPreferencesHelper.accessToken!!, getOffSet(), limit_num)
-        call.enqueue(object : Callback<Notice> {
-            override fun onResponse(call: Call<Notice>, response: Response<Notice>) {
+        call.enqueue(object : Callback<NoticeList> {
+            override fun onResponse(call: Call<NoticeList>, response: Response<NoticeList>) {
                 when (response.code()) {
                     200 -> {
-                        val getDataMore: Notice? = response.body()
+                        val getDataMore: NoticeList? = response.body()
                         if (getDataMore != null && response.isSuccessful) {
                             recyclerList.notice.addAll(getDataMore.notice)
                         }
@@ -252,7 +176,7 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                 }
             }
 
-            override fun onFailure(call: Call<Notice>, t: Throwable) {
+            override fun onFailure(call: Call<NoticeList>, t: Throwable) {
                 Log.d("NoticeActivity", t.toString())
             }
 
@@ -428,5 +352,79 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
             intentToLogin.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
             startActivity(intentToLogin)
         }
+    }
+
+    private fun rvItemClick() {
+        adapter.setOnItemClickListener(object : NoticeRecyclerAdapter.OnNoticeItemClickListener {
+            override fun onItemClick(v: View, data: NoticeList.GetNotice, position: Int) {
+                val id = recyclerList.notice.get(position).id
+                val bottomSheetDialog = BottomSheetDialog(this@NoticeActivity)
+                val bottomSheetCall = noticeInterface.getNoticeDetail("Bearer " + sharedPreferencesHelper.accessToken!!, id)
+                bottomSheetCall.enqueue(object : Callback<GetDetailNotice> {
+                    override fun onResponse(call: Call<GetDetailNotice>, response: Response<GetDetailNotice>) {
+                        when (response.code()) {
+                            200 -> {
+                                val getDetail = response.body()!!
+                                if (getDetail != null && response.isSuccessful) {
+
+                                    bottomSheetDialog.setContentView(R.layout.notice_bottomsheet)
+
+                                    bottomSheetDialog.notice_name_et.text = getDetail.notice.name
+                                    bottomSheetDialog.notice_date_et.text = getDetail.notice.created_at
+                                    bottomSheetDialog.notice_title_tv2.text = getDetail.notice.title
+                                    bottomSheetDialog.notice_contents_tv2.text = getDetail.notice.content
+
+                                    bottomSheetDialog.show()
+                                }
+                            }
+                            404 -> {
+                                Toast.makeText(this@NoticeActivity, getString(R.string.notice_not_match_to_id), Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    }
+
+                    override fun onFailure(call: Call<GetDetailNotice>, t: Throwable) {
+                        Log.d("NoticeActivity", t.toString())
+                    }
+
+                })
+                //bottom sheet 띄우기
+
+                //공지 내리기
+//                bottomSheetDialog.notice_unload_btn.setOnClickListener {
+//                    UnloadDialog.show()
+//                    //Negative Button
+//                    UnloadDialog.unload_negative_btn.setOnClickListener {
+//                        UnloadDialog.dismiss()
+//                    }
+//                    //Positive Button
+//                    UnloadDialog.unload_positive_btn.setOnClickListener {
+//                        val dismissCall = noticeInterface.deleteNotice("Bearer " + sharedPreferencesHelper.accessToken!!, position)
+//                        dismissCall.enqueue(object : Callback<Unit> {
+//                            override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
+//                                when (response.code()) {
+//                                    204 -> {
+//                                        UnloadDialog.dismiss()
+//                                        bottomSheetDialog.dismiss()
+//                                        adapter.removeItem(position)
+//                                        Toast.makeText(this@NoticeActivity, getString(R.string.notice_delete), Toast.LENGTH_SHORT).show()
+//                                    }
+//                                    403 -> {
+//                                        Toast.makeText(this@NoticeActivity, getString(R.string.notice_other_user_delete), Toast.LENGTH_SHORT).show()
+//                                    }
+//                                    404 -> {
+//                                        Toast.makeText(this@NoticeActivity, getString(R.string.notice_not_match_to_id), Toast.LENGTH_SHORT).show()
+//                                    }
+//                                }
+//                            }
+//
+//                            override fun onFailure(call: Call<Unit>, t: Throwable) {
+//                                Log.d("NoticeActivity", t.toString())
+//                            }
+//                        })
+//                    }
+//                }
+            }
+        })
     }
 }
