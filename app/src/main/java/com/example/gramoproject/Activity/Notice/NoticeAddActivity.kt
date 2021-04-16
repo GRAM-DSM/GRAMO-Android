@@ -78,4 +78,7 @@ class NoticeAddActivity : AppCompatActivity() {
         notice_name_et.text = sharedPreferencesHelper.name
         notice_date_et.text = getDate
     }
+
+    fun createNotice(){
+    }
 }

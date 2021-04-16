@@ -1,4 +1,4 @@
-package com.example.gramoproject.dataclass
+package com.example.gramoproject.DataClass
 
 data class RegisterUser(val email: String,
                         val password: String,

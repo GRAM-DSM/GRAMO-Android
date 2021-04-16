@@ -1,17 +1,12 @@
-package com.example.gramoproject.dataclass
+package com.example.gramoproject.DataClass
 
-import com.google.gson.annotations.SerializedName
-
-data class NoticeModel(
-        @SerializedName("id")
-        val id: Int,
-        @SerializedName("name")
-        val name: String,
-        @SerializedName("title")
-        val title: String,
-        @SerializedName("content")
-        val content: String,
-        @SerializedName("user_email")
-        val user_email: String,
-        @SerializedName("created_at")
-        val created_at: String)
+data class Notice(val notice: ArrayList<GetNotice>) {
+        data class GetNotice(
+                val id: Int,
+                val name: String,
+                val title: String,
+                val content: String,
+                val user_name: String,
+                val created_at: String
+        )
+}
