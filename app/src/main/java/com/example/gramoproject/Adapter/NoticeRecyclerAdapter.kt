@@ -1,5 +1,6 @@
 package com.example.gramoproject.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -7,18 +8,20 @@ import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gramo.R
 import com.example.gramoproject.activity.notice.NoticeActivity.Companion.recyclerList
-import com.example.gramoproject.dataclass.NoticeModel
+import com.example.gramoproject.DataClass.NoticeList
 import kotlinx.android.synthetic.main.notice_recycler_item.view.*
 import kotlinx.android.synthetic.main.progressbar.view.*
+import java.util.logging.Handler
 
-class NoticeRecyclerAdapter(private val items: ArrayList<NoticeModel>, fragmentManager: FragmentManager) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class NoticeRecyclerAdapter(private val items: NoticeList, fragmentManager: FragmentManager) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var mfragmentManager : FragmentManager = fragmentManager
     private val VIEW_TYPE_ITEM = 0
     private val VIEW_TYPE_LOADING = 1
 
     interface OnNoticeItemClickListener{
-        fun onItemClick(v: View, data: NoticeModel, position: Int)
+        fun onItemClick(v: View, data: NoticeList.GetNotice, position: Int)
     }
+
     private var listener: OnNoticeItemClickListener? = null
     fun setOnItemClickListener(listener: OnNoticeItemClickListener){
         this.listener = listener
@@ -37,40 +40,35 @@ class NoticeRecyclerAdapter(private val items: ArrayList<NoticeModel>, fragmentM
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
-        val item = items[position]
+        val item = items.notice[position]
         if(holder is ViewHolder) {
             holder.apply {
-                bind(item, mfragmentManager)
+                bind(item!!, mfragmentManager)
                 itemView.tag = item
             }
         } else if(holder is LoadingViewHolder){
+            showLoadingView(holder, position)
         }
+
     }
 
-    override fun getItemCount() = items.size
+    override fun getItemCount() = items.notice.size
 
     override fun getItemId(position: Int): Long {
         return super.getItemId(position)
     }
 
     fun removeItem(position: Int){
-        items.removeAt(position)
+        items.notice.removeAt(position)
         notifyItemRemoved(position)
         notifyDataSetChanged()
+        notifyItemChanged(position)
     }
-
-    fun add(response: NoticeModel){
-        recyclerList.add(response)
-        notifyDataSetChanged()
-        //notifyItemInserted(recyclerList.size - 1)
-    }
-
-
 
     inner class ViewHolder(v: View) : RecyclerView.ViewHolder(v) {
         private val view : View = v
-        fun bind(item: NoticeModel, fragmentManager: FragmentManager){
-            view.notice_name_tv.text = item.name
+        fun bind(item: NoticeList.GetNotice, fragmentManager: FragmentManager){
+            view.notice_name_tv.text = item.user_name
             view.notice_date_tv.text = item.created_at
             view.notice_title_tv.text = item.title
             view.notice_contents_tv.text = item.content
@@ -84,16 +82,18 @@ class NoticeRecyclerAdapter(private val items: ArrayList<NoticeModel>, fragmentM
         }
     }
 
-    //아이템뷰에 프로그래스바 넣기
     inner class LoadingViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
         val progressBar = itemView.progressBar
     }
 
-    //뷰타입 지정
+    private fun showLoadingView(holder: LoadingViewHolder, position: Int){
+    }
+
     override fun getItemViewType(position: Int): Int {
-        if(recyclerList.get(position).title == ""){
+        if(recyclerList.notice.get(position) == null){
             return VIEW_TYPE_LOADING
         }
-        return VIEW_TYPE_ITEM
+        else
+            return VIEW_TYPE_ITEM
     }
 }

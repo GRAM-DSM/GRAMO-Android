@@ -1,7 +1,7 @@
 package com.example.gramoproject.`interface`
 
-import com.example.gramoproject.dataclass.EmailAuth
-import com.example.gramoproject.dataclass.RegisterUser
+import com.example.gramoproject.DataClass.EmailAuth
+import com.example.gramoproject.DataClass.RegisterUser
 import com.google.gson.JsonObject
 import retrofit2.Call
 import retrofit2.http.*

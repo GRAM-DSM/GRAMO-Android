@@ -14,11 +14,11 @@ import android.widget.AdapterView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.gramo.R
+import com.example.gramoproject.Adapter.HintAdapter
 import com.example.gramoproject.`interface`.RegisterInterface
 import com.example.gramoproject.activity.client.ApiClient
-import com.example.gramoproject.adapter.HintAdapter
-import com.example.gramoproject.dataclass.EmailAuth
-import com.example.gramoproject.dataclass.RegisterUser
+import com.example.gramoproject.DataClass.EmailAuth
+import com.example.gramoproject.DataClass.RegisterUser
 import com.google.gson.JsonObject
 import kotlinx.android.synthetic.main.register_activity.*
 import retrofit2.Call
@@ -28,8 +28,8 @@ import retrofit2.Response
 class RegisterActivity : AppCompatActivity() {
 
     private val spinnerArray = arrayOf("iOS 개발자", "안드로이드 개발자", "서버 개발자", "디자이너", "분야를 선택해주세요")
-    private var authCheck = false //이메일 코드 인증 여부
-    private var major: String? = null //전공을 담기 위한 변수
+    private var authCheck = false
+    private var major: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -38,7 +38,6 @@ class RegisterActivity : AppCompatActivity() {
         activityInit()
         spinnerInit()
 
-        //로그인 버튼 클릭시 로그인 페이지로 이동
         register_login_tv2.setOnClickListener {
             loginIntent()
         }
@@ -46,36 +45,26 @@ class RegisterActivity : AppCompatActivity() {
             loginIntent()
         }
 
-        //이메일 인증 버튼
         register_certificate_btn.setOnClickListener {
             register_error_tv.text = ""
             emailAuth()
         }
-        //인증 확인 버튼
         register_check_btn.setOnClickListener {
             register_error_tv.text = ""
             checkCode()
         }
-        //회원가입 버튼 클릭
         register_register_btn.setOnClickListener {
             register_error_tv.text = ""
             register()
         }
     }
 
-    //EditText 입력 변화
     private val textWatcher = object : TextWatcher {
         override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-            // 입력하기 전에 조치
         }
-
         override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-            // 입력란에 변화가 있을 시 조치
         }
-
         override fun afterTextChanged(s: Editable?) {
-            // 입력이 끝났을 때 조치
-
             if (!register_name_et.text.toString().equals("") && !register_email_et.text.toString().equals("") && !register_code_et.text.toString().equals("") &&
                     !register_pass_edit2.text.toString().equals("") && !register_passOverlap_edit.text.toString().equals("") && major != null) {
                 register_register_btn.isEnabled = true
@@ -89,19 +78,15 @@ class RegisterActivity : AppCompatActivity() {
 
     private fun activityInit(){
         register_register_btn.isEnabled = false
-
-        //타이틀바 제거
         val actionBar = supportActionBar
         actionBar?.hide()
 
-        //배경 터치 시 키보드 내리기
         register_activity.setOnClickListener {
             val imm: InputMethodManager =
                     getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(register_name_et.windowToken, 0)
         }
 
-        //editText입력 변화 이벤트 받기
         register_name_et.addTextChangedListener(textWatcher)
         register_email_et.addTextChangedListener(textWatcher)
         register_code_et.addTextChangedListener(textWatcher)
@@ -110,13 +95,11 @@ class RegisterActivity : AppCompatActivity() {
     }
 
     private fun spinnerInit(){
-        //스피너 설정
         val hintAdapter = HintAdapter(this, android.R.layout.simple_list_item_1, spinnerArray)
         register_major_spinner.adapter = hintAdapter
         register_major_spinner.setSelection(hintAdapter.count)
         selectSpinner()
 
-        //스피너 선택시 가상 키보드 내리기
         register_major_spinner.setOnTouchListener(object : View.OnTouchListener {
             override fun onTouch(v: View?, event: MotionEvent?): Boolean {
                 val imm = this@RegisterActivity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -162,7 +145,7 @@ class RegisterActivity : AppCompatActivity() {
         var email = register_email_et.text.toString()
 
         if (email.equals("")) {
-            Toast.makeText(this@RegisterActivity, getString(R.string.register_input_email), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@RegisterActivity, getString(R.string.register_input_email), Toast.LENGTH_LONG).show()
         } else {
             email = register_email_et.text.toString()
             emailObject.addProperty("email", email)
@@ -172,10 +155,10 @@ class RegisterActivity : AppCompatActivity() {
                     when (response.code()) {
                         200 -> {
                             register_error_tv.text = ""
-                            Toast.makeText(this@RegisterActivity, "$email " + getString(R.string.register_check_emailAuth), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@RegisterActivity, "$email " + getString(R.string.register_check_emailAuth), Toast.LENGTH_LONG).show()
                         }
                         400 -> {
-                            Toast.makeText(this@RegisterActivity, getString(R.string.register_bad_request), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@RegisterActivity, getString(R.string.register_bad_request), Toast.LENGTH_LONG).show()
                             Log.d("RegisterActivity", response.message())
                         }
                         409 -> {
@@ -197,7 +180,7 @@ class RegisterActivity : AppCompatActivity() {
         imm.hideSoftInputFromWindow(register_email_et.windowToken, 0)
 
         if (register_code_et.text.toString() == "") {
-            Toast.makeText(this@RegisterActivity, getString(R.string.register_inputCode), Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@RegisterActivity, getString(R.string.register_inputCode), Toast.LENGTH_LONG).show()
         } else {
             val authInfo = EmailAuth(register_email_et.text.toString(), Integer.parseInt(register_code_et.text.toString()))
             val registerInterface = ApiClient.getClient().create(RegisterInterface::class.java)
@@ -208,7 +191,7 @@ class RegisterActivity : AppCompatActivity() {
                     when (response.code()) {
                         200 -> {
                             authCheck = true
-                            Toast.makeText(this@RegisterActivity, getString(R.string.register_auth_success), Toast.LENGTH_SHORT).show()
+                            Toast.makeText(this@RegisterActivity, getString(R.string.register_auth_success), Toast.LENGTH_LONG).show()
                         }
                         404, 409 -> {
                             authCheck = false
