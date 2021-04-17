@@ -75,8 +75,8 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         getNotice()
 
         notice_add_btn.setOnClickListener {
-            val intentToNoticeAdd = Intent(this@NoticeActivity, NoticeAddActivity::class.java)
-            startActivity(intentToNoticeAdd)
+            val intent = Intent(this@NoticeActivity, NoticeAddActivity::class.java)
+            startActivity(intent)
         }
     }
 
@@ -149,8 +149,8 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                     drawer_layout.closeDrawer(GravityCompat.START)
                     return false
                 } else {
-                    val intentToNotice = Intent(this, NoticeActivity::class.java)
-                    startActivity(intentToNotice)
+                    val intent = Intent(this, NoticeActivity::class.java)
+                    startActivity(intent)
                 }
             }
             R.id.calender_menu -> {
@@ -158,8 +158,8 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                     drawer_layout.closeDrawer(GravityCompat.START)
                     return false
                 } else {
-                    val intentToCalendar = Intent(this, CalendarActivity::class.java)
-                    startActivity(intentToCalendar)
+                    val intent = Intent(this, CalendarActivity::class.java)
+                    startActivity(intent)
                 }
             }
             R.id.assignment_menu -> {
@@ -167,8 +167,8 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                     drawer_layout.closeDrawer(GravityCompat.START)
                     return false
                 } else {
-                    val intentToHomework = Intent(this, HomeworkMainActivity::class.java)
-                    startActivity(intentToHomework)
+                    val intent = Intent(this, HomeworkMainActivity::class.java)
+                    startActivity(intent)
                 }
             }
 
@@ -261,9 +261,9 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
             LeaveDialog.dismiss()
         }
         LeaveDialog.leave_positive_btn.setOnClickListener {
-            val intentToLogin = Intent(this@NoticeActivity, LoginActivity::class.java)
-            intentToLogin.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            startActivity(intentToLogin)
+            val intent = Intent(this@NoticeActivity, LoginActivity::class.java)
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            startActivity(intent)
         }
     }
 

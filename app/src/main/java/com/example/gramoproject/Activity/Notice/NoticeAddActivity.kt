@@ -33,37 +33,7 @@ class NoticeAddActivity : AppCompatActivity() {
         }
 
         notice_complete_tv.setOnClickListener{
-            if(notice_title_et.text.toString().equals("") || notice_content_et.text.toString().equals("")){
-                Toast.makeText(this@NoticeAddActivity, getString(R.string.notice_add_insert), Toast.LENGTH_SHORT).show()
-            }
-            else {
-                val intent = Intent(this@NoticeAddActivity, NoticeActivity::class.java)
-                intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-
-                val notice = NoticeItem(notice_title_et.text.toString(), notice_content_et.text.toString())
-                val noticeInterface = ApiClient.getClient().create(NoticeInterface::class.java)
-                val call = noticeInterface.createNotice("Bearer " + sharedPreferencesHelper.accessToken!!, notice)
-                call.enqueue(object: Callback<Unit> {
-                    override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
-                        when(response.code()){
-                            200 -> {
-                                Toast.makeText(this@NoticeAddActivity, getString(R.string.notice_add_success), Toast.LENGTH_SHORT).show()
-                                startActivity(intent)
-                                finish()
-                            }
-                            400 -> {
-                                Toast.makeText(this@NoticeAddActivity, getString(R.string.notice_add_error), Toast.LENGTH_SHORT).show()
-                            }
-                        }
-                    }
-
-                    override fun onFailure(call: Call<Unit>, t: Throwable) {
-                        Log.d("NoticeAddActivity", t.toString())
-                    }
-                })
-
-
-            }
+            createNotice()
         }
     }
     fun noticeAddInit(){
@@ -77,5 +47,36 @@ class NoticeAddActivity : AppCompatActivity() {
     }
 
     fun createNotice(){
+        if(notice_title_et.text.toString().equals("") || notice_content_et.text.toString().equals("")){
+            Toast.makeText(this@NoticeAddActivity, getString(R.string.notice_add_insert), Toast.LENGTH_SHORT).show()
+        }
+        else {
+            val intent = Intent(this@NoticeAddActivity, NoticeActivity::class.java)
+            intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+
+            val notice = NoticeItem(notice_title_et.text.toString(), notice_content_et.text.toString())
+            val noticeInterface = ApiClient.getClient().create(NoticeInterface::class.java)
+            val call = noticeInterface.createNotice("Bearer " + sharedPreferencesHelper.accessToken!!, notice)
+            call.enqueue(object: Callback<Unit> {
+                override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
+                    when(response.code()){
+                        200 -> {
+                            Toast.makeText(this@NoticeAddActivity, getString(R.string.notice_add_success), Toast.LENGTH_SHORT).show()
+                            startActivity(intent)
+                            finish()
+                        }
+                        400 -> {
+                            Toast.makeText(this@NoticeAddActivity, getString(R.string.notice_add_error), Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+
+                override fun onFailure(call: Call<Unit>, t: Throwable) {
+                    Log.d("NoticeAddActivity", t.toString())
+                }
+            })
+
+
+        }
     }
 }
