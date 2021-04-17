@@ -1,5 +1,6 @@
 package com.example.gramoproject.adapter
 
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -10,6 +11,7 @@ import com.example.gramoproject.activity.notice.NoticeActivity.Companion.recycle
 import com.example.gramoproject.DataClass.NoticeList
 import kotlinx.android.synthetic.main.notice_recycler_item.view.*
 import kotlinx.android.synthetic.main.progressbar.view.*
+import java.util.logging.Handler
 
 class NoticeRecyclerAdapter(private val items: NoticeList, fragmentManager: FragmentManager) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var mfragmentManager : FragmentManager = fragmentManager
@@ -41,10 +43,11 @@ class NoticeRecyclerAdapter(private val items: NoticeList, fragmentManager: Frag
         val item = items.notice[position]
         if(holder is ViewHolder) {
             holder.apply {
-                bind(item, mfragmentManager)
+                bind(item!!, mfragmentManager)
                 itemView.tag = item
             }
         } else if(holder is LoadingViewHolder){
+            showLoadingView(holder, position)
         }
 
     }
@@ -83,10 +86,14 @@ class NoticeRecyclerAdapter(private val items: NoticeList, fragmentManager: Frag
         val progressBar = itemView.progressBar
     }
 
+    private fun showLoadingView(holder: LoadingViewHolder, position: Int){
+    }
+
     override fun getItemViewType(position: Int): Int {
-        if(recyclerList.notice.get(position).title == ""){
+        if(recyclerList.notice.get(position) == null){
             return VIEW_TYPE_LOADING
         }
-        return VIEW_TYPE_ITEM
+        else
+            return VIEW_TYPE_ITEM
     }
 }

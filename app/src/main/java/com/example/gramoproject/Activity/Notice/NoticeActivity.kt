@@ -3,6 +3,7 @@ package com.example.gramoproject.activity.notice
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
@@ -60,8 +61,8 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     private lateinit var adapter: NoticeRecyclerAdapter
     private lateinit var noticeInterface: NoticeInterface
     private val sharedPreferencesHelper = SharedPreferencesHelper.getInstance()
-    private var off_set = -10
-    private val limit_num = 10
+    private var off_set = -5
+    private val limit_num = 5
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -98,27 +99,35 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     }
 
     private fun loadMorePage() {
-        val call = noticeInterface.getNoticeList("Bearer " + sharedPreferencesHelper.accessToken!!, getOffSet(), limit_num)
-        call.enqueue(object : Callback<NoticeList> {
-            override fun onResponse(call: Call<NoticeList>, response: Response<NoticeList>) {
-                when (response.code()) {
-                    200 -> {
-                        val getDataMore: NoticeList? = response.body()
-                        if (getDataMore != null && response.isSuccessful) {
-                            recyclerList.notice.addAll(getDataMore.notice)
+        runOnUiThread {
+            recyclerList.notice.add(null)
+            adapter.notifyItemInserted(recyclerList.notice.size - 1)
+
+            val call = noticeInterface.getNoticeList("Bearer " + sharedPreferencesHelper.accessToken!!, getOffSet(), limit_num)
+            call.enqueue(object : Callback<NoticeList> {
+                override fun onResponse(call: Call<NoticeList>, response: Response<NoticeList>) {
+                    when (response.code()) {
+                        200 -> {
+                            recyclerList.notice.removeAt(recyclerList.notice.size - 1)
+                            adapter.notifyItemRemoved(recyclerList.notice.size)
+
+                            val getDataMore: NoticeList? = response.body()
+                            if (getDataMore != null && response.isSuccessful) {
+                                recyclerList.notice.addAll(getDataMore.notice)
+                            }
+                        }
+                        404 -> {
+                            Toast.makeText(this@NoticeActivity, getString(R.string.notice_not_exist), Toast.LENGTH_SHORT).show()
                         }
                     }
-                    404 -> {
-                        Toast.makeText(this@NoticeActivity, getString(R.string.notice_not_exist), Toast.LENGTH_SHORT).show()
-                    }
                 }
-            }
 
-            override fun onFailure(call: Call<NoticeList>, t: Throwable) {
-                Log.d("NoticeActivity", t.toString())
-            }
+                override fun onFailure(call: Call<NoticeList>, t: Throwable) {
+                    Log.d("NoticeActivity", t.toString())
+                }
 
-        })
+            })
+        }
     }
 
     private fun getOffSet(): Int {
@@ -308,7 +317,7 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     private fun rvItemClick() {
         adapter.setOnItemClickListener(object : NoticeRecyclerAdapter.OnNoticeItemClickListener {
             override fun onItemClick(v: View, data: NoticeList.GetNotice, position: Int) {
-                val id = recyclerList.notice.get(position).id
+                val id = recyclerList.notice.get(position)!!.id
                 val bottomSheetDialog = BottomSheetDialog(this@NoticeActivity)
                 bottomSheetDialog.setContentView(R.layout.notice_bottomsheet)
 
@@ -382,7 +391,7 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     private fun swipeRefresh(){
         swipe_refresh_layout.setOnRefreshListener(object: SwipeRefreshLayout.OnRefreshListener{
             override fun onRefresh() {
-                off_set = -10
+                off_set = -5
                 getNotice()
                 swipe_refresh_layout.isRefreshing = false
             }
