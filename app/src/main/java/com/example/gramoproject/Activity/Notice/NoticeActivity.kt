@@ -440,6 +440,7 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     private fun swipeRefresh(){
         swipe_refresh_layout.setOnRefreshListener(object: SwipeRefreshLayout.OnRefreshListener{
             override fun onRefresh() {
+                off_set = -10
                 getNotice()
                 swipe_refresh_layout.isRefreshing = false
             }
