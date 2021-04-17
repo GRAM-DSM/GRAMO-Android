@@ -25,7 +25,6 @@ class NoticeAddActivity : AppCompatActivity() {
 
         noticeAddInit()
 
-        //취소 클릭
         notice_cancel_tv.setOnClickListener{
             val intent = Intent(this@NoticeAddActivity, NoticeActivity::class.java)
             intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
@@ -33,9 +32,7 @@ class NoticeAddActivity : AppCompatActivity() {
             finish()
         }
 
-        //완료 클릭
         notice_complete_tv.setOnClickListener{
-            //제목, 내용이 비어있을 경우 경고문 표시
             if(notice_title_et.text.toString().equals("") || notice_content_et.text.toString().equals("")){
                 Toast.makeText(this@NoticeAddActivity, getString(R.string.notice_add_insert), Toast.LENGTH_SHORT).show()
             }

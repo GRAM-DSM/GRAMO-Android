@@ -23,7 +23,6 @@ import retrofit2.Response
 
 class LoginActivity : AppCompatActivity() {
 
-    //마지막으로 뒤로 가기 버튼을 누른 시간 저장
     private var backKeyPressedTime : Long = 0
     private lateinit var toast : Toast
     private val sharedPreferencesHelper = SharedPreferencesHelper.getInstance()
@@ -32,15 +31,12 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.login_activity)
 
-        //액티비티 설정
         activityInit()
 
-        //회원가입 클릭시 화면 이동
         register_tv.setOnClickListener{
             val intentToRegister = Intent(this@LoginActivity, RegisterActivity::class.java)
             startActivity(intentToRegister)
         }
-
         login_btn.setOnClickListener{
             login_error_tv.text = ""
             login()
@@ -48,11 +44,9 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun activityInit(){
-        //타이틀바 제거
         val actionBar = supportActionBar
         actionBar?.hide()
 
-        //배경 터치 시 키보드 내리기
         login_activity.setOnClickListener {
             val imm: InputMethodManager =
                     getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
@@ -66,7 +60,6 @@ class LoginActivity : AppCompatActivity() {
     }
 
     private fun login(){
-        //빈칸 확인
         if(login_email_et.text.toString() == "" || login_pass_et.text.toString() == "")
             login_error_tv.text = getString(R.string.login_input_email_pass)
         else {
@@ -118,18 +111,14 @@ class LoginActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    //뒤로 가기 버튼 오버라이드
     override fun onBackPressed() {
         //super.onBackPressed()
-        //마지막으로 뒤로가기를 누른 후 2.5초가 지났을 경우
         if (System.currentTimeMillis() > backKeyPressedTime + 2500) { //2500ms = 2.5s
             backKeyPressedTime = System.currentTimeMillis()
             toast = Toast.makeText(this@LoginActivity, getString(R.string.back_pressed), Toast.LENGTH_SHORT)
             toast.show()
             return
         }
-
-        //마지막으로 뒤로가기를 누른 후 2.5초가 지나지 않았을 경우
         if(System.currentTimeMillis() <= backKeyPressedTime + 2500){ //2500ms = 2.5s
             finishAffinity()
             toast.cancel()

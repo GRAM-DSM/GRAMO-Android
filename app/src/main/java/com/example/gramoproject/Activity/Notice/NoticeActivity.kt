@@ -47,42 +47,26 @@ import retrofit2.Response
 
 open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
-    //현재 액티비티 확인
     private val currentActivity = javaClass.simpleName.trim()
-
-    //어댑터에서도 사용하기 위해 companion object 선언
     companion object {
         lateinit var recyclerList: NoticeList
         var logoutCheck: Boolean = false
     }
-
-    //커스텀 알림창
     private lateinit var LogoutDialog: Dialog
     private lateinit var LeaveDialog: Dialog
     private lateinit var UnloadDialog: Dialog
-
-    //마지막으로 뒤로 가기 버튼을 누른 시간 저장
     private var backKeyPressedTime: Long = 0
     private lateinit var toast: Toast
-
-    //리사이클러뷰 어댑터
     private lateinit var adapter: NoticeRecyclerAdapter
-
-    //바텀시트
-    //private lateinit var bottomSheetDialog: BottomSheetDialog
-
-    //API interface
     private lateinit var noticeInterface: NoticeInterface
-
-    //페이지 수, 아이템 개수
+    private val sharedPreferencesHelper = SharedPreferencesHelper.getInstance()
     private var off_set = -10
     private val limit_num = 10
-
-    private val sharedPreferencesHelper = SharedPreferencesHelper.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.notice_activity)
+
         noticeInterface = ApiClient.getClient().create(NoticeInterface::class.java)
 
         initDialog()
@@ -90,32 +74,22 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         swipeRefresh()
         getNotice()
 
-
-
-        //notice_add로 이동
         notice_add_btn.setOnClickListener {
             val intentToNoticeAdd = Intent(this@NoticeActivity, NoticeAddActivity::class.java)
             startActivity(intentToNoticeAdd)
         }
     }
 
-
-    //스크롤 리스너
     private fun initScrollListener() {
         notice_recyclerview.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
 
-                //스크롤이 끝에 도달했는지 확인
                 if (!notice_recyclerview.canScrollVertically(1)) {
-//                    recyclerList.notice.removeAt(recyclerList.notice.lastIndex)
-
-                    //리스트 업데이트 하는 것이 느리기 때문에 코루틴을 통해 UI 변경을 천천히 하게 만듦
                     CoroutineScope(Dispatchers.Main).launch {
                         val temp = CoroutineScope(Dispatchers.IO).async {
                             loadMorePage()
                         }.await()
-
                         adapter.notifyDataSetChanged()
                     }
                 }
@@ -123,7 +97,6 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         })
     }
 
-    //리사이클러뷰의 데이터를 더 로드하는 경우
     private fun loadMorePage() {
         val call = noticeInterface.getNoticeList("Bearer " + sharedPreferencesHelper.accessToken!!, getOffSet(), limit_num)
         call.enqueue(object : Callback<NoticeList> {
@@ -154,11 +127,8 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         return off_set
     }
 
-    //Navigation Drawer 설정
     private fun NavInitializeLayout() {
-        //toolbar를 통해 Appbar 생성
         setSupportActionBar(notice_toolbar2)
-        //Appbar 좌측 Drawer를 열기위한 아이콘 생성
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         supportActionBar?.setHomeAsUpIndicator(R.drawable.ic_baseline_dehaze_24)
         supportActionBar?.setTitle("")
@@ -172,7 +142,6 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         header.notice_major_tv.text = sharedPreferencesHelper.major
     }
 
-    //상단 메뉴바의 아이템 클릭시 활동
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.notice_menu -> {
@@ -208,23 +177,18 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         return true
     }
 
-    //뒤로가기 처리
     override fun onBackPressed() {
-        //drawer가 열려있을 경우
         if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
             drawer_layout.closeDrawers()
         } else {
             //super.onBackPressed()
-            //마지막으로 뒤로가기를 누른 후 2.5초가 지났을 경우
-            if (System.currentTimeMillis() > backKeyPressedTime + 2500) { //2500ms = 2.5s
+            if (System.currentTimeMillis() > backKeyPressedTime + 2500) {
                 backKeyPressedTime = System.currentTimeMillis()
                 toast = Toast.makeText(this@NoticeActivity, getString(R.string.back_pressed), Toast.LENGTH_SHORT)
                 toast.show()
                 return
             }
-
-            //마지막으로 뒤로가기를 누른 후 2.5초가 지나지 않았을 경우
-            if (System.currentTimeMillis() <= backKeyPressedTime + 2500) { //2500ms = 2.5s
+            if (System.currentTimeMillis() <= backKeyPressedTime + 2500) {
                 finishAffinity()
                 toast.cancel()
             }
@@ -232,41 +196,30 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     }
 
     private fun initDialog() {
-        //Navigation Drawer init
         NavInitializeLayout()
         notice_nav_view.setNavigationItemSelectedListener(this)
 
-        //로그아웃 dialog 커스텀
         LogoutDialog = Dialog(this)
         LogoutDialog.setContentView(R.layout.logout_custom_dialog)
-        //로그아웃 클릭
         side_logout_btn.setOnClickListener {
             showLogoutDialog()
         }
 
-        //탈퇴 dialog 커스텀
         LeaveDialog = Dialog(this)
         LeaveDialog.setContentView(R.layout.leave_custom_dialog)
-        //탈퇴 클릭
         side_leave_btn.setOnClickListener {
             showLeaveDialog()
         }
 
-        //공지 내리기 dialog 커스텀
         UnloadDialog = Dialog(this)
         UnloadDialog.setContentView(R.layout.notice_unload_dialog)
     }
 
-    //Logout Custom Dialog
     private fun showLogoutDialog() {
         LogoutDialog.show()
-
-        //Negative Button
         LogoutDialog.logout_negative_btn.setOnClickListener {
             LogoutDialog.dismiss()
         }
-
-        //Positive Button
         LogoutDialog.logout_positive_btn.setOnClickListener {
             val accessToken = "Bearer " + sharedPreferencesHelper.accessToken
             val logoutInterface = ApiClient.getClient().create(LoginInterface::class.java)
@@ -302,16 +255,11 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         }
     }
 
-    //Leave Custom Dialog
     private fun showLeaveDialog() {
         LeaveDialog.show()
-
-        //Negative Button
         LeaveDialog.leave_negative_btn.setOnClickListener {
             LeaveDialog.dismiss()
         }
-
-        //Positive Button
         LeaveDialog.leave_positive_btn.setOnClickListener {
             val intentToLogin = Intent(this@NoticeActivity, LoginActivity::class.java)
             intentToLogin.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
@@ -332,15 +280,11 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                         Log.d("NoticeActivity", response.body().toString())
                         Log.d("NoticeActivity", response.code().toString())
                         if (response.body() != null && response.isSuccessful) {
-                            // recyclerList.notice.addAll(listOf(response.body() as Notice.GetNotice))
                             recyclerList = response.body()!!
 
-                            //리사이클러뷰 레이아웃 매니저
                             fragmentManager = supportFragmentManager
                             layoutManager = LinearLayoutManager(this@NoticeActivity)
                             notice_recyclerview.layoutManager = layoutManager
-
-                            //리사이클러뷰 어댑터 설정
                             adapter = NoticeRecyclerAdapter(recyclerList, fragmentManager)
                             notice_recyclerview.adapter = adapter
 
@@ -398,11 +342,9 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                 })
                 bottomSheetDialog.notice_unload_btn.setOnClickListener {
                     UnloadDialog.show()
-                    //Negative Button
                     UnloadDialog.unload_negative_btn.setOnClickListener {
                         UnloadDialog.dismiss()
                     }
-                    //Positive Button
                     UnloadDialog.unload_positive_btn.setOnClickListener {
                         val dismissCall = noticeInterface.deleteNotice("Bearer " + sharedPreferencesHelper.accessToken!!, id)
                         dismissCall.enqueue(object : Callback<Unit> {

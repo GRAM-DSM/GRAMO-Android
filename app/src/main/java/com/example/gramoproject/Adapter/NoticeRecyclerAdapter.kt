@@ -79,12 +79,10 @@ class NoticeRecyclerAdapter(private val items: NoticeList, fragmentManager: Frag
         }
     }
 
-    //아이템뷰에 프로그래스바 넣기
     inner class LoadingViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
         val progressBar = itemView.progressBar
     }
 
-    //뷰타입 지정
     override fun getItemViewType(position: Int): Int {
         if(recyclerList.notice.get(position).title == ""){
             return VIEW_TYPE_LOADING
