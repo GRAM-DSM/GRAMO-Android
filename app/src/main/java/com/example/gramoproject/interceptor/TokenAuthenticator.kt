@@ -23,7 +23,7 @@ class TokenAuthenticator : Interceptor {
         when(response.code){
             401 -> {
                 if(NoticeActivity.logoutCheck == false) {
-                    val refreshToken = SharedPreferencesHelper.getInstance().refreshToken
+                    val refreshToken = "Bearer " + SharedPreferencesHelper.getInstance().refreshToken
                     if (refreshToken != null) {
                         getAccessToken(refreshToken)
                     }
@@ -40,7 +40,8 @@ class TokenAuthenticator : Interceptor {
             override fun onResponse(call: Call<TokenRefresh>, response: retrofit2.Response<TokenRefresh>) {
                 when(response.code()){
                     201 -> {
-                        sharedPreferencesHelper.accessToken = "Bearer " + response.body()
+                        val saveAccess = response.body()!!.access_token
+                        sharedPreferencesHelper.accessToken = saveAccess
                     }
                     else -> {
                         Log.e("TokenAuthenticator", "알 수 없는 오류")
