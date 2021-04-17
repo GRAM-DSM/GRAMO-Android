@@ -303,7 +303,7 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                         }
                     }
                     401 -> {
-                        Toast.makeText(this@NoticeActivity, getString(R.string.notice_add_error), Toast.LENGTH_LONG).show()
+                        Toast.makeText(this@NoticeActivity, getString(R.string.notice_add_error), Toast.LENGTH_SHORT).show()
                     }
                 }
             }
