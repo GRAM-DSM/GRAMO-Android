@@ -16,7 +16,7 @@
 
 ## 기간  
 From 2020.12.2
-To 2021.3.1
+To 2021.4.21
 
 ## Github 관리
 - Branching Model 이용
@@ -31,6 +31,3 @@ Naming
 Value  
 - color는 colors.xml에 관리
 - string은 string.xml에 관리
-
-코드 정리
-- Ctrl + Alt + L
