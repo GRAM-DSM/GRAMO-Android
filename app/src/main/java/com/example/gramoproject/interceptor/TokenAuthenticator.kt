@@ -1,8 +1,8 @@
 package com.example.gramo.Interceptor
 
-import android.app.Activity
+import android.content.Intent
 import android.util.Log
-import androidx.core.app.ActivityCompat
+import com.example.gramo.Context.GRAMOApplication
 import okhttp3.Interceptor
 import okhttp3.Response
 import com.example.gramo.Sharedpreferences.SharedPreferencesHelper
@@ -10,6 +10,7 @@ import com.example.gramoproject.DataClass.TokenRefresh
 import com.example.gramoproject.`interface`.LoginInterface
 import com.example.gramoproject.activity.client.ApiClient
 import com.example.gramoproject.activity.notice.NoticeActivity
+import com.example.gramoproject.activity.sign.LoginActivity
 import retrofit2.Call
 import retrofit2.Callback
 
@@ -24,8 +25,17 @@ class TokenAuthenticator : Interceptor {
             401 -> {
                 if(NoticeActivity.logoutCheck == false) {
                     val refreshToken = "Bearer " + SharedPreferencesHelper.getInstance().refreshToken
-                    if (refreshToken != null) {
-                        getAccessToken(refreshToken)
+                    if(sharedPreferencesHelper.accessToken == null){
+                        val context = GRAMOApplication.context
+                        val intent = Intent(context, LoginActivity::class.java)
+                        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+                        context!!.startActivity(intent)
+                    }
+                    else {
+                        SharedPreferencesHelper.getInstance().accessToken = null
+                        if (refreshToken != null) {
+                            getAccessToken(refreshToken)
+                        }
                     }
                 }
             }
@@ -43,7 +53,9 @@ class TokenAuthenticator : Interceptor {
                         val saveAccess = response.body()!!.access_token
                         sharedPreferencesHelper.accessToken = saveAccess
                     }
+
                     else -> {
+
                         Log.e("TokenAuthenticator", "알 수 없는 오류")
                     }
                 }
