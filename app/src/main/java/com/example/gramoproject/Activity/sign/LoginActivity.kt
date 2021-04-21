@@ -24,7 +24,7 @@ import retrofit2.Response
 
 class LoginActivity : AppCompatActivity() {
 
-    private var backKeyPressedTime : Long = 0
+    private var backKeyPressedTime : Long = 0   
     private lateinit var toast : Toast
     private val sharedPreferencesHelper = SharedPreferencesHelper.getInstance()
 

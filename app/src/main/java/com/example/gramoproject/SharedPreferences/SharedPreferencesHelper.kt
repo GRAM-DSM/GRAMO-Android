@@ -41,6 +41,7 @@ class SharedPreferencesHelper {
         private const val REFRESH = "refresh_Token"
         private const val NAME = "name"
         private const val MAJOR = "major"
+        private const val TOKEN_TYPE = "token_type"
         private var instance: SharedPreferencesHelper? = null
         lateinit var prefs : SharedPreferences
 
