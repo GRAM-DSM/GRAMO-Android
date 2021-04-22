@@ -16,6 +16,10 @@ interface LoginInterface {
     fun logout(
             @Header("Authorization")header: String) : Call<Unit>
 
+    @DELETE("/withdrawal")
+    fun withDrawal(
+            @Header("Authorization")header: String) : Call<Unit>
+
     @GET("/auth")
     fun tokenRefresh(
             @Header("Authorization")header: String) : Call<TokenRefresh>

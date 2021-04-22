@@ -49,10 +49,12 @@ import retrofit2.Response
 open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private val currentActivity = javaClass.simpleName.trim()
+
     companion object {
         lateinit var recyclerList: NoticeList
         var logoutCheck: Boolean = false
     }
+
     private lateinit var LogoutDialog: Dialog
     private lateinit var LeaveDialog: Dialog
     private lateinit var UnloadDialog: Dialog
@@ -230,37 +232,7 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
             LogoutDialog.dismiss()
         }
         LogoutDialog.logout_positive_btn.setOnClickListener {
-            val accessToken = "Bearer " + sharedPreferencesHelper.accessToken
-            val logoutInterface = ApiClient.getClient().create(LoginInterface::class.java)
-            val logoutCall = logoutInterface.logout(accessToken)
-
-            logoutCall.enqueue(object : Callback<Unit> {
-                override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
-                    when (response.code()) {
-                        200 -> {
-                            Toast.makeText(this@NoticeActivity, getString(R.string.logout_success), Toast.LENGTH_SHORT).show()
-
-                            sharedPreferencesHelper.accessToken = ""
-                            sharedPreferencesHelper.refreshToken = ""
-
-                            logoutCheck = true
-                            LogoutDialog.dismiss()
-                            val intent = Intent(this@NoticeActivity, LoginActivity::class.java)
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                            startActivity(intent)
-                        }
-                        401 -> {
-                            Toast.makeText(this@NoticeActivity, getString(R.string.logout_error), Toast.LENGTH_SHORT).show()
-                        }
-                    }
-                }
-
-                override fun onFailure(call: Call<Unit>, t: Throwable) {
-                    Log.e("NoticeActivity", t.toString())
-                }
-
-            })
-
+            logout()
         }
     }
 
@@ -270,13 +242,11 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
             LeaveDialog.dismiss()
         }
         LeaveDialog.leave_positive_btn.setOnClickListener {
-            val intent = Intent(this@NoticeActivity, LoginActivity::class.java)
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
-            startActivity(intent)
+            withDrawal()
         }
     }
 
-    private fun getNotice(){
+    private fun getNotice() {
         var layoutManager: LinearLayoutManager
         var fragmentManager: FragmentManager
 
@@ -388,13 +358,75 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         })
     }
 
-    private fun swipeRefresh(){
-        swipe_refresh_layout.setOnRefreshListener(object: SwipeRefreshLayout.OnRefreshListener{
+    private fun logout() {
+        val accessToken = "Bearer " + sharedPreferencesHelper.accessToken
+        val logoutInterface = ApiClient.getClient().create(LoginInterface::class.java)
+        val logoutCall = logoutInterface.logout(accessToken)
+
+        logoutCall.enqueue(object : Callback<Unit> {
+            override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
+                when (response.code()) {
+                    200 -> {
+                        Toast.makeText(this@NoticeActivity, getString(R.string.logout_success), Toast.LENGTH_SHORT).show()
+
+                        sharedPreferencesHelper.accessToken = ""
+                        sharedPreferencesHelper.refreshToken = ""
+
+                        logoutCheck = true
+                        LogoutDialog.dismiss()
+                        loginIntent()
+                    }
+                    401 -> {
+                        Toast.makeText(this@NoticeActivity, getString(R.string.logout_error), Toast.LENGTH_SHORT).show()
+                    }
+                }
+            }
+
+            override fun onFailure(call: Call<Unit>, t: Throwable) {
+                Log.e("NoticeActivity", t.toString())
+            }
+
+        })
+    }
+
+    private fun withDrawal(){
+        val accessToken = "Bearer " + sharedPreferencesHelper.accessToken
+        val withInterface = ApiClient.getClient().create(LoginInterface::class.java)
+        val withCall = withInterface.withDrawal(accessToken)
+
+        withCall.enqueue(object: Callback<Unit>{
+            override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
+                when(response.code()){
+                    200 -> {
+                        sharedPreferencesHelper.accessToken = ""
+                        sharedPreferencesHelper.refreshToken = ""
+                        loginIntent()
+                    }
+                    401 ->
+                        Toast.makeText(this@NoticeActivity, getString(R.string.with_error), Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<Unit>, t: Throwable) {
+                Log.e("NoticeActivity", t.toString())
+            }
+
+        })
+    }
+
+    private fun swipeRefresh() {
+        swipe_refresh_layout.setOnRefreshListener(object : SwipeRefreshLayout.OnRefreshListener {
             override fun onRefresh() {
                 off_set = -5
                 getNotice()
                 swipe_refresh_layout.isRefreshing = false
             }
         })
+    }
+
+    private fun loginIntent() {
+        val intent = Intent(this@NoticeActivity, LoginActivity::class.java)
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        startActivity(intent)
     }
 }
