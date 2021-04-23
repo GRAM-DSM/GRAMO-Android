@@ -54,7 +54,7 @@ class LoginActivity : AppCompatActivity() {
             imm.hideSoftInputFromWindow(login_email_et.windowToken, 0)
         }
 
-        if(sharedPreferencesHelper.accessToken!!.isNotEmpty()){
+        if(sharedPreferencesHelper.accessToken?.isNotEmpty() == true){
             noticeIntent()
         }
 
