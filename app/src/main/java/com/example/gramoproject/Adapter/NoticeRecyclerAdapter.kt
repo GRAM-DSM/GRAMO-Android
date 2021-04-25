@@ -4,6 +4,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ProgressBar
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gramo.R
@@ -46,10 +47,9 @@ class NoticeRecyclerAdapter(private val items: NoticeList, fragmentManager: Frag
                 bind(item!!, mfragmentManager)
                 itemView.tag = item
             }
-        } else if(holder is LoadingViewHolder){
-            showLoadingView(holder, position)
+        } else {
+            (holder as LoadingViewHolder).progressBar.isIndeterminate = true
         }
-
     }
 
     override fun getItemCount() = items.notice.size
@@ -83,7 +83,11 @@ class NoticeRecyclerAdapter(private val items: NoticeList, fragmentManager: Frag
     }
 
     inner class LoadingViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
-        val progressBar = itemView.progressBar
+        var progressBar : ProgressBar
+
+        init{
+            progressBar = itemView.progressBar
+        }
     }
 
     private fun showLoadingView(holder: LoadingViewHolder, position: Int){
