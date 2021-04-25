@@ -3,14 +3,12 @@ package com.example.gramoproject.activity.notice
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
-import android.os.Handler
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
 import androidx.core.view.GravityCompat
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -37,11 +35,8 @@ import kotlinx.android.synthetic.main.notice_bottomsheet.*
 import kotlinx.android.synthetic.main.notice_drawer.*
 import kotlinx.android.synthetic.main.notice_drawer.view.*
 import kotlinx.android.synthetic.main.notice_unload_dialog.*
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
-import okhttp3.internal.notifyAll
+import kotlinx.android.synthetic.main.progressbar.*
+import kotlinx.coroutines.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -63,8 +58,9 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     private lateinit var adapter: NoticeRecyclerAdapter
     private lateinit var noticeInterface: NoticeInterface
     private val sharedPreferencesHelper = SharedPreferencesHelper.getInstance()
-    private var off_set = -5
-    private val limit_num = 5
+    private var off_set = -10
+    private val limit_num = 10
+    private var isNext = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -72,10 +68,10 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
 
         noticeInterface = ApiClient.getClient().create(NoticeInterface::class.java)
 
+        getNotice()
+        swipeRefresh()
         initDialog()
         initScrollListener()
-        swipeRefresh()
-        getNotice()
 
         notice_add_btn.setOnClickListener {
             val intent = Intent(this@NoticeActivity, NoticeAddActivity::class.java)
@@ -88,12 +84,14 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
 
-                if (!notice_recyclerview.canScrollVertically(1)) {
-                    CoroutineScope(Dispatchers.Main).launch {
-                        val temp = CoroutineScope(Dispatchers.IO).async {
-                            loadMorePage()
-                        }.await()
-                        adapter.notifyDataSetChanged()
+                if (isNext) {
+                    if (!notice_recyclerview.canScrollVertically(1)) {
+                        CoroutineScope(Dispatchers.Main).launch {
+                            val temp = CoroutineScope(Dispatchers.IO).async {
+                                loadMorePage()
+                            }.await()
+                            adapter.notifyDataSetChanged()
+                        }
                     }
                 }
             }
@@ -115,6 +113,7 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
 
                             val getDataMore: NoticeList? = response.body()
                             if (getDataMore != null && response.isSuccessful) {
+                                isNext = getDataMore.next_page
                                 recyclerList.notice.addAll(getDataMore.notice)
                             }
                         }
@@ -260,6 +259,7 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                         Log.d("NoticeActivity", response.code().toString())
                         if (response.body() != null && response.isSuccessful) {
                             recyclerList = response.body()!!
+                            isNext = response.body()!!.next_page
 
                             fragmentManager = supportFragmentManager
                             layoutManager = LinearLayoutManager(this@NoticeActivity)
@@ -417,7 +417,7 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     private fun swipeRefresh() {
         swipe_refresh_layout.setOnRefreshListener(object : SwipeRefreshLayout.OnRefreshListener {
             override fun onRefresh() {
-                off_set = -5
+                off_set = -10
                 getNotice()
                 swipe_refresh_layout.isRefreshing = false
             }
