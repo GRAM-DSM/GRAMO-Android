@@ -3,6 +3,8 @@ package com.example.gramoproject.activity.notice
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
@@ -40,6 +42,7 @@ import kotlinx.coroutines.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.lang.Runnable
 
 open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -61,6 +64,7 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     private var off_set = -10
     private val limit_num = 10
     private var isNext = false
+    private var isLoading = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,14 +88,10 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
 
-                if (isNext) {
+                if (isNext && !isLoading) {
                     if (!notice_recyclerview.canScrollVertically(1)) {
-                        CoroutineScope(Dispatchers.Main).launch {
-                            val temp = CoroutineScope(Dispatchers.IO).async {
-                                loadMorePage()
-                            }.await()
-                            adapter.notifyDataSetChanged()
-                        }
+                        loadMorePage()
+                        isLoading = true
                     }
                 }
             }
@@ -103,31 +103,40 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
             recyclerList.notice.add(null)
             adapter.notifyItemInserted(recyclerList.notice.size - 1)
 
+            val handler = Handler(Looper.getMainLooper())
             val call = noticeInterface.getNoticeList("Bearer " + sharedPreferencesHelper.accessToken!!, getOffSet(), limit_num)
-            call.enqueue(object : Callback<NoticeList> {
-                override fun onResponse(call: Call<NoticeList>, response: Response<NoticeList>) {
-                    when (response.code()) {
-                        200 -> {
-                            recyclerList.notice.removeAt(recyclerList.notice.size - 1)
-                            adapter.notifyItemRemoved(recyclerList.notice.size)
 
-                            val getDataMore: NoticeList? = response.body()
-                            if (getDataMore != null && response.isSuccessful) {
-                                isNext = getDataMore.next_page
-                                recyclerList.notice.addAll(getDataMore.notice)
+            handler.postDelayed(object : Runnable {
+                override fun run() {
+                    call.enqueue(object : Callback<NoticeList> {
+                        override fun onResponse(call: Call<NoticeList>, response: Response<NoticeList>) {
+                            when (response.code()) {
+                                200 -> {
+                                    recyclerList.notice.removeAt(recyclerList.notice.size - 1)
+                                    adapter.notifyItemRemoved(recyclerList.notice.size)
+
+                                    val getDataMore: NoticeList? = response.body()
+                                    if (getDataMore != null && response.isSuccessful) {
+                                        isNext = getDataMore.next_page
+                                        recyclerList.notice.addAll(getDataMore.notice)
+                                    }
+                                    adapter.notifyDataSetChanged()
+                                    isLoading = false
+                                }
+                                404 -> {
+                                    Toast.makeText(this@NoticeActivity, getString(R.string.notice_not_exist), Toast.LENGTH_SHORT).show()
+                                }
                             }
                         }
-                        404 -> {
-                            Toast.makeText(this@NoticeActivity, getString(R.string.notice_not_exist), Toast.LENGTH_SHORT).show()
+
+                        override fun onFailure(call: Call<NoticeList>, t: Throwable) {
+                            Log.d("NoticeActivity", t.toString())
                         }
-                    }
+
+                    })
                 }
 
-                override fun onFailure(call: Call<NoticeList>, t: Throwable) {
-                    Log.d("NoticeActivity", t.toString())
-                }
-
-            })
+            }, 1000)
         }
     }
 
@@ -389,14 +398,14 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         })
     }
 
-    private fun withDrawal(){
+    private fun withDrawal() {
         val accessToken = "Bearer " + sharedPreferencesHelper.accessToken
         val withInterface = ApiClient.getClient().create(LoginInterface::class.java)
         val withCall = withInterface.withDrawal(accessToken)
 
-        withCall.enqueue(object: Callback<Unit>{
+        withCall.enqueue(object : Callback<Unit> {
             override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
-                when(response.code()){
+                when (response.code()) {
                     200 -> {
                         sharedPreferencesHelper.accessToken = ""
                         sharedPreferencesHelper.refreshToken = ""
