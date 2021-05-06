@@ -51,6 +51,7 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
     companion object {
         lateinit var recyclerList: NoticeList
         var logoutCheck: Boolean = false
+        var withCheck: Boolean = false
     }
 
     private lateinit var LogoutDialog: Dialog
@@ -250,6 +251,7 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
             LeaveDialog.dismiss()
         }
         LeaveDialog.leave_positive_btn.setOnClickListener {
+            LeaveDialog.dismiss()
             withDrawal()
         }
     }
@@ -407,12 +409,15 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
             override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
                 when (response.code()) {
                     200 -> {
+                        withCheck = true
                         sharedPreferencesHelper.accessToken = ""
                         sharedPreferencesHelper.refreshToken = ""
                         loginIntent()
                     }
-                    401 ->
+                    401 -> {
+                        withCheck = false
                         Toast.makeText(this@NoticeActivity, getString(R.string.with_error), Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
 
