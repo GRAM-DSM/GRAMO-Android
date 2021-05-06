@@ -55,7 +55,7 @@ class LoginActivity : AppCompatActivity() {
         }
 
         if(sharedPreferencesHelper.accessToken?.isNotEmpty() == true){
-            noticeIntent()
+           noticeIntent()
         }
 
     }

@@ -7,6 +7,7 @@
     <string name="register_bad_request">잘못된 요청입니다.</string>
     <string name="register_already_used_email">이미 사용 중인 이메일 입니다.</string>
     <string name="register_code_not_match">인증번호가 일치하지 않습니다.</string>
+    <string name="register_need_email_auth">이메일 인증이 필요합니다.</string>
     <string name="register_password_length">비밀번호는 5~20자리까지 가능합니다.</string>
     <string name="register_password_not_match">비밀번호가 일치하지 않습니다.</string>
     <string name="register_check_emailAuth">으로 보내진 인증코드를 확인해주세요.</string>

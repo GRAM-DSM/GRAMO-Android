@@ -213,7 +213,9 @@ class RegisterActivity : AppCompatActivity() {
             register_error_tv.text = getString(R.string.register_password_length)
         }
         else if (!register_pass_edit2.text.toString().equals(register_passOverlap_edit.text.toString()))
-            register_error_tv.text = getString(R.string.register_code_not_match)
+            register_error_tv.text = getString(R.string.register_password_not_match)
+        else if(!authCheck)
+            register_error_tv.text = getString(R.string.register_need_email_auth)
         else {
             register_error_tv.text = ""
             val user = RegisterUser(register_email_et.text.toString(), register_pass_edit2.text.toString(), register_name_et.text.toString(), major!!  )

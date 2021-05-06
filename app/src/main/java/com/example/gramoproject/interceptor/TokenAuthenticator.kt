@@ -23,7 +23,7 @@ class TokenAuthenticator : Interceptor {
 
         when(response.code){
             401 -> {
-                if(NoticeActivity.logoutCheck == false) {
+                if(!NoticeActivity.logoutCheck && !NoticeActivity.withCheck) {
                     val refreshToken = "Bearer " + SharedPreferencesHelper.getInstance().refreshToken
                     if(sharedPreferencesHelper.accessToken == null){
                         val context = GRAMOApplication.context
