@@ -1,9 +1,8 @@
-package com.example.gramoproject.Activity.Notice
+package com.example.gramoproject.activity.notice
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.gramo.R
-import com.google.android.material.navigation.NavigationView
 
 class NoticeActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

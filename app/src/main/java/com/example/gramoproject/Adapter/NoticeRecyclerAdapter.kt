@@ -1,4 +1,4 @@
-package com.example.gramoproject.Adapter
+package com.example.gramoproject.adapter
 
 class NoticeRecyclerAdapter {
 }

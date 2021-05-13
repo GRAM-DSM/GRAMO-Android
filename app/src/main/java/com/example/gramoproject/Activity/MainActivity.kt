@@ -1,4 +1,4 @@
-package com.example.gramoproject.Activity
+package com.example.gramoproject.activity
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle

@@ -1,4 +1,4 @@
-package com.example.gramoproject.BottomSheet
+package com.example.gramoproject.bottomSheet
 
 class BottomSheet {
 }

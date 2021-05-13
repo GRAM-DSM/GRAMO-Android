@@ -49,11 +49,20 @@ dependencies {
     implementation 'com.squareup.retrofit2:retrofit:2.8.1'
     implementation 'com.squareup.retrofit2:converter-gson:2.8.1'
 
+    //gson 컨버터
+    implementation 'com.squareup.retrofit2:converter-gson:2.6.4'
+
     //okhttp3
     implementation 'com.squareup.okhttp3:logging-interceptor:4.9.0'
 
     //캘린더뷰
     implementation 'com.prolificinteractive:material-calendarview:1.4.3'
+
+    //코루틴
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.2'
+
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
+
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'

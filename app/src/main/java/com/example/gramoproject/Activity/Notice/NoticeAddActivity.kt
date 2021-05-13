@@ -1,4 +1,4 @@
-package com.example.gramoproject.Activity.Notice
+package com.example.gramoproject.activity.notice
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
