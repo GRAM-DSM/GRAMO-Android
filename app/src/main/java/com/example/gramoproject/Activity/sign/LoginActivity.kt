@@ -65,7 +65,7 @@ class LoginActivity : AppCompatActivity() {
             login_error_tv.text = getString(R.string.login_input_email_pass)
         else {
             val login = Login(login_email_et.text.toString(), login_pass_et.text.toString())
-            val loginInterface = ApiClient.getClient().create(LoginInterface::class.java)
+            val loginInterface = ApiClient.getFlaskClient().create(LoginInterface::class.java)
             var loginCall = loginInterface.signIn(login)
 
             loginCall.enqueue(object: Callback<LoginUser> {

@@ -140,7 +140,7 @@ class RegisterActivity : AppCompatActivity() {
         val imm = this@RegisterActivity.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(register_email_et.windowToken, 0)
 
-        val registerInterface = ApiClient.getClient().create(RegisterInterface::class.java)
+        val registerInterface = ApiClient.getFlaskClient().create(RegisterInterface::class.java)
         var emailObject = JsonObject()
         var email = register_email_et.text.toString()
 
@@ -183,7 +183,7 @@ class RegisterActivity : AppCompatActivity() {
             Toast.makeText(this@RegisterActivity, getString(R.string.register_inputCode), Toast.LENGTH_LONG).show()
         } else {
             val authInfo = EmailAuth(register_email_et.text.toString(), Integer.parseInt(register_code_et.text.toString()))
-            val registerInterface = ApiClient.getClient().create(RegisterInterface::class.java)
+            val registerInterface = ApiClient.getFlaskClient().create(RegisterInterface::class.java)
             val registerConfirm = registerInterface.checkEmailAuthenticationCode(authInfo)
 
             registerConfirm.enqueue(object : Callback<Unit> {
@@ -219,7 +219,7 @@ class RegisterActivity : AppCompatActivity() {
         else {
             register_error_tv.text = ""
             val user = RegisterUser(register_email_et.text.toString(), register_pass_edit2.text.toString(), register_name_et.text.toString(), major!!  )
-            val registerInterface = ApiClient.getClient().create(RegisterInterface::class.java)
+            val registerInterface = ApiClient.getFlaskClient().create(RegisterInterface::class.java)
             val registerCall = registerInterface.signUp(user)
 
             registerCall.enqueue(object : Callback<Unit> {

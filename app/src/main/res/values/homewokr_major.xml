@@ -3,9 +3,9 @@
 
     <string-array name="majorList">
         <item>분야선택</item>
-        <item>안드로이드</item>
-        <item>ios</item>
-        <item>서버</item>
-        <item>디자인</item>
+        <item>ANDROID</item>
+        <item>IOS</item>
+        <item>BACKEND</item>
+        <item>DESIGN</item>
     </string-array>
 </resources>

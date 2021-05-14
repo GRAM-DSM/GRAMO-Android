@@ -1,42 +1,55 @@
 package com.example.gramoproject.adapter
 
+import android.content.Intent
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import androidx.recyclerview.widget.RecyclerView
 import com.example.gramo.R
-import com.example.gramoproject.activity.homework.CriteriaViewHolder
-import com.example.gramoproject.activity.homework.ListViewHolder
-import com.thoughtbot.expandablerecyclerview.ExpandableRecyclerViewAdapter
-import com.thoughtbot.expandablerecyclerview.models.ExpandableGroup
+import com.example.gramoproject.activity.homework.HomeworkShowActivity
+import com.example.gramoproject.DataClass.HomeworkResponse
+import kotlinx.android.synthetic.main.homework_list.view.*
 
-class HomeworkAdapter(groups: List<ExpandableGroup<*>?>?) :
-    ExpandableRecyclerViewAdapter<CriteriaViewHolder, ListViewHolder>(groups) {
-    override fun onCreateGroupViewHolder(parent: ViewGroup?, viewType: Int): CriteriaViewHolder {
-        val v = LayoutInflater.from(parent?.context)
-            .inflate(R.layout.homework_criteria, parent, false)
-        return CriteriaViewHolder(v)
+class HomeworkAdapter : RecyclerView.Adapter<HomeworkAdapter.HomeworkViewHolder>() {
 
+    private var items: ArrayList<HomeworkResponse> = arrayListOf()
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HomeworkViewHolder {
+        return HomeworkViewHolder(
+            LayoutInflater.from(parent.context).inflate(R.layout.homework_list, parent, false)
+        )
     }
 
-    override fun onCreateChildViewHolder(parent: ViewGroup?, viewType: Int): ListViewHolder {
-        val v = LayoutInflater.from(parent?.context)
-            .inflate(R.layout.homework_list, parent, false)
-        return ListViewHolder(v)
+    override fun onBindViewHolder(holder: HomeworkViewHolder, position: Int) {
+        holder.run {
+            bind(items[position])
+            itemView.run {
+                setOnClickListener {
+                    val intent = Intent(context, HomeworkShowActivity::class.java)
+                    intent.putExtra("homeworkID", items[position].homeworkId)
+                    context.startActivity(intent)
+                }
+            }
+        }
     }
 
-    override fun onBindChildViewHolder(
-        holder: ListViewHolder?,
-        flatPosition: Int,
-        group: ExpandableGroup<*>?,
-        childIndex: Int
-    ) {
+    override fun getItemCount(): Int = items.size
 
+    class HomeworkViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
+        fun bind(item: HomeworkResponse) {
+            view.hmwk_endDate_tv.text = item.endDate
+            view.hmwk_title_tv.text = item.title
+            view.hmwk_description_tv.text = item.description
+            view.hmwk_major_tv.text = item.major
+            view.hmwk_name_tv.text = item.teacherName
+            view.hmwk_date_tv.text = item.startDate
+        }
     }
 
-    override fun onBindGroupViewHolder(
-        holder: CriteriaViewHolder?,
-        flatPosition: Int,
-        group: ExpandableGroup<*>?
-    ) {
-        TODO("Not yet implemented")
+    fun addHomeworkData(input: ArrayList<HomeworkResponse>) {
+        items.clear()
+        items.addAll(input)
+        notifyDataSetChanged()
     }
+
 }

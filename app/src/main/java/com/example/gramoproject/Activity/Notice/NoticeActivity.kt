@@ -71,7 +71,7 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         super.onCreate(savedInstanceState)
         setContentView(R.layout.notice_activity)
 
-        noticeInterface = ApiClient.getClient().create(NoticeInterface::class.java)
+        noticeInterface = ApiClient.getFlaskClient().create(NoticeInterface::class.java)
 
         getNotice()
         swipeRefresh()
@@ -371,7 +371,7 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
 
     private fun logout() {
         val accessToken = "Bearer " + sharedPreferencesHelper.accessToken
-        val logoutInterface = ApiClient.getClient().create(LoginInterface::class.java)
+        val logoutInterface = ApiClient.getFlaskClient().create(LoginInterface::class.java)
         val logoutCall = logoutInterface.logout(accessToken)
 
         logoutCall.enqueue(object : Callback<Unit> {
@@ -402,7 +402,7 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
 
     private fun withDrawal() {
         val accessToken = "Bearer " + sharedPreferencesHelper.accessToken
-        val withInterface = ApiClient.getClient().create(LoginInterface::class.java)
+        val withInterface = ApiClient.getFlaskClient().create(LoginInterface::class.java)
         val withCall = withInterface.withDrawal(accessToken)
 
         withCall.enqueue(object : Callback<Unit> {
