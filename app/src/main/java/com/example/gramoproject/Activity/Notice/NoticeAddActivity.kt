@@ -55,7 +55,7 @@ class NoticeAddActivity : AppCompatActivity() {
             intent.setFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
 
             val notice = NoticeItem(notice_title_et.text.toString(), notice_content_et.text.toString())
-            val noticeInterface = ApiClient.getClient().create(NoticeInterface::class.java)
+            val noticeInterface = ApiClient.getFlaskClient().create(NoticeInterface::class.java)
             val call = noticeInterface.createNotice("Bearer " + sharedPreferencesHelper.accessToken!!, notice)
             call.enqueue(object: Callback<Unit> {
                 override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
