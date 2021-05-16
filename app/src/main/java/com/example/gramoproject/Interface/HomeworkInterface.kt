@@ -9,31 +9,44 @@ import retrofit2.http.*
 
 interface HomeworkInterface {
     @GET("/homework/assign")
-    fun getAssignedHomeworkList(): Call<List<HomeworkResponse>>
+    fun getAssignedHomeworkList(@Header("Authorization") header: String): Call<List<HomeworkResponse>>
 
     @GET("/homework/submit")
-    fun getSubmittedHomeworkList(): Call<List<HomeworkResponse>>
+    fun getSubmittedHomeworkList(@Header("Authorization") header: String): Call<List<HomeworkResponse>>
 
     @GET("/homework/order")
-    fun getOrderedHomeworkList(): Call<List<HomeworkResponse>>
+    fun getOrderedHomeworkList(@Header("Authorization")header: String): Call<List<HomeworkResponse>>
 
     @GET("/homework/{homeworkID}")
-    fun getHomeworkContent(@Path("homeworkID") homeworkID: Int): Call<HomeworkContentResponseData>
+    fun getHomeworkContent(
+            @Path("homeworkID") homeworkID: Int,
+            @Header("Authorization") header: String
+    ): Call<HomeworkContentResponseData>
 
     @POST("/homework")
-    fun createHomework(@Body body: HomeworkBodyData): Call<Unit>
+    fun createHomework(
+            @Header("Authorization") header: String,
+            @Body body: HomeworkBodyData): Call<Unit>
 
     @DELETE("/homework/{detailId}")
-    fun deleteHomework(@Path("detailId") detailId: Int): Call<Unit>
+    fun deleteHomework(
+            @Header("Authorization") header: String,
+            @Path("detailId") detailId: Int): Call<Unit>
 
     @PATCH("/homework/{homeworkID}")
-    fun submitHomework(@Path("homeworkID") homeworkID: Int): Call<Unit>
+    fun submitHomework(
+            @Header("Authorization") header: String,
+            @Path("homeworkID") homeworkID: Int): Call<Unit>
 
     @PATCH("/homework/reject/{homeworkID}")
-    fun rejectHomework(@Path("homeworkID") homeworkID: Int): Call<Unit>
+    fun rejectHomework(
+            @Header("Authorization") header: String,
+            @Path("homeworkID") homeworkID: Int): Call<Unit>
 
     @GET("/user/list")
-    fun getUserList(): Call<HomeworkedUserData>
+    fun getUserList(
+            @Header("Authorization") header: String
+    ): Call<HomeworkedUserData>
 
 }
 

@@ -6,6 +6,7 @@ import android.os.Bundle
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gramo.R
+import com.example.gramo.Sharedpreferences.SharedPreferencesHelper
 import com.example.gramoproject.adapter.HomeworkAdapter
 import com.example.gramoproject.activity.client.ApiClient
 import com.example.gramoproject.DataClass.HomeworkResponse
@@ -21,6 +22,7 @@ class HomeworkMainActivity : AppCompatActivity() {
     val assignedAdapter = HomeworkAdapter()
     val orderedAdapter = HomeworkAdapter()
     val submittedAdapter = HomeworkAdapter()
+    private val sharedPreferencesHelper = SharedPreferencesHelper.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -94,7 +96,7 @@ class HomeworkMainActivity : AppCompatActivity() {
 
     override fun onResume() {
         val service = ApiClient.getClient().create(HomeworkInterface::class.java)
-        service.getOrderedHomeworkList().enqueue(object : Callback<List<HomeworkResponse>> {
+        service.getOrderedHomeworkList("Bearer " + sharedPreferencesHelper.accessToken!!).enqueue(object : Callback<List<HomeworkResponse>> {
             override fun onResponse(
                 call: Call<List<HomeworkResponse>>,
                 response: Response<List<HomeworkResponse>>
@@ -105,12 +107,11 @@ class HomeworkMainActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call<List<HomeworkResponse>>, t: Throwable) {
-
             }
 
         })
 
-        service.getAssignedHomeworkList().enqueue(object : Callback<List<HomeworkResponse>> {
+        service.getAssignedHomeworkList("Bearer " + sharedPreferencesHelper.accessToken!!).enqueue(object : Callback<List<HomeworkResponse>> {
             override fun onResponse(
                 call: Call<List<HomeworkResponse>>,
                 response: Response<List<HomeworkResponse>>
@@ -126,7 +127,7 @@ class HomeworkMainActivity : AppCompatActivity() {
 
         })
 
-        service.getSubmittedHomeworkList().enqueue(object : Callback<List<HomeworkResponse>> {
+        service.getSubmittedHomeworkList("Bearer " + sharedPreferencesHelper.accessToken!!).enqueue(object : Callback<List<HomeworkResponse>> {
             override fun onResponse(
                 call: Call<List<HomeworkResponse>>,
                 response: Response<List<HomeworkResponse>>

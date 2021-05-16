@@ -32,6 +32,7 @@ class HomeworkAddActivity : AppCompatActivity() {
 
     var studentItems: List<UserResponse> = listOf()
     var userInfo: UserResponse? = null
+    private val sharedPreferencesHelper = SharedPreferencesHelper.getInstance()
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -84,7 +85,7 @@ class HomeworkAddActivity : AppCompatActivity() {
         }
 
         val userResponse = ApiClient.getClient().create(HomeworkInterface::class.java)
-        userResponse.getUserList().enqueue(object : Callback<HomeworkedUserData> {
+        userResponse.getUserList("Bearer " + sharedPreferencesHelper.accessToken!!).enqueue(object : Callback<HomeworkedUserData> {
             override fun onResponse(
                 call: Call<HomeworkedUserData>,
                 response: Response<HomeworkedUserData>
@@ -141,7 +142,7 @@ class HomeworkAddActivity : AppCompatActivity() {
             builder.setNegativeButton(
                 "추가"
             ) { _: DialogInterface?, _: Int ->
-                userResponse.createHomework(bodyData).enqueue(object : Callback<Unit> {
+                userResponse.createHomework("Bearer " + sharedPreferencesHelper.accessToken!!, bodyData).enqueue(object : Callback<Unit> {
                     override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
                         Toast.makeText(
                             this@HomeworkAddActivity,

@@ -37,5 +37,6 @@
     <string name="homework_submit_success">숙제를 제출하였습니다.</string>
     <string name="homework_reject_success">숙제를 반환하였습니다.</string>
     <string name="homework_delete_success">숙제를 삭제하였습니다.</string>
+    <string name="homework_does_not_submit">숙제가 아직 제출되지 않았습니다.</string>
     <string name="homework_check_success">숙제 제출을 확인하였습니다.</string>
 </resources>

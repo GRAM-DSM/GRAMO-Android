@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.gramo.R
+import com.example.gramo.Sharedpreferences.SharedPreferencesHelper
 import com.example.gramoproject.DataClass.HomeworkContentResponseData
 import com.example.gramoproject.Interface.HomeworkInterface
 import com.example.gramoproject.activity.client.ApiClient
@@ -17,6 +18,8 @@ import retrofit2.Response
 
 class HomeworkShowActivity : AppCompatActivity() {
 
+    private val sharedPreferencesHelper = SharedPreferencesHelper.getInstance()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.homework_show_activity)
@@ -25,7 +28,7 @@ class HomeworkShowActivity : AppCompatActivity() {
         val builder = AlertDialog.Builder(this)
         val service = ApiClient.getClient().create(HomeworkInterface::class.java)
 
-        service.getHomeworkContent(homeworkID)
+        service.getHomeworkContent(homeworkID, "Bearer " + sharedPreferencesHelper.accessToken!!)
             .enqueue(object : Callback<HomeworkContentResponseData> {
                 override fun onResponse(
                     call: Call<HomeworkContentResponseData>,
@@ -68,7 +71,7 @@ class HomeworkShowActivity : AppCompatActivity() {
 
         hmwk_submit_tv.setOnClickListener {
             if (hmwk_submit_tv.text == "제출하기") {
-                service.submitHomework(homeworkID).enqueue(object : Callback<Unit> {
+                service.submitHomework("Bearer " + sharedPreferencesHelper.accessToken!! ,homeworkID).enqueue(object : Callback<Unit> {
                     override fun onResponse(
                         call: Call<Unit>,
                         response: Response<Unit>
@@ -90,7 +93,7 @@ class HomeworkShowActivity : AppCompatActivity() {
 
                 })
             } else {
-                service.deleteHomework(homeworkID).enqueue(object : Callback<Unit> {
+                service.deleteHomework("Bearer " + sharedPreferencesHelper.accessToken!!, homeworkID).enqueue(object : Callback<Unit> {
                     override fun onResponse(
                         call: Call<Unit>,
                         response: Response<Unit>
@@ -116,7 +119,7 @@ class HomeworkShowActivity : AppCompatActivity() {
             builder.setNegativeButton(
                 "반환"
             ) { _: DialogInterface?, _: Int ->
-                service.rejectHomework(homeworkID).enqueue(object : Callback<Unit> {
+                service.rejectHomework("Bearer " + sharedPreferencesHelper.accessToken!!, homeworkID).enqueue(object : Callback<Unit> {
                     override fun onResponse(
                         call: Call<Unit>,
                         response: Response<Unit>
@@ -124,6 +127,8 @@ class HomeworkShowActivity : AppCompatActivity() {
                         if (response.isSuccessful) {
                             showToast(R.string.homework_reject_success)
                         }
+                        else if(response.code() == 409)
+                            showToast(R.string.homework_does_not_submit)
                     }
 
                     override fun onFailure(call: Call<Unit>, t: Throwable) {
@@ -145,7 +150,7 @@ class HomeworkShowActivity : AppCompatActivity() {
             builder.setNegativeButton(
                 "삭제"
             ) { _: DialogInterface?, _: Int ->
-                service.deleteHomework(homeworkID).enqueue(object : Callback<Unit> {
+                service.deleteHomework("Bearer " + sharedPreferencesHelper.accessToken!!, homeworkID).enqueue(object : Callback<Unit> {
                     override fun onResponse(
                         call: Call<Unit>,
                         response: Response<Unit>
