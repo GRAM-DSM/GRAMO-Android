@@ -60,7 +60,7 @@ class NoticeAddActivity : AppCompatActivity() {
             call.enqueue(object: Callback<Unit> {
                 override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
                     when(response.code()){
-                        200 -> {
+                        201 -> {
                             Toast.makeText(this@NoticeAddActivity, getString(R.string.notice_add_success), Toast.LENGTH_SHORT).show()
                             startActivity(intent)
                             finish()
