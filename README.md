@@ -1,33 +1,44 @@
 # GRAMO-Android
+
+> GRAMO : GRam Application Members Only
+
+전공동아리 그램(GRAM)의 공지사항/숙제/동아리 일정을 확인할 수 있는 동아리 관리 앱입니다.
+
 ## 사용 기술
+
 - Kotlin
 - Retrofit
-- okhttp3
+- AAC(Android Architecture Component)
+- MVVM 
 
 
 ## 기능분담
+
 - 안병헌
-    - 회원가입&로그인
-    - 공지사항
+  - 회원가입&로그인
+  - 공지사항
 - 박동행
-    - 숙제
+  - 숙제
 - 박나연
-    - 캘린더
+  - 캘린더
 
 ## 기간  
+
 From 2020.12.2
-To 2021.4.21
+To 2021.6.7
 
 ## Github 관리
+
 - Branching Model 이용
-- 기능이 완성되면 pull request로 코드 리뷰 후 develop에 merge
+- 기능이 완성되면 pull request로 코드 리뷰 후 master에 merge
 
 ## Resource 관리
-Naming
-- View_ID: where_description_what
-- Layout_ID: what_description 
-- drawable_FileName: what_description
 
 Value  
+
 - color는 colors.xml에 관리
 - string은 string.xml에 관리
+
+코드 정리
+
+- Ctrl + Alt + l(소문자 L)
