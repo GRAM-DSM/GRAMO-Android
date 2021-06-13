@@ -1,6 +1,5 @@
 package com.example.gramoproject.adapter
 
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,11 +7,10 @@ import android.widget.ProgressBar
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gramo.R
-import com.example.gramoproject.activity.notice.NoticeActivity.Companion.recyclerList
 import com.example.gramoproject.DataClass.NoticeList
+import com.example.gramoproject.activity.notice.NoticeActivity.Companion.recyclerList
 import kotlinx.android.synthetic.main.notice_recycler_item.view.*
 import kotlinx.android.synthetic.main.progressbar.view.*
-import java.util.logging.Handler
 
 class NoticeRecyclerAdapter(private val items: NoticeList, fragmentManager: FragmentManager) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var mfragmentManager : FragmentManager = fragmentManager

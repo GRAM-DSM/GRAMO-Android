@@ -10,6 +10,7 @@ import com.example.gramo.Sharedpreferences.SharedPreferencesHelper
 import com.example.gramoproject.activity.client.ApiClient
 import com.example.gramoproject.`interface`.NoticeInterface
 import com.example.gramoproject.DataClass.NoticeItem
+import com.example.gramoproject.activity.notice.NoticeActivity
 import kotlinx.android.synthetic.main.notice_add_activity.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -60,7 +61,7 @@ class NoticeAddActivity : AppCompatActivity() {
             call.enqueue(object: Callback<Unit> {
                 override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
                     when(response.code()){
-                        200 -> {
+                        201 -> {
                             Toast.makeText(this@NoticeAddActivity, getString(R.string.notice_add_success), Toast.LENGTH_SHORT).show()
                             startActivity(intent)
                             finish()

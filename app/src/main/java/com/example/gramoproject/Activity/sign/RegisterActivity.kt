@@ -15,10 +15,10 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.gramo.R
 import com.example.gramoproject.Adapter.HintAdapter
-import com.example.gramoproject.`interface`.RegisterInterface
-import com.example.gramoproject.activity.client.ApiClient
 import com.example.gramoproject.DataClass.EmailAuth
 import com.example.gramoproject.DataClass.RegisterUser
+import com.example.gramoproject.`interface`.RegisterInterface
+import com.example.gramoproject.activity.client.ApiClient
 import com.google.gson.JsonObject
 import kotlinx.android.synthetic.main.register_activity.*
 import retrofit2.Call

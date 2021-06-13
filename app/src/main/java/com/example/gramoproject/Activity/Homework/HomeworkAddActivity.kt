@@ -15,12 +15,12 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.gramo.R
 import com.example.gramo.Sharedpreferences.SharedPreferencesHelper
-import com.example.gramoproject.adapter.AssignorAdapter
 import com.example.gramo.model.UserResponse
 import com.example.gramoproject.activity.client.ApiClient
 import com.example.gramoproject.DataClass.HomeworkBodyData
 import com.example.gramoproject.DataClass.HomeworkedUserData
-import com.example.gramoproject.Interface.HomeworkInterface
+import com.example.gramoproject.adapter.AssignorAdapter
+import com.example.gramoproject.`interface`.HomeworkInterface
 import kotlinx.android.synthetic.main.homework_add_activity.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -85,43 +85,44 @@ class HomeworkAddActivity : AppCompatActivity() {
         }
 
         val userResponse = ApiClient.getClient().create(HomeworkInterface::class.java)
-        userResponse.getUserList("Bearer " + sharedPreferencesHelper.accessToken!!).enqueue(object : Callback<HomeworkedUserData> {
-            override fun onResponse(
-                call: Call<HomeworkedUserData>,
-                response: Response<HomeworkedUserData>
-            ) {
-                if (response.isSuccessful) {
-                    studentItems = response.body()?.userInfoResponses ?: listOf()
-                    val userList = studentItems.map { "${it.name} (${it.major})" }
-                        .toMutableList().apply { this.add("할당자 선택하기") }
-                    hmwk_student_spinner.adapter =
-                        AssignorAdapter(this@HomeworkAddActivity, userList) {
-                            hmwk_student_spinner.onItemSelectedListener = object :
-                                AdapterView.OnItemSelectedListener {
-                                override fun onItemSelected(
-                                    parent: AdapterView<*>?,
-                                    view: View?,
-                                    position: Int,
-                                    id: Long
-                                ) {
-                                    userInfo = studentItems[position]
-                                }
+        userResponse.getUserList("Bearer " + sharedPreferencesHelper.accessToken!!)
+            .enqueue(object : Callback<HomeworkedUserData> {
+                override fun onResponse(
+                    call: Call<HomeworkedUserData>,
+                    response: Response<HomeworkedUserData>
+                ) {
+                    if (response.isSuccessful) {
+                        studentItems = response.body()?.userInfoResponses ?: listOf()
+                        val userList = studentItems.map { "${it.name} (${it.major})" }
+                            .toMutableList().apply { this.add("할당자 선택하기") }
+                        hmwk_student_spinner.adapter =
+                            AssignorAdapter(this@HomeworkAddActivity, userList) {
+                                hmwk_student_spinner.onItemSelectedListener = object :
+                                    AdapterView.OnItemSelectedListener {
+                                    override fun onItemSelected(
+                                        parent: AdapterView<*>?,
+                                        view: View?,
+                                        position: Int,
+                                        id: Long
+                                    ) {
+                                        userInfo = studentItems[position]
+                                    }
 
-                                override fun onNothingSelected(p0: AdapterView<*>?) {
+                                    override fun onNothingSelected(p0: AdapterView<*>?) {
 
+                                    }
                                 }
                             }
-                        }
 
-                    hmwk_student_spinner.setSelection(studentItems.size)
+                        hmwk_student_spinner.setSelection(studentItems.size)
+                    }
                 }
-            }
 
-            override fun onFailure(call: Call<HomeworkedUserData>, t: Throwable) {
+                override fun onFailure(call: Call<HomeworkedUserData>, t: Throwable) {
 
-            }
+                }
 
-        })
+            })
 
         hmwk_cancel_tv.setOnClickListener {
             finish()
@@ -132,7 +133,7 @@ class HomeworkAddActivity : AppCompatActivity() {
                 major,
                 hmwk_endDate_tv.text.toString(),
                 userInfo!!.email,
-                hmwk_description_tv.text.toString(),
+                hmwk_description_tv?.text.toString(),
                 hmwk_title_tv.text.toString()
             )
             builder.setMessage("숙제를 추가하시겠습니까?")
@@ -142,7 +143,10 @@ class HomeworkAddActivity : AppCompatActivity() {
             builder.setNegativeButton(
                 "추가"
             ) { _: DialogInterface?, _: Int ->
-                userResponse.createHomework("Bearer " + sharedPreferencesHelper.accessToken!!, bodyData).enqueue(object : Callback<Unit> {
+                userResponse.createHomework(
+                    "Bearer " + sharedPreferencesHelper.accessToken!!,
+                    bodyData
+                ).enqueue(object : Callback<Unit> {
                     override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
                         Toast.makeText(
                             this@HomeworkAddActivity,
@@ -160,7 +164,6 @@ class HomeworkAddActivity : AppCompatActivity() {
                 Handler().postDelayed({
                     finish()
                 }, 300L)
-
             }
             builder.setCancelable(false)
             builder.show()

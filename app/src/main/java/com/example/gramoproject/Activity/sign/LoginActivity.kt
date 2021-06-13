@@ -7,12 +7,10 @@ import android.util.Log
 import android.view.inputmethod.InputMethodManager
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import com.example.gramo.Interceptor.TokenAuthenticator
 import com.example.gramo.R
 import com.example.gramo.Sharedpreferences.SharedPreferencesHelper
 import com.example.gramoproject.activity.client.ApiClient
 import com.example.gramoproject.activity.notice.NoticeActivity
-import com.example.gramoproject.activity.sign.RegisterActivity
 import com.example.gramoproject.DataClass.Login
 import com.example.gramoproject.DataClass.LoginUser
 import com.example.gramoproject.`interface`.LoginInterface

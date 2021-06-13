@@ -340,7 +340,7 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
                         dismissCall.enqueue(object : Callback<Unit> {
                             override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
                                 when (response.code()) {
-                                    200 -> {
+                                    204 -> {
                                         UnloadDialog.dismiss()
                                         bottomSheetDialog.dismiss()
                                         adapter.removeItem(position)
@@ -377,7 +377,7 @@ open class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItem
         logoutCall.enqueue(object : Callback<Unit> {
             override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
                 when (response.code()) {
-                    200 -> {
+                    204 -> {
                         Toast.makeText(this@NoticeActivity, getString(R.string.logout_success), Toast.LENGTH_SHORT).show()
 
                         sharedPreferencesHelper.accessToken = ""
