@@ -24,7 +24,7 @@
         app:layout_anchorGravity="center">
 
         <TextView
-            android:id="@+id/notice_add_btn2"
+            android:id="@+id/notice_add_btn"
             android:layout_width="40dp"
             android:layout_height="wrap_content"
             android:layout_gravity="right|center"
@@ -38,12 +38,18 @@
 
     </androidx.appcompat.widget.Toolbar>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/notice_recyclerview"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh_layout"
         android:layout_width="380dp"
         android:layout_height="match_parent"
         android:layout_gravity="bottom|center_horizontal"
-        android:layout_marginTop="80dp" />
+        android:layout_marginTop="80dp">
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/notice_recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
+
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

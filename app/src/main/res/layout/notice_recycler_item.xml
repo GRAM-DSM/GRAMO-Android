@@ -4,7 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:orientation="horizontal">
 
     <androidx.cardview.widget.CardView
@@ -39,7 +39,7 @@
                 app:tint="#C3C8CD" />
 
             <TextView
-                android:id="@+id/notice_name_et"
+                android:id="@+id/notice_name_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
@@ -51,7 +51,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/notice_date_et"
+                android:id="@+id/notice_date_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="5dp"
@@ -59,24 +59,24 @@
                 android:textColor="@color/black"
                 android:textSize="10sp"
                 app:layout_constraintStart_toEndOf="@+id/notice_img"
-                app:layout_constraintTop_toBottomOf="@+id/notice_name_et" />
+                app:layout_constraintTop_toBottomOf="@+id/notice_name_tv" />
 
             <TextView
-                android:id="@+id/title_tv"
+                android:id="@+id/notice_title_tv"
                 android:layout_width="340dp"
                 android:layout_height="45dp"
                 android:layout_marginStart="14dp"
+                android:ellipsize="end"
                 android:fontFamily="@font/notosansmedium"
+                android:maxLines="1"
                 android:text="내일은 전공동아리 대청소 날 입니다."
                 android:textColor="@color/black"
                 android:textSize="18sp"
-                android:maxLines="1"
-                android:ellipsize="end"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/notice_date_et" />
+                app:layout_constraintTop_toBottomOf="@+id/notice_date_tv" />
 
             <TextView
-                android:id="@+id/contents_tv"
+                android:id="@+id/notice_contents_tv"
                 android:layout_width="335dp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="14dp"
@@ -87,7 +87,7 @@
                 android:ellipsize="end"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/title_tv" />
+                app:layout_constraintTop_toBottomOf="@+id/notice_title_tv" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

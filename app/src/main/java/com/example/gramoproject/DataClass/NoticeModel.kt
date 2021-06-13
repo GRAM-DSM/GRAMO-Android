@@ -1,7 +1,11 @@
 package com.example.gramoproject.DataClass
 
-data class NoticeModel(val id: String,
-                       val title: String,
-                       val content: String,
-                       val email: String,
-                       val dateTime: String)
+data class NoticeList(val notice: ArrayList<GetNotice?>, val next_page: Boolean) {
+        data class GetNotice(
+                val id: Int,
+                val title: String,
+                val content: String,
+                val user_name: String,
+                val created_at: String
+        )
+}

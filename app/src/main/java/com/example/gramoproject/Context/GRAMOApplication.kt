@@ -1,4 +1,4 @@
-package com.example.gramoproject.Context
+package com.example.gramo.Context
 
 import android.app.Application
 import android.content.Context
