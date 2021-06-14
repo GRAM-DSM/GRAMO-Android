@@ -9,6 +9,7 @@ import com.example.gramo.R
 import com.example.gramo.Sharedpreferences.SharedPreferencesHelper
 import com.example.gramoproject.api.ApiClient
 import com.example.gramoproject.`interface`.NoticeInterface
+import com.example.gramoproject.activity.notice.NoticeActivity
 import com.example.gramoproject.model.NoticeItem
 import kotlinx.android.synthetic.main.notice_add_activity.*
 import retrofit2.Call

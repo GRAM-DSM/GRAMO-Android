@@ -18,7 +18,6 @@ import com.example.gramoproject.adapter.HintAdapter
 import com.example.gramoproject.model.RegisterUser
 import com.example.gramoproject.view.main.MainActivity.Companion.intent
 import com.example.gramoproject.view.main.MainActivity.Companion.toast
-import com.example.gramoproject.view.sign.LoginActivity
 import com.example.gramoproject.viewmodel.RegisterViewModel
 import kotlinx.android.synthetic.main.register_activity.*
 

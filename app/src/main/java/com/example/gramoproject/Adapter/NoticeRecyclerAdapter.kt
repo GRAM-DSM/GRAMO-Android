@@ -7,7 +7,6 @@ import android.widget.ProgressBar
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gramo.R
-import com.example.gramoproject.view.notice.NoticeActivity.Companion.recyclerList
 import com.example.gramoproject.model.NoticeList
 import kotlinx.android.synthetic.main.notice_recycler_item.view.*
 import kotlinx.android.synthetic.main.progressbar.view.*
@@ -92,7 +91,7 @@ class NoticeRecyclerAdapter(private val items: NoticeList, fragmentManager: Frag
     }
 
     override fun getItemViewType(position: Int): Int {
-        if(recyclerList.notice.get(position) == null){
+        if(items.notice.get(position) == null){
             return VIEW_TYPE_LOADING
         }
         else

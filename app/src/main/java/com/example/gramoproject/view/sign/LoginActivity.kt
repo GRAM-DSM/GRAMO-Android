@@ -9,10 +9,10 @@ import androidx.databinding.DataBindingUtil
 import com.example.gramo.R
 import com.example.gramo.Sharedpreferences.SharedPreferencesHelper
 import com.example.gramo.databinding.LoginActivityBinding
+import com.example.gramoproject.activity.notice.NoticeActivity
 import com.example.gramoproject.model.Login
 import com.example.gramoproject.view.main.MainActivity.Companion.intent
 import com.example.gramoproject.view.main.MainActivity.Companion.toast
-import com.example.gramoproject.view.notice.NoticeActivity
 import com.example.gramoproject.viewmodel.LoginViewModel
 import kotlinx.android.synthetic.main.login_activity.*
 
