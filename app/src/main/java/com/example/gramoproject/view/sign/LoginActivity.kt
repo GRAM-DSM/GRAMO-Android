@@ -1,126 +1,87 @@
-package com.example.gramoproject.view.sign
+package com.example.gramoproject.activity.sign
 
 import android.content.Context
-import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.inputmethod.InputMethodManager
-import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.databinding.DataBindingUtil
 import com.example.gramo.R
 import com.example.gramo.Sharedpreferences.SharedPreferencesHelper
-import com.example.gramoproject.api.ApiClient
-import com.example.gramoproject.view.notice.NoticeActivity
+import com.example.gramo.databinding.LoginActivityBinding
 import com.example.gramoproject.model.Login
-import com.example.gramoproject.model.LoginUser
-import com.example.gramoproject.`interface`.LoginInterface
+import com.example.gramoproject.view.main.MainActivity.Companion.intent
+import com.example.gramoproject.view.main.MainActivity.Companion.toast
+import com.example.gramoproject.view.notice.NoticeActivity
+import com.example.gramoproject.viewmodel.LoginViewModel
 import kotlinx.android.synthetic.main.login_activity.*
-import org.json.JSONException
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class LoginActivity : AppCompatActivity() {
 
-    private var backKeyPressedTime : Long = 0   
-    private lateinit var toast : Toast
+    private lateinit var binding: LoginActivityBinding
+    private var backKeyPressedTime: Long = 0
     private val sharedPreferencesHelper = SharedPreferencesHelper.getInstance()
+    private val viewModel: LoginViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.login_activity)
+        binding = DataBindingUtil.setContentView(this, R.layout.login_activity)
+        binding.lifecycleOwner = this
+        binding.viewModel = viewModel
 
         activityInit()
+        viewModelObserve()
 
-        register_tv.setOnClickListener{
-            val intentToRegister = Intent(this@LoginActivity, RegisterActivity::class.java)
-            startActivity(intentToRegister)
+        register_tv.setOnClickListener {
+            intent(this@LoginActivity, RegisterActivity::class.java, false)
         }
-        login_btn.setOnClickListener{
+        login_btn.setOnClickListener {
             login_error_tv.text = ""
-            login()
+            if (login_email_et.text.toString() == "" || login_pass_et.text.toString() == "")
+                login_error_tv.text = getString(R.string.login_input_email_pass)
+            else {
+                val login = Login(login_email_et.text.toString(), login_pass_et.text.toString())
+                viewModel.login(login)
+            }
         }
     }
 
-    private fun activityInit(){
+    private fun activityInit() {
         val actionBar = supportActionBar
         actionBar?.hide()
 
         login_activity.setOnClickListener {
             val imm: InputMethodManager =
-                    getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
             imm.hideSoftInputFromWindow(login_email_et.windowToken, 0)
         }
 
-        if(sharedPreferencesHelper.accessToken?.isNotEmpty() == true){
-           noticeIntent()
+        if (sharedPreferencesHelper.accessToken?.isNotEmpty() == true) {
+            intent(this@LoginActivity, NoticeActivity::class.java, true)
         }
 
     }
 
-    private fun login(){
-        if(login_email_et.text.toString() == "" || login_pass_et.text.toString() == "")
-            login_error_tv.text = getString(R.string.login_input_email_pass)
-        else {
-            val login = Login(login_email_et.text.toString(), login_pass_et.text.toString())
-            val loginInterface = ApiClient.getFlaskClient().create(LoginInterface::class.java)
-            var loginCall = loginInterface.signIn(login)
-
-            loginCall.enqueue(object: Callback<LoginUser> {
-                override fun onResponse(call: Call<LoginUser>, response: Response<LoginUser>) {
-                    when(response.code()){
-                        201 -> {
-                            try {
-                                val saveAccess = response.body()?.access_token
-                                val saveRefresh = response.body()?.refresh_token
-                                val saveName = response.body()?.name
-                                val saveMajor = response.body()?.major
-
-                                Log.i("LoginActivity", saveAccess!!)
-                                Log.i("LoginActivity", saveRefresh!!)
-
-                                sharedPreferencesHelper.accessToken = saveAccess
-                                sharedPreferencesHelper.refreshToken = saveRefresh
-                                sharedPreferencesHelper.name = saveName
-                                sharedPreferencesHelper.major = saveMajor
-
-                                Toast.makeText(this@LoginActivity, getString(R.string.login_success), Toast.LENGTH_SHORT).show()
-                                noticeIntent()
-
-                            } catch (e: JSONException){
-                                e.printStackTrace()
-                            }
-                        }
-                        400, 404 -> {
-                            login_error_tv.text = getString(R.string.login_not_correct).toString()
-                        }
-                    }
+    private fun viewModelObserve(){
+        viewModel.loginLiveData.observe(this, {
+            when (it) {
+                201 -> {
+                    toast(this@LoginActivity, R.string.login_success, 0)
+                    intent(this@LoginActivity, NoticeActivity::class.java, true)
                 }
-
-                override fun onFailure(call: Call<LoginUser>, t: Throwable) {
-                    Log.d("LoginActivity", t.toString())
-                }
-            })
-        }
-    }
-
-    private fun noticeIntent(){
-        val intent = Intent(this@LoginActivity, NoticeActivity::class.java)
-        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK)
-        startActivity(intent)
+                400, 404 -> login_error_tv.text = getString(R.string.login_not_correct)
+            }
+        })
     }
 
     override fun onBackPressed() {
-        //super.onBackPressed()
         if (System.currentTimeMillis() > backKeyPressedTime + 2500) { //2500ms = 2.5s
             backKeyPressedTime = System.currentTimeMillis()
-            toast = Toast.makeText(this@LoginActivity, getString(R.string.back_pressed), Toast.LENGTH_SHORT)
-            toast.show()
+            toast(this@LoginActivity, R.string.back_pressed, 0)
             return
         }
-        if(System.currentTimeMillis() <= backKeyPressedTime + 2500){ //2500ms = 2.5s
+        if (System.currentTimeMillis() <= backKeyPressedTime + 2500) { //2500ms = 2.5s
             finishAffinity()
-            toast.cancel()
         }
     }
 }
