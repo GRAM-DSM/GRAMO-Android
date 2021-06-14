@@ -6,11 +6,11 @@ import com.example.gramo.Context.GRAMOApplication
 import okhttp3.Interceptor
 import okhttp3.Response
 import com.example.gramo.Sharedpreferences.SharedPreferencesHelper
-import com.example.gramoproject.DataClass.TokenRefresh
+import com.example.gramoproject.model.TokenRefresh
 import com.example.gramoproject.`interface`.LoginInterface
-import com.example.gramoproject.activity.client.ApiClient
-import com.example.gramoproject.activity.notice.NoticeActivity
-import com.example.gramoproject.activity.sign.LoginActivity
+import com.example.gramoproject.api.ApiClient
+import com.example.gramoproject.view.notice.NoticeActivity
+import com.example.gramoproject.view.sign.LoginActivity
 import retrofit2.Call
 import retrofit2.Callback
 
