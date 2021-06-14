@@ -1,16 +1,16 @@
-package com.example.gramo.Interceptor
+package com.example.gramoproject.interceptor
 
 import android.content.Intent
 import android.util.Log
-import com.example.gramo.Context.GRAMOApplication
+import com.example.gramoproject.context.GRAMOApplication
 import okhttp3.Interceptor
 import okhttp3.Response
-import com.example.gramo.Sharedpreferences.SharedPreferencesHelper
-import com.example.gramoproject.DataClass.TokenRefresh
-import com.example.gramoproject.`interface`.LoginInterface
-import com.example.gramoproject.activity.client.ApiClient
-import com.example.gramoproject.activity.notice.NoticeActivity
-import com.example.gramoproject.activity.sign.LoginActivity
+import com.example.gramoproject.sharedpreferences.SharedPreferencesHelper
+import com.example.gramoproject.api.LoginInterface
+import com.example.gramoproject.model.TokenRefresh
+import com.example.gramoproject.api.ApiClient
+import com.example.gramoproject.view.notice.NoticeActivity
+import com.example.gramoproject.view.sign.LoginActivity
 import retrofit2.Call
 import retrofit2.Callback
 
@@ -45,7 +45,6 @@ class TokenAuthenticator : Interceptor {
 
     private fun getAccessToken(refreshToken: String){
         val token = ApiClient.getClient().create(LoginInterface::class.java).tokenRefresh(refreshToken)
-
         token.enqueue(object: Callback<TokenRefresh>{
             override fun onResponse(call: Call<TokenRefresh>, response: retrofit2.Response<TokenRefresh>) {
                 when(response.code()){
