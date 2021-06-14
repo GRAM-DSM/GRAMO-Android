@@ -22,7 +22,6 @@ import com.example.gramoproject.view.calendar.CalendarActivity
 import com.example.gramoproject.view.homework.HomeworkMainActivity
 import com.example.gramoproject.view.main.MainActivity.Companion.intent
 import com.example.gramoproject.view.main.MainActivity.Companion.toast
-import com.example.gramoproject.view.notice.NoticeAddActivity
 import com.example.gramoproject.viewmodel.NoticeViewModel
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.navigation.NavigationView
