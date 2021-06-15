@@ -1,8 +1,11 @@
 package com.example.gramoproject.view.calendar
 
+import android.app.DatePickerDialog
 import android.app.Dialog
+import android.icu.util.Calendar
 import android.os.Bundle
 import android.view.MenuItem
+import android.widget.DatePicker
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
@@ -20,11 +23,14 @@ import com.example.gramoproject.viewmodel.CalendarViewModel
 import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.calendar_activity.*
 import kotlinx.android.synthetic.main.calendar_appbar.*
+import kotlinx.android.synthetic.main.homework_add_activity.*
 import kotlinx.android.synthetic.main.leave_custom_dialog.*
 import kotlinx.android.synthetic.main.logout_custom_dialog.*
 import kotlinx.android.synthetic.main.notice_activity.*
 import kotlinx.android.synthetic.main.notice_activity.drawer_layout
 import kotlinx.android.synthetic.main.notice_drawer.view.*
+import java.text.SimpleDateFormat
+import java.util.*
 
 class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -34,6 +40,10 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
     private val viewModel: CalendarViewModel by viewModels()
     private val currentActivity = javaClass.simpleName.trim()
     private val sharedPreferencesHelper = SharedPreferencesHelper.getInstance()
+    val calendar = java.util.Calendar.getInstance()
+    val year = calendar.get(Calendar.YEAR)
+    val month = calendar.get(Calendar.MONTH)
+    val day = calendar.get(Calendar.DAY_OF_MONTH)
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,8 +51,19 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
         dataBinding = DataBindingUtil.setContentView(this, R.layout.calendar_activity)
         dataBinding.lifecycleOwner = this
         dataBinding.viewModel = viewModel
+
         initDialog()
         viewModelObseve()
+
+        calendar_date.setOnClickListener{
+            datePicker()
+        }
+
+        val now = System.currentTimeMillis()
+        val date = Date(now)
+        val dateFormat = SimpleDateFormat("yyyy년 MM월 dd일")
+        val getDate = dateFormat.format(date)
+        calendar_date_tv.text = getDate
     }
 
     private fun viewModelObseve(){
@@ -165,5 +186,13 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
             LeaveDialog.dismiss()
             viewModel.withDrawal()
         }
+    }
+
+    private fun datePicker() {
+        val datePicker = DatePickerDialog(this, { _, i, i2, i3 ->
+            calendar_date_tv.text = resources.getString(R.string.set_date, i, i2 + 1, i3)
+        }, year, month, day)
+
+        datePicker.show()
     }
 }

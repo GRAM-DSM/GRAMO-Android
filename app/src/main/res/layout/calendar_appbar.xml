@@ -16,12 +16,13 @@
         app:layout_constraintTop_toTopOf="parent" >
 
         <LinearLayout
+            android:id="@+id/calendar_date"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center">
 
             <TextView
-                android:id="@+id/calendar_date"
+                android:id="@+id/calendar_date_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -36,8 +37,6 @@
                 app:tint="#909090" />
 
         </LinearLayout>
-
-
 
     </androidx.appcompat.widget.Toolbar>
 
