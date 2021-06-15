@@ -1,229 +1,76 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
+    <data>
+        <variable
+            name="viewModel"
+            type="com.example.gramoproject.viewmodel.CalendarViewModel" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+
         android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" >
+        android:layout_height="match_parent">
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center">
+        <androidx.drawerlayout.widget.DrawerLayout
+            android:id="@+id/drawer_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/calendar_date"
+            <include layout="@layout/calendar_appbar" />
+
+            <com.google.android.material.navigation.NavigationView
+                android:id="@+id/calendar_nav_view"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:textColor="#909090"
-                android:text="2021년 6월 10일"/>
+                android:layout_height="match_parent"
+                android:layout_gravity="start"
+                android:background="@color/white"
+                android:fitsSystemWindows="true"
+                android:theme="@style/NavigationTheme"
+                app:headerLayout="@layout/notice_drawer"
+                app:itemTextAppearance="@style/ItemFont"
+                app:menu="@menu/drawer_menu">
 
-            <ImageView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                app:srcCompat="@drawable/ic_baseline_keyboard_arrow_down_24"
-                app:tint="#909090" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="bottom"
+                    android:orientation="vertical">
 
-        </LinearLayout>
+                    <Button
+                        android:id="@+id/cal_side_logout_btn"
+                        style="@style/Widget.AppCompat.Button.Borderless"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:backgroundTint="@color/white"
+                        android:gravity="left|center_vertical"
+                        android:paddingLeft="17dp"
+                        android:text="로그아웃"
+                        android:textColor="@color/red"
+                        android:textSize="18sp" />
 
+                    <Button
+                        android:id="@+id/cal_side_leave_btn"
+                        style="@style/Widget.AppCompat.Button.Borderless"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:layout_marginBottom="10dp"
+                        android:backgroundTint="@color/white"
+                        android:gravity="left|center_vertical"
+                        android:paddingLeft="17dp"
+                        android:text="탈퇴하기"
+                        android:textColor="@color/gray"
+                        android:textSize="18sp" />
 
+                </LinearLayout>
 
-    </androidx.appcompat.widget.Toolbar>
+            </com.google.android.material.navigation.NavigationView>
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        app:layout_constraintBottom_toTopOf="@+id/picu_rv"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar"
-        app:srcCompat="@drawable/red_dot" />
+        </androidx.drawerlayout.widget.DrawerLayout>
 
-    <TextView
-        android:id="@+id/picu_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:text="PICU"
-        android:textColor="#000000"
-        android:textSize="20dp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toTopOf="@+id/picu_rv"
-        app:layout_constraintStart_toEndOf="@+id/imageView"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <ImageButton
-        android:id="@+id/plus_btn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="24dp"
-        android:background="#00FF0000"
-        app:layout_constraintBottom_toTopOf="@+id/picu_rv"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar"
-        app:srcCompat="@drawable/ic_baseline_add_24" />
-
-
-    <View
-        android:id="@+id/divider"
-        android:layout_width="370dp"
-        android:layout_height="1dp"
-        android:background="@color/black"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/picu_rv"
-        android:layout_width="match_parent"
-        android:layout_height="230dp"
-        android:layout_marginTop="60dp"
-        android:nestedScrollingEnabled="false"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
-
-
-    <LinearLayout
-
-        android:id="@+id/picu_input"
-        android:layout_width="match_parent"
-        android:layout_height="60dp"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/picu_tv"
-        tools:ignore="MissingConstraints">
-
-        <ImageView
-            android:id="@+id/profite_img"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
-            android:layout_marginTop="10dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-             />
-
-        <TextView
-            android:id="@+id/user_name_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="15dp"
-            android:layout_marginTop="15dp"
-            android:text="박나연"
-            android:textColor="#000"
-            android:textSize="18dp"
-            app:layout_constraintStart_toEndOf="@+id/profite_img"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <EditText
-            android:id="@+id/reason_input"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="10dp"
-            android:layout_marginTop="15dp"
-            android:background="@null"
-            android:hint="사유를 적어주세요."
-            android:textSize="14dp"
-            app:layout_constraintStart_toEndOf="@+id/user_name_tv"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="MissingConstraints" />
-    </LinearLayout>
-
-    <TextView
-        android:id="@+id/plan_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="25dp"
-        android:text="특별한 일"
-        android:textColor="#000000"
-        android:textSize="20dp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toEndOf="@+id/imageView3"
-        app:layout_constraintTop_toBottomOf="@+id/divider" />
-
-    <ImageView
-        android:id="@+id/imageView3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        app:layout_constraintBottom_toTopOf="@+id/special_rv"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider"
-        app:srcCompat="@drawable/blue_dot" />
-
-    <ImageButton
-        android:id="@+id/plus_btn2"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:layout_marginEnd="24dp"
-        android:backgroundTint="#00FF0000"
-        app:layout_constraintBottom_toTopOf="@+id/special_rv"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/divider"
-        app:srcCompat="@drawable/ic_baseline_add_24" />
-
-    <LinearLayout
-        android:id="@+id/special_input"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:visibility="gone"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:ignore="MissingConstraints">
-
-        <EditText
-            android:id="@+id/speci_title_input"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="17dp"
-            android:layout_marginTop="15dp"
-            android:background="@null"
-            android:hint="어떤 특별한 일인가요?"
-            android:textColor="#000"
-            android:textSize="18dp"
-            app:layout_constraintStart_toEndOf="@+id/profite_img"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <EditText
-            android:id="@+id/do_input"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="17dp"
-            android:layout_marginTop="15dp"
-            android:background="@null"
-            android:hint="특별한 일의 설명을 적어주세요"
-            android:textSize="14dp"
-            app:layout_constraintStart_toEndOf="@+id/user_name_tv"
-            app:layout_constraintTop_toTopOf="parent"
-            tools:ignore="MissingConstraints" />
-    </LinearLayout>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/special_rv"
-        android:layout_width="409dp"
-        android:layout_height="290dp"
-        android:nestedScrollingEnabled="false"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+</layout>
