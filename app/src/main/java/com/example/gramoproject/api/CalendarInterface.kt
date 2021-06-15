@@ -6,21 +6,21 @@ import retrofit2.Call
 import retrofit2.http.*
 
 interface CalendarInterface {
-    @GET("/calendar/plan")
+    @GET("/calendar/plan/{date}")
     fun getPlan(
-        @Header("Authorization") header: Header,
+        @Header("Authorization") header: String,
         @Path("date") date: String
     ): Call<PlanList>
 
-    @GET("/calendar/picu")
+    @GET("/calendar/picu/{date}")
     fun getPicu(
-        @Header("Authorization") header: Header,
+        @Header("Authorization") header: String,
         @Path("date") date: String
     ): Call<PicuList>
 
     @POST("/calendar/plan")
     fun createPlan(
-        @Header("Authorization") header: Header,
+        @Header("Authorization") header: String,
         @Body content: String,
         @Body title: String,
         @Body date: String
@@ -28,20 +28,20 @@ interface CalendarInterface {
 
     @POST("/calendar/picu")
     fun createPicu(
-        @Header("Authorization") header: Header,
+        @Header("Authorization") header: String,
         @Body description : String,
         @Body date : String
     ) : Call<Unit>
 
     @DELETE("/calendar/plan")
     fun deletePlan(
-        @Header("Authorization") header: Header,
+        @Header("Authorization") header: String,
         @Path("planId") planId : Int
     ) : Call<Unit>
 
     @DELETE("/calendar/picu")
     fun deletePicu(
-        @Header("Authorization") header: Header,
+        @Header("Authorization") header: String,
         @Path("picuId") picuId : Int
     ) : Call<Unit>
 }

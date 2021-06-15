@@ -5,14 +5,18 @@ import android.app.Dialog
 import android.icu.util.Calendar
 import android.os.Bundle
 import android.view.MenuItem
-import android.widget.DatePicker
+import android.view.View
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.databinding.DataBindingUtil
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.gramo.R
 import com.example.gramo.databinding.CalendarActivityBinding
+import com.example.gramoproject.adapter.PicuRecyclerAdapter
+import com.example.gramoproject.adapter.PlanRecyclerAdapter
+import com.example.gramoproject.model.NoticeList
 import com.example.gramoproject.sharedpreferences.SharedPreferencesHelper
 import com.example.gramoproject.view.homework.HomeworkMainActivity
 import com.example.gramoproject.view.main.MainActivity
@@ -29,6 +33,7 @@ import kotlinx.android.synthetic.main.logout_custom_dialog.*
 import kotlinx.android.synthetic.main.notice_activity.*
 import kotlinx.android.synthetic.main.notice_activity.drawer_layout
 import kotlinx.android.synthetic.main.notice_drawer.view.*
+import kotlinx.android.synthetic.main.picu_custom_dialog.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -36,7 +41,11 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 
     private lateinit var LogoutDialog: Dialog
     private lateinit var LeaveDialog: Dialog
+    private lateinit var picuDialog: Dialog
     private lateinit var dataBinding : CalendarActivityBinding
+    private lateinit var cal_date : String
+    private lateinit var picuAdapter: PicuRecyclerAdapter
+    private lateinit var planAdapter: PlanRecyclerAdapter
     private val viewModel: CalendarViewModel by viewModels()
     private val currentActivity = javaClass.simpleName.trim()
     private val sharedPreferencesHelper = SharedPreferencesHelper.getInstance()
@@ -52,21 +61,45 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
         dataBinding.lifecycleOwner = this
         dataBinding.viewModel = viewModel
 
-        initDialog()
-        viewModelObseve()
-
-        calendar_date.setOnClickListener{
-            datePicker()
-        }
+        picu_rv.layoutManager = LinearLayoutManager(this@CalendarActivity)
+        special_rv.layoutManager = LinearLayoutManager(this@CalendarActivity)
 
         val now = System.currentTimeMillis()
         val date = Date(now)
         val dateFormat = SimpleDateFormat("yyyy년 MM월 dd일")
+        val apiDateFormat = SimpleDateFormat("yyyy-MM-dd")
         val getDate = dateFormat.format(date)
+        val apiGetDate = apiDateFormat.format(date)
         calendar_date_tv.text = getDate
+        cal_date = apiGetDate
+
+        initDialog()
+        viewModelObseve()
+        viewModel.getPicu(cal_date)
+        viewModel.getPlan(cal_date)
+
+        calendar_date.setOnClickListener{
+            datePicker()
+        }
     }
 
     private fun viewModelObseve(){
+        viewModel.picuLiveData.observe(this, {
+            when(it){
+                200 -> {
+                    picuAdapter = PicuRecyclerAdapter(viewModel.picuList.value!!)
+                    picu_rv.adapter = picuAdapter
+                }
+            }
+        })
+        viewModel.planLiveData.observe(this, {
+            when(it){
+                200 -> {
+                    planAdapter = PlanRecyclerAdapter(viewModel.planList.value!!)
+                    special_rv.adapter = planAdapter
+                }
+            }
+        })
         viewModel.logoutLiveData.observe(this, {
             when(it){
                 204 -> {
@@ -165,6 +198,10 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
         cal_side_leave_btn.setOnClickListener {
             showLeaveDialog()
         }
+
+        picuDialog = Dialog(this)
+        picuDialog.setContentView(R.layout.picu_custom_dialog)
+
     }
 
     private fun showLogoutDialog() {
@@ -191,8 +228,13 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
     private fun datePicker() {
         val datePicker = DatePickerDialog(this, { _, i, i2, i3 ->
             calendar_date_tv.text = resources.getString(R.string.set_date, i, i2 + 1, i3)
+            cal_date = resources.getString(R.string.calendar_set_date, i, i2 + 1, i3)
+            viewModel.getPicu(cal_date)
+            viewModel.getPlan(cal_date)
         }, year, month, day)
 
         datePicker.show()
     }
+
+
 }
