@@ -2,10 +2,12 @@ package com.example.gramoproject.view.calendar
 
 import android.app.DatePickerDialog
 import android.app.Dialog
+import android.content.Context
 import android.icu.util.Calendar
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
@@ -31,6 +33,7 @@ import kotlinx.android.synthetic.main.calendar_activity.*
 import kotlinx.android.synthetic.main.calendar_appbar.*
 import kotlinx.android.synthetic.main.homework_add_activity.*
 import kotlinx.android.synthetic.main.leave_custom_dialog.*
+import kotlinx.android.synthetic.main.login_activity.*
 import kotlinx.android.synthetic.main.logout_custom_dialog.*
 import kotlinx.android.synthetic.main.notice_activity.*
 import kotlinx.android.synthetic.main.notice_activity.drawer_layout
@@ -85,6 +88,33 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
         calendar_date.setOnClickListener {
             datePicker()
         }
+
+        cal_add_btn.setOnClickListener{
+            add_layout.visibility = View.VISIBLE
+        }
+
+        cal_plan_add_btn.setOnClickListener{
+            add_plan_layout.visibility = View.VISIBLE
+        }
+
+        cal_cancel_iv.setOnClickListener{
+            add_layout.visibility = View.GONE
+            user_description_et.setText("")
+
+            val imm: InputMethodManager =
+                getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(cal_cancel_iv.windowToken, 0)
+        }
+
+        cal_plan_cancel_iv.setOnClickListener{
+            add_plan_layout.visibility = View.GONE
+            plan_title.setText("")
+            plan_description.setText("")
+
+            val imm: InputMethodManager =
+                getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            imm.hideSoftInputFromWindow(cal_cancel_iv.windowToken, 0)
+        }
     }
 
     private fun viewModelObseve() {
@@ -132,6 +162,7 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
             }
         })
     }
+
 
     private fun NavInitializeLayout() {
         setSupportActionBar(calendar_toolbar)

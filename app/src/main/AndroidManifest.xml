@@ -26,7 +26,7 @@
         <activity android:name="com.example.gramoproject.activity.sign.RegisterActivity" />
         <activity android:name="com.example.gramoproject.view.notice.NoticeActivity" />
         <activity android:name="com.example.gramoproject.activity.notice.NoticeAddActivity" />
-        <activity android:name="com.example.gramoproject.view.calendar.CalendarActivity" />
+        <activity android:name="com.example.gramoproject.view.calendar.CalendarActivity" android:windowSoftInputMode="adjustNothing"/>
         <activity android:name="com.example.gramoproject.view.homework.HomeworkAddActivity" />
         <activity android:name="com.example.gramoproject.view.homework.HomeworkShowActivity" />
         <activity android:name="com.example.gramoproject.view.homework.HomeworkMainActivity" />
