@@ -9,7 +9,9 @@ import com.example.gramoproject.adapter.PlanRecyclerAdapter
 import com.example.gramoproject.api.ApiClient
 import com.example.gramoproject.api.CalendarInterface
 import com.example.gramoproject.api.LoginInterface
+import com.example.gramoproject.model.PicuBody
 import com.example.gramoproject.model.PicuList
+import com.example.gramoproject.model.PlanBody
 import com.example.gramoproject.model.PlanList
 import com.example.gramoproject.sharedpreferences.SharedPreferencesHelper
 import retrofit2.Call
@@ -24,12 +26,16 @@ class CalendarViewModel : ViewModel() {
     private val _planLiveData = MutableLiveData<Int>()
     private val _picuDeleteLiveData = MutableLiveData<Int>()
     private val _planDeleteLiveData = MutableLiveData<Int>()
+    private val _createPicuLiveData = MutableLiveData<Int>()
+    private val _createPlanLiveData = MutableLiveData<Int>()
     val logoutLiveData: LiveData<Int> get() = _logoutLiveData
     val withDrawLiveData: LiveData<Int> get() = _withDrawLiveData
     val picuLiveData: LiveData<Int> get() = _picuLivaData
     val planLiveData: LiveData<Int> get() = _planLiveData
     val picuDeleteLiveData: LiveData<Int> get() = _picuDeleteLiveData
     val planDeleteLiveData: LiveData<Int> get() = _planDeleteLiveData
+    val createPicuLiveData: LiveData<Int> get() = _createPicuLiveData
+    val createPlanLiveData: LiveData<Int> get() = _createPlanLiveData
     val picuList = MutableLiveData<PicuList>()
     val planList = MutableLiveData<PlanList>()
 
@@ -64,6 +70,33 @@ class CalendarViewModel : ViewModel() {
             }
 
             override fun onFailure(call: Call<PlanList>, t: Throwable) {
+            }
+
+        })
+    }
+
+    fun createPicu(picu : PicuBody){
+        val createPicuCall = ApiClient.getClient().create(CalendarInterface::class.java)
+            .createPicu("Bearer " + sharedPreferencesHelper.accessToken, picu)
+        createPicuCall.enqueue(object : Callback<Unit> {
+            override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
+                _createPicuLiveData.value = response.code()
+            }
+
+            override fun onFailure(call: Call<Unit>, t: Throwable) {
+            }
+        })
+    }
+
+    fun createPlan(plan : PlanBody){
+        val createPlanCall = ApiClient.getClient().create(CalendarInterface::class.java)
+            .createPlan("Bearer " + sharedPreferencesHelper.accessToken, plan)
+        createPlanCall.enqueue(object : Callback<Unit> {
+            override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
+                _createPlanLiveData.value = response.code()
+            }
+
+            override fun onFailure(call: Call<Unit>, t: Throwable) {
             }
 
         })

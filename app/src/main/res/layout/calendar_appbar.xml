@@ -64,7 +64,7 @@
         app:layout_constraintTop_toBottomOf="@+id/calendar_toolbar" />
 
     <ImageButton
-        android:id="@+id/cal_add_btn"
+        android:id="@+id/cal_picu_plus_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="24dp"
@@ -75,7 +75,7 @@
         app:srcCompat="@drawable/ic_baseline_add_24" />
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/add_layout"
+        android:id="@+id/add_picu_layout"
         android:layout_width="370dp"
         android:layout_height="60dp"
         android:layout_marginTop="5dp"
@@ -96,12 +96,11 @@
             app:tint="#C3C8CD" />
 
         <TextView
-            android:id="@+id/user_name_tv"
+            android:id="@+id/picu_user_name_tv"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="5dp"
             android:layout_marginTop="15dp"
-            android:text="박나연"
             android:textColor="#000"
             android:textSize="18dp"
             app:layout_constraintStart_toEndOf="@+id/profite_img"
@@ -117,11 +116,11 @@
             android:textSize="14dp"
             android:background="@null"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toEndOf="@+id/user_name_tv"
+            app:layout_constraintStart_toEndOf="@+id/picu_user_name_tv"
             app:layout_constraintTop_toTopOf="parent" />
 
         <ImageView
-            android:id="@+id/cal_accept_iv"
+            android:id="@+id/cal_picu_accept_iv"
             android:layout_width="20dp"
             android:layout_height="20dp"
             android:src="@drawable/ic_baseline_check_24"
@@ -176,7 +175,7 @@
         app:srcCompat="@drawable/blue_dot" />
 
     <ImageButton
-        android:id="@+id/cal_plan_add_btn"
+        android:id="@+id/cal_plan_plus_btn"
         android:layout_width="30dp"
         android:layout_height="30dp"
         android:layout_marginEnd="24dp"
@@ -255,7 +254,7 @@
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/add_layout" />
+        app:layout_constraintTop_toBottomOf="@+id/add_picu_layout" />
 
 
     <androidx.recyclerview.widget.RecyclerView

@@ -1,6 +1,8 @@
 package com.example.gramoproject.api
 
+import com.example.gramoproject.model.PicuBody
 import com.example.gramoproject.model.PicuList
+import com.example.gramoproject.model.PlanBody
 import com.example.gramoproject.model.PlanList
 import retrofit2.Call
 import retrofit2.http.*
@@ -21,16 +23,13 @@ interface CalendarInterface {
     @POST("/calendar/plan")
     fun createPlan(
         @Header("Authorization") header: String,
-        @Body content: String,
-        @Body title: String,
-        @Body date: String
+        @Body plan : PlanBody
     ) : Call<Unit>
 
     @POST("/calendar/picu")
     fun createPicu(
         @Header("Authorization") header: String,
-        @Body description : String,
-        @Body date : String
+        @Body picu : PicuBody
     ) : Call<Unit>
 
     @DELETE("/calendar/plan/{planId}")

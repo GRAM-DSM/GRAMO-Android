@@ -18,11 +18,10 @@ import com.example.gramo.R
 import com.example.gramo.databinding.CalendarActivityBinding
 import com.example.gramoproject.adapter.PicuRecyclerAdapter
 import com.example.gramoproject.adapter.PlanRecyclerAdapter
-import com.example.gramoproject.model.PicuList
-import com.example.gramoproject.model.PlanList
+import com.example.gramoproject.model.PicuBody
+import com.example.gramoproject.model.PlanBody
 import com.example.gramoproject.sharedpreferences.SharedPreferencesHelper
 import com.example.gramoproject.view.homework.HomeworkMainActivity
-import com.example.gramoproject.view.main.MainActivity
 import com.example.gramoproject.view.main.MainActivity.Companion.intent
 import com.example.gramoproject.view.main.MainActivity.Companion.toast
 import com.example.gramoproject.view.notice.NoticeActivity
@@ -84,36 +83,46 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
         viewModelObseve()
         viewModel.getPicu(cal_date)
         viewModel.getPlan(cal_date)
+        picu_user_name_tv.text = sharedPreferencesHelper.name
 
         calendar_date.setOnClickListener {
             datePicker()
         }
 
-        cal_add_btn.setOnClickListener{
-            add_layout.visibility = View.VISIBLE
+        cal_picu_plus_btn.setOnClickListener{
+            add_picu_layout.visibility = View.VISIBLE
         }
 
-        cal_plan_add_btn.setOnClickListener{
+        cal_plan_plus_btn.setOnClickListener{
             add_plan_layout.visibility = View.VISIBLE
         }
 
-        cal_cancel_iv.setOnClickListener{
-            add_layout.visibility = View.GONE
+        cal_picu_accept_iv.setOnClickListener{
+            viewModel.createPicu(PicuBody(user_description_et.getText().toString(), cal_date))
+            add_picu_layout.visibility = View.GONE
             user_description_et.setText("")
+            picuKeyboardDown()
+        }
 
-            val imm: InputMethodManager =
-                getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.hideSoftInputFromWindow(cal_cancel_iv.windowToken, 0)
+        cal_plan_accept_iv.setOnClickListener{
+            viewModel.createPlan(PlanBody(plan_description.text.toString(), plan_title.text.toString(), cal_date))
+            add_plan_layout.visibility = View.GONE
+            plan_title.setText("")
+            plan_description.setText("")
+            planKeyboardDown()
+        }
+
+        cal_cancel_iv.setOnClickListener{
+            add_picu_layout.visibility = View.GONE
+            user_description_et.setText("")
+            picuKeyboardDown()
         }
 
         cal_plan_cancel_iv.setOnClickListener{
             add_plan_layout.visibility = View.GONE
             plan_title.setText("")
             plan_description.setText("")
-
-            val imm: InputMethodManager =
-                getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.hideSoftInputFromWindow(cal_cancel_iv.windowToken, 0)
+            planKeyboardDown()
         }
     }
 
@@ -134,6 +143,22 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
                     special_rv.adapter = planAdapter
                     planIvClick()
                 }
+            }
+        })
+        viewModel.createPicuLiveData.observe(this, {
+            when(it){
+                201 -> {
+                    viewModel.getPicu(cal_date)
+                    toast(this@CalendarActivity, R.string.create_picu, 0)
+                } else -> toast(this@CalendarActivity, R.string.calendar_error, 0)
+            }
+        })
+        viewModel.createPlanLiveData.observe(this, {
+            when(it){
+                201 -> {
+                    viewModel.getPlan(cal_date)
+                    toast(this@CalendarActivity, R.string.create_plan, 0)
+                } else -> toast(this@CalendarActivity, R.string.calendar_error, 0)
             }
         })
         viewModel.logoutLiveData.observe(this, {
@@ -162,7 +187,6 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
             }
         })
     }
-
 
     private fun NavInitializeLayout() {
         setSupportActionBar(calendar_toolbar)
@@ -327,5 +351,17 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
                 else -> toast(this@CalendarActivity, R.string.calendar_error, 0)
             }
         })
+    }
+
+    private fun picuKeyboardDown(){
+        val imm: InputMethodManager =
+            getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(cal_cancel_iv.windowToken, 0)
+    }
+
+    private fun planKeyboardDown(){
+        val imm: InputMethodManager =
+            getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(cal_cancel_iv.windowToken, 0)
     }
 }

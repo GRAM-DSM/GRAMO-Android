@@ -112,10 +112,11 @@
         <EditText
             android:id="@+id/notice_content_et"
             android:layout_width="360dp"
-            android:layout_height="wrap_content"
+            android:layout_height="500dp"
             android:layout_marginTop="55dp"
             android:background="@null"
             android:hint="내용을 입력하세요"
+            android:gravity="top"
             android:maxLength="1000"
             android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
