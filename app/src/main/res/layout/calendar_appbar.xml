@@ -108,10 +108,12 @@
 
         <EditText
             android:id="@+id/user_description_et"
-            android:layout_width="180dp"
+            android:layout_width="160dp"
             android:layout_height="40dp"
             android:layout_marginStart="10dp"
             android:hint="사유를 입력해주세요"
+            android:maxLines="2"
+            android:inputType="textPersonName"
             android:textColor="#000"
             android:textSize="14dp"
             android:background="@null"
@@ -197,12 +199,14 @@
 
         <EditText
             android:id="@+id/plan_title"
-            android:layout_width="wrap_content"
+            android:layout_width="280dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="15dp"
             android:layout_marginTop="5dp"
             android:background="@null"
             android:hint="어떤 특별한 일인가요?"
+            android:maxLines="1"
+            android:inputType="textPersonName"
             android:textColor="#000"
             android:textSize="18dp"
             app:layout_constraintStart_toStartOf="parent"
@@ -210,11 +214,12 @@
 
         <EditText
             android:id="@+id/plan_description"
-            android:layout_width="wrap_content"
+            android:layout_width="280dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="15dp"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="5dp"
+            android:maxLines="2"
             android:background="@null"
             android:inputType="textPersonName"
             android:textSize="14dp"
