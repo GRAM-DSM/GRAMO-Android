@@ -1,55 +1,62 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<LinearLayout
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="60dp"
-    android:layout_margin="5dp">
+    android:layout_height="wrap_content">
 
-    <ImageView
-        android:id="@+id/profite_img"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginStart="10dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_baseline_account_circle_24"
-        app:tint="#C3C8CD"/>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="60dp"
+            android:layout_margin="5dp">
 
-    <TextView
-        android:id="@+id/user_name_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="15dp"
-        android:text="박나연"
-        android:textColor="#000"
-        android:textSize="18dp"
-        app:layout_constraintStart_toEndOf="@+id/profite_img"
-        app:layout_constraintTop_toTopOf="parent" />
+            <ImageView
+                android:id="@+id/profite_img"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginStart="10dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_baseline_account_circle_24"
+                app:tint="#C3C8CD"/>
 
-    <TextView
-        android:id="@+id/user_description_tv"
-        android:layout_width="240dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="18dp"
-        android:text="몸이 아파요 "
-        android:textColor="#000"
-        android:textSize="14dp"
-        app:layout_constraintStart_toEndOf="@+id/user_name_tv"
-        app:layout_constraintTop_toTopOf="parent" />
+            <TextView
+                android:id="@+id/user_name_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="15dp"
+                android:text="박나연"
+                android:textColor="#000"
+                android:textSize="18dp"
+                app:layout_constraintStart_toEndOf="@+id/profite_img"
+                app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageView
-        android:id="@+id/cal_delete_iv"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/user_description_tv"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/picu_clear" />
+            <TextView
+                android:id="@+id/user_description_tv"
+                android:layout_width="200dp"
+                android:layout_height="40dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="18dp"
+                android:text="몸이 아파요 "
+                android:textColor="#000"
+                android:textSize="14dp"
+                app:layout_constraintStart_toEndOf="@+id/user_name_tv"
+                app:layout_constraintTop_toTopOf="parent" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <ImageView
+                android:id="@+id/picu_delete_iv"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_marginRight="18dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/clear_delete" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</LinearLayout>
+

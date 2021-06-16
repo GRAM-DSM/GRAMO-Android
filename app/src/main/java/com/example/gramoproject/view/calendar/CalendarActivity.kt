@@ -16,11 +16,13 @@ import com.example.gramo.R
 import com.example.gramo.databinding.CalendarActivityBinding
 import com.example.gramoproject.adapter.PicuRecyclerAdapter
 import com.example.gramoproject.adapter.PlanRecyclerAdapter
-import com.example.gramoproject.model.NoticeList
+import com.example.gramoproject.model.PicuList
+import com.example.gramoproject.model.PlanList
 import com.example.gramoproject.sharedpreferences.SharedPreferencesHelper
 import com.example.gramoproject.view.homework.HomeworkMainActivity
 import com.example.gramoproject.view.main.MainActivity
 import com.example.gramoproject.view.main.MainActivity.Companion.intent
+import com.example.gramoproject.view.main.MainActivity.Companion.toast
 import com.example.gramoproject.view.notice.NoticeActivity
 import com.example.gramoproject.view.sign.LoginActivity
 import com.example.gramoproject.viewmodel.CalendarViewModel
@@ -34,6 +36,7 @@ import kotlinx.android.synthetic.main.notice_activity.*
 import kotlinx.android.synthetic.main.notice_activity.drawer_layout
 import kotlinx.android.synthetic.main.notice_drawer.view.*
 import kotlinx.android.synthetic.main.picu_custom_dialog.*
+import kotlinx.android.synthetic.main.picu_item.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -42,8 +45,9 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
     private lateinit var LogoutDialog: Dialog
     private lateinit var LeaveDialog: Dialog
     private lateinit var picuDialog: Dialog
-    private lateinit var dataBinding : CalendarActivityBinding
-    private lateinit var cal_date : String
+    private lateinit var planDialog: Dialog
+    private lateinit var dataBinding: CalendarActivityBinding
+    private lateinit var cal_date: String
     private lateinit var picuAdapter: PicuRecyclerAdapter
     private lateinit var planAdapter: PlanRecyclerAdapter
     private val viewModel: CalendarViewModel by viewModels()
@@ -78,50 +82,52 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
         viewModel.getPicu(cal_date)
         viewModel.getPlan(cal_date)
 
-        calendar_date.setOnClickListener{
+        calendar_date.setOnClickListener {
             datePicker()
         }
     }
 
-    private fun viewModelObseve(){
+    private fun viewModelObseve() {
         viewModel.picuLiveData.observe(this, {
-            when(it){
+            when (it) {
                 200 -> {
                     picuAdapter = PicuRecyclerAdapter(viewModel.picuList.value!!)
                     picu_rv.adapter = picuAdapter
+                    picuIvClick()
                 }
             }
         })
         viewModel.planLiveData.observe(this, {
-            when(it){
+            when (it) {
                 200 -> {
                     planAdapter = PlanRecyclerAdapter(viewModel.planList.value!!)
                     special_rv.adapter = planAdapter
+                    planIvClick()
                 }
             }
         })
         viewModel.logoutLiveData.observe(this, {
-            when(it){
+            when (it) {
                 204 -> {
-                    MainActivity.toast(this@CalendarActivity, R.string.logout_success, 0)
+                    toast(this@CalendarActivity, R.string.logout_success, 0)
                     NoticeActivity.logoutCheck = true
                     LogoutDialog.dismiss()
                     intent(this@CalendarActivity, LoginActivity::class.java, true)
                 }
-                401 -> MainActivity.toast(this@CalendarActivity, R.string.logout_error, 0)
+                401 -> toast(this@CalendarActivity, R.string.logout_error, 0)
 
             }
         })
         viewModel.withDrawLiveData.observe(this, {
-            when(it){
+            when (it) {
                 204 -> {
                     NoticeActivity.withCheck = true
-                    MainActivity.toast(this@CalendarActivity, R.string.with_success, 0)
+                    toast(this@CalendarActivity, R.string.with_success, 0)
                     intent(this@CalendarActivity, LoginActivity::class.java, true)
                 }
                 401 -> {
                     NoticeActivity.withCheck = false
-                    MainActivity.toast(this@CalendarActivity, R.string.with_error, 0)
+                    toast(this@CalendarActivity, R.string.with_error, 0)
                 }
             }
         })
@@ -202,6 +208,8 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
         picuDialog = Dialog(this)
         picuDialog.setContentView(R.layout.picu_custom_dialog)
 
+        planDialog = Dialog(this)
+        planDialog.setContentView(R.layout.plan_custom_dialog)
     }
 
     private fun showLogoutDialog() {
@@ -236,19 +244,57 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
         datePicker.show()
     }
 
-    private fun rvItemClick(){
+    private fun picuIvClick() {
+        picuAdapter.setOnItemClickListener(object : PicuRecyclerAdapter.OnItemClickListener {
+            override fun onItemClick(v: View, position: Int) {
+                val picuId = viewModel.picuList.value!!.picuContentResponses.get(position)!!.picuId
+                picuDialog.show()
+                picuDialog.picu_negative_btn.setOnClickListener {
+                    picuDialog.dismiss()
+                }
+                picuDialog.picu_positive_btn.setOnClickListener {
+                    picuDialog.dismiss()
+                    deletePicu(picuId, position, picuAdapter)
+                }
+            }
+        })
     }
 
-    private fun showPicuDialog(){
-        picuDialog.show()
-        picuDialog.picu_negative_btn.setOnClickListener{
-            picuDialog.dismiss()
-        }
-        picuDialog.picu_positive_btn.setOnClickListener{
-            picuDialog.dismiss()
-            //viewModel.deletePicu()
-        }
+    private fun planIvClick() {
+        planAdapter.setOnItemClickListener(object : PlanRecyclerAdapter.OnItemClickListener {
+            override fun onItemClick(v: View, position: Int) {
+                val planId = viewModel.planList.value!!.planContentResponses.get(position)!!.planId
+                planDialog.show()
+                planDialog.picu_negative_btn.setOnClickListener {
+                    planDialog.dismiss()
+                }
+                planDialog.picu_positive_btn.setOnClickListener {
+                    planDialog.dismiss()
+                    deletePlan(planId, position, planAdapter)
+                }
+            }
+        })
     }
 
+    private fun deletePicu(picuId: Int, position: Int, adapter: PicuRecyclerAdapter) {
+        viewModel.deletePicu(picuId, position, adapter)
+        viewModel.picuDeleteLiveData.observe(this, {
+            when (it) {
+                200 -> toast(this@CalendarActivity, R.string.success_picu_delete, 0)
+                401 -> toast(this@CalendarActivity, R.string.does_not_delete_picu, 0)
+                else -> toast(this@CalendarActivity, R.string.calendar_error, 0)
+            }
+        })
+    }
 
+    private fun deletePlan(planId: Int, position: Int, adapter: PlanRecyclerAdapter) {
+        viewModel.deletePlan(planId, position, adapter)
+        viewModel.planDeleteLiveData.observe(this, {
+            when (it) {
+                200 -> toast(this@CalendarActivity, R.string.success_plan_delete, 0)
+                401 -> toast(this@CalendarActivity, R.string.does_not_delete_plan, 0)
+                else -> toast(this@CalendarActivity, R.string.calendar_error, 0)
+            }
+        })
+    }
 }

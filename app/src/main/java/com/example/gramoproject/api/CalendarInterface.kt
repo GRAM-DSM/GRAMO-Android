@@ -33,13 +33,13 @@ interface CalendarInterface {
         @Body date : String
     ) : Call<Unit>
 
-    @DELETE("/calendar/plan")
+    @DELETE("/calendar/plan/{planId}")
     fun deletePlan(
         @Header("Authorization") header: String,
         @Path("planId") planId : Int
     ) : Call<Unit>
 
-    @DELETE("/calendar/picu")
+    @DELETE("/calendar/picu/{picuId}")
     fun deletePicu(
         @Header("Authorization") header: String,
         @Path("picuId") picuId : Int

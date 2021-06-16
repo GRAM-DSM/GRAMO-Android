@@ -138,10 +138,12 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="10dp"
         android:layout_marginTop="25dp"
+        android:layout_marginBottom="23dp"
         android:text="특별한 일"
         android:textColor="#000000"
         android:textSize="20dp"
         android:textStyle="bold"
+        app:layout_constraintBottom_toTopOf="@+id/special_rv"
         app:layout_constraintStart_toEndOf="@+id/imageView3"
         app:layout_constraintTop_toBottomOf="@+id/divider" />
 
@@ -205,7 +207,7 @@
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/picu_rv"
-        android:layout_width="370dp"
+        android:layout_width="380dp"
         android:layout_height="230dp"
         android:layout_marginTop="60dp"
         android:nestedScrollingEnabled="false"
@@ -218,7 +220,7 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/special_rv"
         android:layout_width="370dp"
-        android:layout_height="290dp"
+        android:layout_height="300dp"
         android:nestedScrollingEnabled="false"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
