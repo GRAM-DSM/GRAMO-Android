@@ -27,7 +27,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:textColor="#909090"
-                android:text="2021년 6월 10일"/>
+                android:text=""/>
 
             <ImageView
                 android:layout_width="wrap_content"
@@ -123,6 +123,7 @@
             android:id="@+id/cal_picu_accept_iv"
             android:layout_width="20dp"
             android:layout_height="20dp"
+            android:layout_marginRight="5dp"
             android:src="@drawable/ic_baseline_check_24"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/cal_cancel_iv"
@@ -189,7 +190,6 @@
         android:id="@+id/add_plan_layout"
         android:layout_width="370dp"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
         android:visibility="gone"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -228,6 +228,7 @@
             android:id="@+id/cal_plan_accept_iv"
             android:layout_width="20dp"
             android:layout_height="20dp"
+            android:layout_marginRight="5dp"
             android:src="@drawable/ic_baseline_check_24"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@+id/cal_plan_cancel_iv"

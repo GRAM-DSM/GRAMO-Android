@@ -53,4 +53,5 @@
     <string name="create_plan">일정이 추가되었습니다.</string>
     <string name="plan_not_found">선택한 일정을 찾을 수 없습니다.</string>
     <string name="calendar_error">오류가 발생했습니다.</string>
+    <string name="isEmpty">내용을 입력해주세요.</string>
 </resources>
