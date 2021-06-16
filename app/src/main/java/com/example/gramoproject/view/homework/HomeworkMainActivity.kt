@@ -19,6 +19,7 @@ import com.example.gramoproject.api.ApiClient
 import com.example.gramoproject.api.HomeworkInterface
 import com.example.gramoproject.model.HomeworkResponse
 import com.example.gramoproject.view.calendar.CalendarActivity
+import com.example.gramoproject.view.main.MainActivity
 import com.example.gramoproject.view.notice.NoticeActivity
 import com.example.gramoproject.view.sign.LoginActivity
 import com.google.android.material.navigation.NavigationView
@@ -97,6 +98,7 @@ class HomeworkMainActivity : AppCompatActivity(), NavigationView.OnNavigationIte
                 } else {
                     val intentToNotice = Intent(this, NoticeActivity::class.java)
                     startActivity(intentToNotice)
+                    finish()
                 }
             }
             R.id.calender_menu -> {
@@ -106,6 +108,7 @@ class HomeworkMainActivity : AppCompatActivity(), NavigationView.OnNavigationIte
                 } else {
                     val intentToCalendar = Intent(this, CalendarActivity::class.java)
                     startActivity(intentToCalendar)
+                    finish()
                 }
             }
             R.id.assignment_menu -> {
@@ -115,6 +118,7 @@ class HomeworkMainActivity : AppCompatActivity(), NavigationView.OnNavigationIte
                 } else {
                     val intentToHomework = Intent(this, HomeworkMainActivity::class.java)
                     startActivity(intentToHomework)
+                    finish()
                 }
             }
 

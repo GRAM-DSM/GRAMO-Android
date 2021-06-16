@@ -1,12 +1,8 @@
 package com.example.gramoproject.viewmodel
 
-import android.app.Activity
-import android.app.Application
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import com.example.gramoproject.sharedpreferences.SharedPreferencesHelper
 import com.example.gramoproject.model.GetDetailNotice
 import com.example.gramoproject.model.NoticeList
@@ -18,10 +14,9 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class NoticeViewModel(application: Application) : AndroidViewModel(application) {
+class NoticeViewModel : ViewModel() {
     private val noticeInterface = ApiClient.getFlaskClient().create(NoticeInterface::class.java)
     private val sharedPreferencesHelper = SharedPreferencesHelper.getInstance()
-    private val context = getApplication<Application>().applicationContext
     val noticeLiveData = MutableLiveData<Int>()
     val itemLiveData = MutableLiveData<Int>()
     val loadMoreLiveData = MutableLiveData<Int>()
@@ -35,8 +30,12 @@ class NoticeViewModel(application: Application) : AndroidViewModel(application) 
     var off_set = -10
     val limit_num = 10
 
-    fun getNotice(){
-        val recyclerCall = noticeInterface.getNoticeList("Bearer " + sharedPreferencesHelper.accessToken!!, getOffSet(), limit_num)
+    fun getNotice() {
+        val recyclerCall = noticeInterface.getNoticeList(
+            "Bearer " + sharedPreferencesHelper.accessToken!!,
+            getOffSet(),
+            limit_num
+        )
 
         recyclerCall.enqueue(object : Callback<NoticeList> {
             override fun onResponse(call: Call<NoticeList>, response: Response<NoticeList>) {
@@ -57,15 +56,20 @@ class NoticeViewModel(application: Application) : AndroidViewModel(application) 
         })
     }
 
-    fun rvItemClick(id : Int){
-        val bottomSheetCall = noticeInterface.getNoticeDetail("Bearer " + sharedPreferencesHelper.accessToken!!, id)
+    fun rvItemClick(id: Int) {
+        val bottomSheetCall =
+            noticeInterface.getNoticeDetail("Bearer " + sharedPreferencesHelper.accessToken!!, id)
         bottomSheetCall.enqueue(object : Callback<GetDetailNotice> {
-            override fun onResponse(call: Call<GetDetailNotice>, response: Response<GetDetailNotice>) {
+            override fun onResponse(
+                call: Call<GetDetailNotice>,
+                response: Response<GetDetailNotice>
+            ) {
                 when (response.code()) {
                     200 -> noticeDetail.value = response.body()!!
                 }
                 itemLiveData.value = response.code()
             }
+
             override fun onFailure(call: Call<GetDetailNotice>, t: Throwable) {
                 Log.d("NoticeActivity", t.toString())
             }
@@ -73,50 +77,47 @@ class NoticeViewModel(application: Application) : AndroidViewModel(application) 
         })
     }
 
-    fun loadMore(adapter: NoticeRecyclerAdapter){
-        (context as Activity).runOnUiThread {
-            noticeList.value!!.notice.add(null)
-            adapter.notifyItemInserted(noticeList.value!!.notice.size - 1)
-            val handler = Handler(Looper.getMainLooper())
-            val call = noticeInterface.getNoticeList("Bearer " + sharedPreferencesHelper.accessToken!!, getOffSet(), limit_num)
+    fun loadMore(adapter: NoticeRecyclerAdapter) {
+        noticeList.value!!.notice.add(null)
+        adapter.notifyItemInserted(noticeList.value!!.notice.size - 1)
+        val call = noticeInterface.getNoticeList(
+            "Bearer " + sharedPreferencesHelper.accessToken!!,
+            getOffSet(),
+            limit_num
+        )
+        call.enqueue(object : Callback<NoticeList> {
+            override fun onResponse(call: Call<NoticeList>, response: Response<NoticeList>) {
+                when (response.code()) {
+                    200 -> {
+                        noticeList.value!!.notice.removeAt(noticeList.value!!.notice.size - 1)
+                        adapter.notifyItemRemoved(noticeList.value!!.notice.size)
 
-            handler.postDelayed(object : Runnable {
-                override fun run() {
-                    call.enqueue(object : Callback<NoticeList> {
-                        override fun onResponse(call: Call<NoticeList>, response: Response<NoticeList>) {
-                            when (response.code()) {
-                                200 -> {
-                                    noticeList.value!!.notice.removeAt(noticeList.value!!.notice.size - 1)
-                                    adapter.notifyItemRemoved(noticeList.value!!.notice.size)
-
-                                    val getDataMore: NoticeList? = response.body()
-                                    if (getDataMore != null && response.isSuccessful) {
-                                        isNext = getDataMore.next_page
-                                        noticeList.value!!.notice.addAll(getDataMore.notice)
-                                    }
-                                    adapter.notifyDataSetChanged()
-                                    isLoading = false
-                                }
-                            }
-                            loadMoreLiveData.value = response.code()
+                        val getDataMore: NoticeList? = response.body()
+                        if (getDataMore != null && response.isSuccessful) {
+                            isNext = getDataMore.next_page
+                            noticeList.value!!.notice.addAll(getDataMore.notice)
                         }
-
-                        override fun onFailure(call: Call<NoticeList>, t: Throwable) {
-                            Log.d("NoticeActivity", t.toString())
-                        }
-
-                    })
+                        adapter.notifyDataSetChanged()
+                        isLoading = false
+                    }
                 }
+                loadMoreLiveData.value = response.code()
+            }
 
-            }, 1000)
-        }
+            override fun onFailure(call: Call<NoticeList>, t: Throwable) {
+                Log.d("NoticeActivity", t.toString())
+            }
+
+        })
+
     }
 
-    fun noticeRemove(position : Int, id : Int, adapter : NoticeRecyclerAdapter){
-        val dismissCall = noticeInterface.deleteNotice("Bearer " + sharedPreferencesHelper.accessToken!!, id)
+    fun noticeRemove(position: Int, id: Int, adapter: NoticeRecyclerAdapter) {
+        val dismissCall =
+            noticeInterface.deleteNotice("Bearer " + sharedPreferencesHelper.accessToken!!, id)
         dismissCall.enqueue(object : Callback<Unit> {
             override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
-                when(response.code()){
+                when (response.code()) {
                     204 -> adapter.removeItem(position)
                 }
                 removeLiveData.value = response.code()
@@ -128,8 +129,9 @@ class NoticeViewModel(application: Application) : AndroidViewModel(application) 
         })
     }
 
-    fun logout(){
-        val logoutCall = ApiClient.getFlaskClient().create(LoginInterface::class.java).logout("Bearer " + sharedPreferencesHelper.accessToken)
+    fun logout() {
+        val logoutCall = ApiClient.getFlaskClient().create(LoginInterface::class.java)
+            .logout("Bearer " + sharedPreferencesHelper.accessToken)
         logoutCall.enqueue(object : Callback<Unit> {
             override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
                 when (response.code()) {
@@ -147,8 +149,9 @@ class NoticeViewModel(application: Application) : AndroidViewModel(application) 
         })
     }
 
-    fun withDrawal(){
-        val withCall = ApiClient.getFlaskClient().create(LoginInterface::class.java).withDrawal("Bearer " + sharedPreferencesHelper.accessToken)
+    fun withDrawal() {
+        val withCall = ApiClient.getFlaskClient().create(LoginInterface::class.java)
+            .withDrawal("Bearer " + sharedPreferencesHelper.accessToken)
         withCall.enqueue(object : Callback<Unit> {
             override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
                 when (response.code()) {
