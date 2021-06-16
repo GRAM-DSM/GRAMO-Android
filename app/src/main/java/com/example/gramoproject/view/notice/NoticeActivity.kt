@@ -2,6 +2,8 @@ package com.example.gramoproject.view.notice
 
 import android.app.Dialog
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.view.MenuItem
 import android.view.View
 import androidx.activity.viewModels
@@ -36,6 +38,7 @@ import kotlinx.android.synthetic.main.notice_drawer.view.*
 import kotlinx.android.synthetic.main.notice_unload_dialog.*
 import kotlinx.android.synthetic.main.progressbar.*
 import kotlinx.coroutines.*
+import java.lang.Runnable
 
 class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -139,8 +142,15 @@ class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
 
                 if (viewModel.isNext && !viewModel.isLoading) {
                     if (!notice_recyclerview.canScrollVertically(1)) {
-                        viewModel.loadMore(adapter)
-                        viewModel.isLoading = true
+                        runOnUiThread {
+                            val handler = Handler(Looper.getMainLooper())
+                            handler.postDelayed(object : Runnable {
+                                override fun run() {
+                                    viewModel.loadMore(adapter)
+                                    viewModel.isLoading = true
+                                }
+                            }, 1000)
+                        }
                     }
                 }
             }

@@ -236,5 +236,19 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
         datePicker.show()
     }
 
+    private fun rvItemClick(){
+    }
+
+    private fun showPicuDialog(){
+        picuDialog.show()
+        picuDialog.picu_negative_btn.setOnClickListener{
+            picuDialog.dismiss()
+        }
+        picuDialog.picu_positive_btn.setOnClickListener{
+            picuDialog.dismiss()
+            //viewModel.deletePicu()
+        }
+    }
+
 
 }

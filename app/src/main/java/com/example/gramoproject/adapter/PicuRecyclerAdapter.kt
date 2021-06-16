@@ -3,6 +3,7 @@ package com.example.gramoproject.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.AdapterView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gramo.R
 import com.example.gramoproject.model.NoticeList
@@ -11,12 +12,12 @@ import kotlinx.android.synthetic.main.picu_item.view.*
 
 class PicuRecyclerAdapter(private val items: PicuList) : RecyclerView.Adapter<PicuRecyclerAdapter.ViewHolder>() {
 
-    interface OnNoticeItemClickListener{
-        fun onItemClick(v: View, data: NoticeList.GetNotice, position: Int)
+    interface OnCalendarItemClickListener{
+        fun onItemClick(v: View, position: Int)
     }
 
-    private var listener: OnNoticeItemClickListener? = null
-    fun setOnItemClickListener(listener: OnNoticeItemClickListener){
+    private var listener: OnCalendarItemClickListener? = null
+    fun setOnItemClickListener(listener: OnCalendarItemClickListener){
         this.listener = listener
     }
 
