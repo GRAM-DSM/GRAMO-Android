@@ -80,7 +80,6 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
         cal_date = apiGetDate
 
         initDialog()
-        viewModelObseve()
         viewModel.getPicu(cal_date)
         viewModel.getPlan(cal_date)
         picu_user_name_tv.text = sharedPreferencesHelper.name
@@ -138,9 +137,20 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
             plan_description.setText("")
             planKeyboardDown()
         }
-    }
 
-    private fun viewModelObseve() {
+        viewModel.picuDeleteLiveData.observe(this, {
+            when (it) {
+                200 -> toast(this@CalendarActivity, R.string.success_picu_delete, 0)
+                403 -> toast(this@CalendarActivity, R.string.does_not_delete_picu, 0)
+                else -> toast(this@CalendarActivity, R.string.calendar_error, 0)
+            }
+        })
+        viewModel.planDeleteLiveData.observe(this, {
+            when (it) {
+                200 -> toast(this@CalendarActivity, R.string.success_plan_delete, 0)
+                else -> toast(this@CalendarActivity, R.string.calendar_error, 0)
+            }
+        })
         viewModel.picuLiveData.observe(this, {
             when (it) {
                 200 -> {
@@ -203,6 +213,7 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
             }
         })
     }
+
 
     private fun NavInitializeLayout() {
         setSupportActionBar(calendar_toolbar)
@@ -325,7 +336,7 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
                 }
                 picuDialog.picu_positive_btn.setOnClickListener {
                     picuDialog.dismiss()
-                    deletePicu(picuId, position, picuAdapter)
+                    viewModel.deletePicu(picuId,position,picuAdapter)
                 }
             }
         })
@@ -341,34 +352,12 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
                 }
                 planDialog.picu_positive_btn.setOnClickListener {
                     planDialog.dismiss()
-                    deletePlan(planId, position, planAdapter)
+                    viewModel.deletePlan(planId, position, planAdapter)
                 }
             }
         })
     }
-
-    private fun deletePicu(picuId: Int, position: Int, adapter: PicuRecyclerAdapter) {
-        viewModel.deletePicu(picuId, position, adapter)
-        viewModel.picuDeleteLiveData.observe(this, {
-            when (it) {
-                200 -> toast(this@CalendarActivity, R.string.success_picu_delete, 0)
-                401 -> toast(this@CalendarActivity, R.string.does_not_delete_picu, 0)
-                else -> toast(this@CalendarActivity, R.string.calendar_error, 0)
-            }
-        })
-    }
-
-    private fun deletePlan(planId: Int, position: Int, adapter: PlanRecyclerAdapter) {
-        viewModel.deletePlan(planId, position, adapter)
-        viewModel.planDeleteLiveData.observe(this, {
-            when (it) {
-                200 -> toast(this@CalendarActivity, R.string.success_plan_delete, 0)
-                401 -> toast(this@CalendarActivity, R.string.does_not_delete_plan, 0)
-                else -> toast(this@CalendarActivity, R.string.calendar_error, 0)
-            }
-        })
-    }
-
+    
     private fun picuKeyboardDown() {
         val imm: InputMethodManager =
             getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
