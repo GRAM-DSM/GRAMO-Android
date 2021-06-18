@@ -312,7 +312,7 @@ class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
     private fun swipeRefresh() {
         swipe_refresh_layout.setOnRefreshListener(object : SwipeRefreshLayout.OnRefreshListener {
             override fun onRefresh() {
-                viewModel.off_set = -10
+                viewModel.page = 0
                 viewModel.getNotice()
                 swipe_refresh_layout.isRefreshing = false
             }
