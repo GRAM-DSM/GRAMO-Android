@@ -76,8 +76,6 @@ class NoticeViewModel : ViewModel() {
     }
 
     fun loadMore(adapter: NoticeRecyclerAdapter) {
-        noticeList.value!!.notice.add(null)
-        adapter.notifyItemInserted(noticeList.value!!.notice.size - 1)
         val call = noticeInterface.getNoticeList(
             "Bearer " + sharedPreferencesHelper.accessToken!!,
             getNoticePage()
@@ -86,9 +84,6 @@ class NoticeViewModel : ViewModel() {
             override fun onResponse(call: Call<NoticeList>, response: Response<NoticeList>) {
                 when (response.code()) {
                     200 -> {
-                        noticeList.value!!.notice.removeAt(noticeList.value!!.notice.size - 1)
-                        adapter.notifyItemRemoved(noticeList.value!!.notice.size)
-
                         val getDataMore: NoticeList? = response.body()
                         if (getDataMore != null && response.isSuccessful) {
                             isNext = getDataMore.next_page

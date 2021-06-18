@@ -36,7 +36,6 @@ import kotlinx.android.synthetic.main.notice_bottomsheet.*
 import kotlinx.android.synthetic.main.notice_drawer.*
 import kotlinx.android.synthetic.main.notice_drawer.view.*
 import kotlinx.android.synthetic.main.notice_unload_dialog.*
-import kotlinx.android.synthetic.main.progressbar.*
 import kotlinx.coroutines.*
 import java.lang.Runnable
 
@@ -140,14 +139,18 @@ class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                 super.onScrolled(recyclerView, dx, dy)
 
+                val layoutManager = recyclerView.layoutManager as LinearLayoutManager
                 if (viewModel.isNext && !viewModel.isLoading) {
-                    if (!notice_recyclerview.canScrollVertically(1)) {
+                    if (layoutManager != null && layoutManager.findLastCompletelyVisibleItemPosition() ==
+                            viewModel.noticeList.value!!.notice.size - 1) {
+                                progressBar.visibility = View.VISIBLE
                         runOnUiThread {
                             val handler = Handler(Looper.getMainLooper())
                             handler.postDelayed(object : Runnable {
                                 override fun run() {
                                     viewModel.loadMore(adapter)
                                     viewModel.isLoading = true
+                                    progressBar.visibility = View.INVISIBLE
                                 }
                             }, 1000)
                         }

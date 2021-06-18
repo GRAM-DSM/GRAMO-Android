@@ -3,13 +3,11 @@ package com.example.gramoproject.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gramo.R
 import com.example.gramoproject.model.NoticeList
 import kotlinx.android.synthetic.main.notice_recycler_item.view.*
-import kotlinx.android.synthetic.main.progressbar.view.*
 
 class NoticeRecyclerAdapter(private val items: NoticeList, fragmentManager: FragmentManager) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private var mfragmentManager : FragmentManager = fragmentManager
@@ -28,13 +26,8 @@ class NoticeRecyclerAdapter(private val items: NoticeList, fragmentManager: Frag
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         val inflatedView: View
 
-        if(viewType == VIEW_TYPE_ITEM) {
-            inflatedView = LayoutInflater.from(parent.context).inflate(R.layout.notice_recycler_item, parent, false)
-            return ViewHolder(inflatedView)
-        } else {
-            inflatedView = LayoutInflater.from(parent.context).inflate(R.layout.progressbar, parent, false)
-            return LoadingViewHolder(inflatedView)
-        }
+        inflatedView = LayoutInflater.from(parent.context).inflate(R.layout.notice_recycler_item, parent, false)
+        return ViewHolder(inflatedView)
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -44,8 +37,6 @@ class NoticeRecyclerAdapter(private val items: NoticeList, fragmentManager: Frag
                 bind(item!!, mfragmentManager)
                 itemView.tag = item
             }
-        } else {
-            (holder as LoadingViewHolder).progressBar.isIndeterminate = true
         }
     }
 
@@ -79,16 +70,14 @@ class NoticeRecyclerAdapter(private val items: NoticeList, fragmentManager: Frag
         }
     }
 
-    inner class LoadingViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
-        var progressBar : ProgressBar
+//    inner class LoadingViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView){
+//        var progressBar : ProgressBar
+//
+//        init{
+//            progressBar = itemView.progressBar
+//        }
+//    }
 
-        init{
-            progressBar = itemView.progressBar
-        }
-    }
-
-    private fun showLoadingView(holder: LoadingViewHolder, position: Int){
-    }
 
     override fun getItemViewType(position: Int): Int {
         if(items.notice.get(position) == null){
