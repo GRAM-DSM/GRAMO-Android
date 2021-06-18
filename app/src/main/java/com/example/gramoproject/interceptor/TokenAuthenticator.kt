@@ -9,6 +9,7 @@ import com.example.gramoproject.sharedpreferences.SharedPreferencesHelper
 import com.example.gramoproject.api.LoginInterface
 import com.example.gramoproject.model.TokenRefresh
 import com.example.gramoproject.api.ApiClient
+import com.example.gramoproject.view.calendar.CalendarActivity
 import com.example.gramoproject.view.notice.NoticeActivity
 import com.example.gramoproject.view.sign.LoginActivity
 import retrofit2.Call
@@ -26,10 +27,9 @@ class TokenAuthenticator : Interceptor {
                 if(!NoticeActivity.logoutCheck && !NoticeActivity.withCheck) {
                     val refreshToken = "Bearer " + SharedPreferencesHelper.getInstance().refreshToken
                     if(sharedPreferencesHelper.accessToken == null){
-                        val context = GRAMOApplication.context
-                        val intent = Intent(context, LoginActivity::class.java)
+                        val intent = Intent(GRAMOApplication.context, LoginActivity::class.java)
                         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
-                        context!!.startActivity(intent)
+                        GRAMOApplication.context!!.startActivity(intent)
                     }
                     else {
                         SharedPreferencesHelper.getInstance().accessToken = null

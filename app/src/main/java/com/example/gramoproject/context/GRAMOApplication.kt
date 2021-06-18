@@ -7,7 +7,7 @@ import com.example.gramoproject.sharedpreferences.SharedPreferencesHelper
 class GRAMOApplication : Application() {
     private var context: Context? = null
     override fun onCreate() {
-
+        context = applicationContext
         sharedPreferencesHelper.prefs = applicationContext!!.getSharedPreferences("Gramo-prefs", Context.MODE_PRIVATE)
         super.onCreate()
     }
