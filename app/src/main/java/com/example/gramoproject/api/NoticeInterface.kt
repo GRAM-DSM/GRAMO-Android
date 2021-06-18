@@ -8,11 +8,10 @@ import retrofit2.Call
 import retrofit2.http.*
 
 interface NoticeInterface {
-    @GET("/notice/{off_set}/{limit_num}")
+    @GET("/notice/list/{page}")
     fun getNoticeList(
             @Header("Authorization") header: String,
-            @Path("off_set") off_set: Int,
-            @Path("limit_num") limit_num: Int) : Call<NoticeList>
+            @Path("page") page : Int) : Call<NoticeList>
 
     @GET("/notice/{notice_id}")
     fun getNoticeDetail(

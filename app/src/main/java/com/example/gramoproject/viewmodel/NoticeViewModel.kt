@@ -27,14 +27,12 @@ class NoticeViewModel : ViewModel() {
     val withDrawLiveData = MutableLiveData<Int>()
     var isNext = false
     var isLoading = false
-    var off_set = -10
-    val limit_num = 10
+    var page = 0
 
     fun getNotice() {
         val recyclerCall = noticeInterface.getNoticeList(
             "Bearer " + sharedPreferencesHelper.accessToken!!,
-            getOffSet(),
-            limit_num
+            getNoticePage()
         )
 
         recyclerCall.enqueue(object : Callback<NoticeList> {
@@ -78,20 +76,14 @@ class NoticeViewModel : ViewModel() {
     }
 
     fun loadMore(adapter: NoticeRecyclerAdapter) {
-        noticeList.value!!.notice.add(null)
-        adapter.notifyItemInserted(noticeList.value!!.notice.size - 1)
         val call = noticeInterface.getNoticeList(
             "Bearer " + sharedPreferencesHelper.accessToken!!,
-            getOffSet(),
-            limit_num
+            getNoticePage()
         )
         call.enqueue(object : Callback<NoticeList> {
             override fun onResponse(call: Call<NoticeList>, response: Response<NoticeList>) {
                 when (response.code()) {
                     200 -> {
-                        noticeList.value!!.notice.removeAt(noticeList.value!!.notice.size - 1)
-                        adapter.notifyItemRemoved(noticeList.value!!.notice.size)
-
                         val getDataMore: NoticeList? = response.body()
                         if (getDataMore != null && response.isSuccessful) {
                             isNext = getDataMore.next_page
@@ -170,9 +162,8 @@ class NoticeViewModel : ViewModel() {
         })
     }
 
-    private fun getOffSet(): Int {
-        off_set += limit_num
-        return off_set
+    private fun getNoticePage(): Int {
+        return page++
     }
 
 }
