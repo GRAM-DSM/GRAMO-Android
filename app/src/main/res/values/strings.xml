@@ -35,14 +35,17 @@
     <string name="notice_add_success">공지사항이 등록되었습니다.</string>
     <string name="notice_add_error">오류가 발생했습니다.</string>
 
-    <string name="set_date">%d년 %02d월 %02d일</string>
+    <string name="homework_set_date">%d-%02d-%02d</string>
     <string name="homework_add_success">숙제를 추가하였습니다.</string>
     <string name="homework_submit_success">숙제를 제출하였습니다.</string>
     <string name="homework_reject_success">숙제를 반환하였습니다.</string>
     <string name="homework_delete_success">숙제를 삭제하였습니다.</string>
     <string name="homework_does_not_submit">숙제가 아직 제출되지 않았습니다.</string>
     <string name="homework_check_success">숙제 제출을 확인하였습니다.</string>
-    
+    <string name="homewokr_already_submitted">숙제를 이미 제출하였습니다.</string>
+    <string name="homework_choice_correct_date">올바른 날짜를 선택해주세요.</string>
+    <string name="homework_add_content">숙제의 내용을 추가해주세요.</string>
+
     <string name="calendar_set_date">%d-%02d-%02d</string>
     <string name="success_picu_delete">PICU가 삭제되었습니다.</string>
     <string name="does_not_delete_picu">다른 사용자가 만든 PICU를 삭제할 수 없습니다.</string>
@@ -54,4 +57,5 @@
     <string name="plan_not_found">선택한 일정을 찾을 수 없습니다.</string>
     <string name="calendar_error">오류가 발생했습니다.</string>
     <string name="isEmpty">내용을 입력해주세요.</string>
+
 </resources>
