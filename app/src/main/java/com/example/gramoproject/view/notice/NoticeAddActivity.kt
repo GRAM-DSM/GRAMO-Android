@@ -25,8 +25,6 @@ class NoticeAddActivity : AppCompatActivity() {
         dataBinding.lifecycleOwner = this
         dataBinding.viewModel = viewModel
 
-        viewModelObserve()
-
         notice_cancel_tv.setOnClickListener{
             finish()
         }
@@ -39,9 +37,7 @@ class NoticeAddActivity : AppCompatActivity() {
                 viewModel.createNotice(NoticeItem(notice_title_et.text.toString(), notice_content_et.text.toString()))
             }
         }
-    }
 
-    private fun viewModelObserve(){
         viewModel.liveData.observe(this, {
             when(it){
                 201 -> {

@@ -103,7 +103,7 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
                 viewModel.createPicu(PicuBody(user_description_et.getText().toString(), cal_date))
                 add_picu_layout.visibility = View.GONE
                 user_description_et.setText("")
-                picuKeyboardDown()
+                keyboardDown()
             }
         }
 
@@ -121,21 +121,21 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
                 add_plan_layout.visibility = View.GONE
                 plan_title.setText("")
                 plan_description.setText("")
-                planKeyboardDown()
+                keyboardDown()
             }
         }
 
         cal_cancel_iv.setOnClickListener {
             add_picu_layout.visibility = View.GONE
             user_description_et.setText("")
-            picuKeyboardDown()
+            keyboardDown()
         }
 
         cal_plan_cancel_iv.setOnClickListener {
             add_plan_layout.visibility = View.GONE
             plan_title.setText("")
             plan_description.setText("")
-            planKeyboardDown()
+            keyboardDown()
         }
 
         viewModel.picuDeleteLiveData.observe(this, {
@@ -357,14 +357,8 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
             }
         })
     }
-
-    private fun picuKeyboardDown() {
-        val imm: InputMethodManager =
-            getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        imm.hideSoftInputFromWindow(cal_cancel_iv.windowToken, 0)
-    }
-
-    private fun planKeyboardDown() {
+    
+    private fun keyboardDown() {
         val imm: InputMethodManager =
             getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         imm.hideSoftInputFromWindow(cal_cancel_iv.windowToken, 0)

@@ -45,7 +45,6 @@ class HomeworkAddActivity : AppCompatActivity() {
 
         viewModel.getUserList()
         majorSpinnerInit()
-        viewModelObserve()
 
         hmwk_name_tv.text = SharedPreferencesHelper.getInstance().name
 
@@ -62,6 +61,20 @@ class HomeworkAddActivity : AppCompatActivity() {
         hmwk_complete_tv.setOnClickListener {
             addHomework()
         }
+
+        viewModel.homeworkLiveData.observe(this, {
+            when (it) {
+                201 -> {
+                    intent(this@HomeworkAddActivity, HomeworkMainActivity::class.java, true)
+                    toast(this@HomeworkAddActivity, R.string.homework_add_success, 0)
+                }
+            }
+        })
+        viewModel.userLiveData.observe(this, {
+            when (it) {
+                200 -> userSpinnerInit()
+            }
+        })
     }
 
     private fun showDatePickerDialog() {
@@ -155,25 +168,9 @@ class HomeworkAddActivity : AppCompatActivity() {
                         hmwk_title_tv.text.toString()
                     )
                 )
-                viewModel.homeworkLiveData.observe(this, {
-                    when (it) {
-                        201 -> {
-                            intent(this@HomeworkAddActivity, HomeworkMainActivity::class.java, true)
-                            toast(this@HomeworkAddActivity, R.string.homework_add_success, 0)
-                        }
-                    }
-                })
             }
         }
         builder.setCancelable(false)
         builder.show()
-    }
-
-    private fun viewModelObserve() {
-        viewModel.userLiveData.observe(this, {
-            when (it) {
-                200 -> userSpinnerInit()
-            }
-        })
     }
 }

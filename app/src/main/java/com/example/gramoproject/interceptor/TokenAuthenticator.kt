@@ -24,12 +24,12 @@ class TokenAuthenticator : Interceptor {
 
         when(response.code){
             401 -> {
+                val refreshToken = "Bearer " + SharedPreferencesHelper.getInstance().refreshToken
                 if(!NoticeActivity.logoutCheck && !NoticeActivity.withCheck) {
-                    val refreshToken = "Bearer " + SharedPreferencesHelper.getInstance().refreshToken
                     if(sharedPreferencesHelper.accessToken == null){
                         val intent = Intent(GRAMOApplication.context, LoginActivity::class.java)
                         intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
-                        GRAMOApplication.context!!.startActivity(intent)
+                        GRAMOApplication.context.startActivity(intent)
                     }
                     else {
                         SharedPreferencesHelper.getInstance().accessToken = null
@@ -44,7 +44,7 @@ class TokenAuthenticator : Interceptor {
     }
 
     private fun getAccessToken(refreshToken: String){
-        val token = ApiClient.getClient().create(LoginInterface::class.java).tokenRefresh(refreshToken)
+        val token = ApiClient.getFlaskClient().create(LoginInterface::class.java).tokenRefresh(refreshToken)
         token.enqueue(object: Callback<TokenRefresh>{
             override fun onResponse(call: Call<TokenRefresh>, response: retrofit2.Response<TokenRefresh>) {
                 when(response.code()){

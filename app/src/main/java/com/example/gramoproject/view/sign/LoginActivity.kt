@@ -31,7 +31,6 @@ class LoginActivity : AppCompatActivity() {
         binding.viewModel = viewModel
 
         activityInit()
-        viewModelObserve()
 
         register_tv.setOnClickListener {
             intent(this@LoginActivity, RegisterActivity::class.java, false)
@@ -45,6 +44,16 @@ class LoginActivity : AppCompatActivity() {
                 viewModel.login(login)
             }
         }
+
+        viewModel.loginLiveData.observe(this, {
+            when (it) {
+                201 -> {
+                    toast(this@LoginActivity, R.string.login_success, 0)
+                    intent(this@LoginActivity, NoticeActivity::class.java, true)
+                }
+                400, 404 -> login_error_tv.text = getString(R.string.login_not_correct)
+            }
+        })
     }
 
     private fun activityInit() {
@@ -61,18 +70,6 @@ class LoginActivity : AppCompatActivity() {
             intent(this@LoginActivity, NoticeActivity::class.java, true)
         }
 
-    }
-
-    private fun viewModelObserve(){
-        viewModel.loginLiveData.observe(this, {
-            when (it) {
-                201 -> {
-                    toast(this@LoginActivity, R.string.login_success, 0)
-                    intent(this@LoginActivity, NoticeActivity::class.java, true)
-                }
-                400, 404 -> login_error_tv.text = getString(R.string.login_not_correct)
-            }
-        })
     }
 
     override fun onBackPressed() {

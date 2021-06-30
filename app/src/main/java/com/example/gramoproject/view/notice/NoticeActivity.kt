@@ -67,7 +67,6 @@ class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         notice_recyclerview.layoutManager = layoutManager
 
         viewModel.getNotice()
-        viewModelObserve()
         swipeRefresh()
         initDialog()
         initScrollListener()
@@ -76,9 +75,6 @@ class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
             intent(this@NoticeActivity, NoticeAddActivity::class.java, false)
         }
 
-    }
-
-    private fun viewModelObserve(){
         var fragmentManager = supportFragmentManager
         viewModel.noticeLiveData.observe(this, {
             when (it) {
@@ -129,6 +125,23 @@ class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                 401 -> {
                     withCheck = false
                     toast(this@NoticeActivity, R.string.with_error, 0)
+                }
+            }
+        })
+        viewModel.removeLiveData.observe(this, {
+            when (it) {
+                204 -> {
+                    UnloadDialog.dismiss()
+                    bottomSheetDialog.dismiss()
+                    toast(this@NoticeActivity, R.string.notice_delete, 0)
+                }
+                403 -> {
+                    UnloadDialog.dismiss()
+                    toast(this@NoticeActivity, R.string.notice_other_user_delete, 0)
+                }
+                404 -> {
+                    UnloadDialog.dismiss()
+                    toast(this@NoticeActivity, R.string.notice_not_match_to_id, 0)
                 }
             }
         })
@@ -282,31 +295,9 @@ class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                         UnloadDialog.dismiss()
                     }
                     UnloadDialog.unload_positive_btn.setOnClickListener {
-                        noticeRemove(position, id)
+                        viewModel.noticeRemove(position, id, adapter)
                         viewModel.removeLiveData.value = 0
                     }
-                }
-            }
-        })
-    }
-
-    private fun noticeRemove(position: Int, id: Int) {
-        viewModel.noticeRemove(position, id, adapter)
-        viewModel.removeLiveData.observe(this, {
-            when (it) {
-                204 -> {
-                    UnloadDialog.dismiss()
-                    bottomSheetDialog.dismiss()
-                    toast(this@NoticeActivity, R.string.notice_delete, 0)
-                }
-                403 -> {
-                    UnloadDialog.dismiss()
-                    toast(this@NoticeActivity, R.string.notice_other_user_delete, 0)
-                }
-                404 -> {
-                    UnloadDialog.dismiss()
-                    toast(this@NoticeActivity, R.string.notice_not_match_to_id, 0)
-                    adapter.notifyItemChanged(id)
                 }
             }
         })

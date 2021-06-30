@@ -27,7 +27,6 @@ class HomeworkShowActivity : AppCompatActivity() {
         val homeworkID = intent.getIntExtra("homeworkID", 1)
 
         viewModel.getHomeworkContent(homeworkID)
-        viewModelObserve()
 
         hmwk_back_tv.setOnClickListener {
             finish()
@@ -54,9 +53,7 @@ class HomeworkShowActivity : AppCompatActivity() {
             onPressed = false
             deleteHomework(homeworkID)
         }
-    }
 
-    fun viewModelObserve() {
         viewModel.contentLiveData.observe(this, {
             when (it) {
                 200 -> {

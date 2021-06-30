@@ -54,15 +54,12 @@ class HomeworkMainActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         viewModel.getHomework()
         initDialog()
         swipeRefresh()
-        viewModelObserve()
 
         hmwk_add_tv.setOnClickListener {
             val intent = Intent(this, HomeworkAddActivity::class.java)
             startActivity(intent)
         }
-    }
 
-    private fun viewModelObserve() {
         viewModel.assignLiveData.observe(this, {
             when(it) {
                 200 -> {

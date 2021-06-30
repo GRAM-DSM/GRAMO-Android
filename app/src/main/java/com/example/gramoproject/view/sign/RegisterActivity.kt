@@ -14,7 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.example.gramo.R
 import com.example.gramo.databinding.RegisterActivityBinding
-import com.example.gramoproject.Adapter.HintAdapter
+import com.example.gramoproject.adapter.HintAdapter
 import com.example.gramoproject.model.RegisterUser
 import com.example.gramoproject.view.main.MainActivity.Companion.intent
 import com.example.gramoproject.view.main.MainActivity.Companion.toast
@@ -39,7 +39,6 @@ class RegisterActivity : AppCompatActivity() {
 
         activityInit()
         spinnerInit()
-        viewModelObserve()
 
         register_login_tv2.setOnClickListener {
             intent(this@RegisterActivity, LoginActivity::class.java, true)
@@ -65,32 +64,7 @@ class RegisterActivity : AppCompatActivity() {
                 )
             }
         }
-    }
 
-    private val textWatcher = object : TextWatcher {
-        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-        }
-
-        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-        }
-
-        override fun afterTextChanged(s: Editable?) {
-            if (!register_name_et.text.toString().equals("") && !register_email_et.text.toString()
-                    .equals("") && !register_code_et.text.toString().equals("") &&
-                !register_pass_edit2.text.toString()
-                    .equals("") && !register_passOverlap_edit.text.toString()
-                    .equals("") && major != null
-            ) {
-                register_register_btn.isEnabled = true
-                register_register_btn.setBackgroundColor(Color.parseColor("#112D4E"))
-            } else {
-                register_register_btn.isEnabled = false
-                register_register_btn.setBackgroundColor(Color.parseColor("#909090"))
-            }
-        }
-    }
-
-    private fun viewModelObserve(){
         viewModel.emailLiveData.observe(this, {
             when (it) {
                 0 -> toast(this@RegisterActivity, R.string.register_input_email, 1)
@@ -123,6 +97,29 @@ class RegisterActivity : AppCompatActivity() {
 
             }
         })
+    }
+
+    private val textWatcher = object : TextWatcher {
+        override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+        }
+
+        override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+        }
+
+        override fun afterTextChanged(s: Editable?) {
+            if (!register_name_et.text.toString().equals("") && !register_email_et.text.toString()
+                    .equals("") && !register_code_et.text.toString().equals("") &&
+                !register_pass_edit2.text.toString()
+                    .equals("") && !register_passOverlap_edit.text.toString()
+                    .equals("") && major != null
+            ) {
+                register_register_btn.isEnabled = true
+                register_register_btn.setBackgroundColor(Color.parseColor("#112D4E"))
+            } else {
+                register_register_btn.isEnabled = false
+                register_register_btn.setBackgroundColor(Color.parseColor("#909090"))
+            }
+        }
     }
 
     private fun activityInit() {
