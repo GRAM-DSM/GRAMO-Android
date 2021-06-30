@@ -14,7 +14,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import com.example.gramo.R
 import com.example.gramo.databinding.RegisterActivityBinding
-import com.example.gramoproject.adapter.HintAdapter
+import com.example.gramoproject.Adapter.HintAdapter
 import com.example.gramoproject.model.RegisterUser
 import com.example.gramoproject.view.main.MainActivity.Companion.intent
 import com.example.gramoproject.view.main.MainActivity.Companion.toast

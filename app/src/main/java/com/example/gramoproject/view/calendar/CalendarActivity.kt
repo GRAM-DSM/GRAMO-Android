@@ -317,7 +317,7 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 
     private fun datePicker() {
         val datePicker = DatePickerDialog(this, { _, i, i2, i3 ->
-            calendar_date_tv.text = resources.getString(R.string.set_date, i, i2 + 1, i3)
+            calendar_date_tv.text = resources.getString(R.string.calendar_set_date, i, i2 + 1, i3)
             cal_date = resources.getString(R.string.calendar_set_date, i, i2 + 1, i3)
             viewModel.getPicu(cal_date)
             viewModel.getPlan(cal_date)
@@ -357,7 +357,7 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
             }
         })
     }
-    
+
     private fun picuKeyboardDown() {
         val imm: InputMethodManager =
             getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
