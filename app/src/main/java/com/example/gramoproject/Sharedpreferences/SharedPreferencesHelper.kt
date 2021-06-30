@@ -1,4 +1,4 @@
-package com.example.gramo.Sharedpreferences
+package com.example.gramoproject.sharedpreferences
 
 import android.content.SharedPreferences
 

@@ -6,8 +6,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gramo.R
-import com.example.gramoproject.DataClass.HomeworkResponse
-import com.example.gramoproject.activity.homework.HomeworkShowActivity
+import com.example.gramoproject.view.homework.HomeworkShowActivity
+import com.example.gramoproject.model.HomeworkResponse
 import kotlinx.android.synthetic.main.homework_list.view.*
 
 class HomeworkAdapter : RecyclerView.Adapter<HomeworkAdapter.HomeworkViewHolder>() {

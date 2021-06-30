@@ -1,55 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:background="@color/white"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<layout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appBarLayout"
+    <data>
+        <import type="androidx.databinding.ObservableArrayList"/>
+        <import type="com.example.gramoproject.model.NoticeList"/>
+        <variable
+            name="noticeList"
+            type="ObservableArrayList&lt;NoticeList&gt;"/>
+    </data>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:elevation="0dp">
-
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/notice_toolbar2"
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:gravity="center"
-        android:background="@color/white"
-        app:layout_anchor="@+id/appBarLayout"
-        app:layout_anchorGravity="center">
-
-        <TextView
-            android:id="@+id/notice_add_btn"
-            android:layout_width="40dp"
-            android:layout_height="wrap_content"
-            android:layout_gravity="right|center"
-            android:fontFamily="@font/notosansmedium"
-            android:gravity="center"
-            android:text="추가"
-            android:textColor="@color/black"
-            android:textSize="16sp"
-            android:layout_marginRight="15dp"/>
-
-
-    </androidx.appcompat.widget.Toolbar>
-
-    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
-        android:id="@+id/swipe_refresh_layout"
-        android:layout_width="380dp"
         android:layout_height="match_parent"
-        android:layout_gravity="bottom|center_horizontal"
-        android:layout_marginTop="80dp">
+        android:background="@color/white">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/notice_recyclerview"
+        <com.google.android.material.appbar.AppBarLayout
+            android:id="@+id/appBarLayout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
+            android:layout_height="wrap_content"
+            app:elevation="0dp">
 
-    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+        </com.google.android.material.appbar.AppBarLayout>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/notice_toolbar2"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/white"
+            android:gravity="center"
+            android:orientation="vertical"
+            app:layout_anchor="@+id/appBarLayout"
+            app:layout_anchorGravity="center">
+
+            <TextView
+                android:id="@+id/notice_add_btn"
+                android:layout_width="40dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="right|center"
+                android:layout_marginRight="15dp"
+                android:fontFamily="@font/notosansmedium"
+                android:gravity="center"
+                android:text="추가"
+                android:textColor="@color/black"
+                android:textSize="16sp" />
+        </androidx.appcompat.widget.Toolbar>
+
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:id="@+id/swipe_refresh_layout"
+            android:layout_width="380dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="55dp">
+
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/notice_recyclerview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+            </FrameLayout>
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_weight="1"
+            android:indeterminate="true"
+            android:indeterminateTint="@color/indigo"
+            android:indeterminateTintMode="src_atop"
+            android:progressTint="@color/indigo"
+            android:visibility="invisible" />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+
+</layout>
