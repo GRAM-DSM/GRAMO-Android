@@ -1,59 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/hmwk_drawer_layout"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.example.gramoproject.view.homework.HomeworkMainActivity">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <include layout="@layout/homework_appbar" />
+    <data>
+        <variable
+            name="viewModel"
+            type="com.example.gramoproject.viewmodel.HomeworkMainViewModel" />
+    </data>
 
-    <com.google.android.material.navigation.NavigationView
-        android:id="@+id/homework_nav_view"
-        android:layout_width="wrap_content"
+    <androidx.drawerlayout.widget.DrawerLayout
+        android:id="@+id/hmwk_drawer_layout"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:background="@color/white"
-        android:fitsSystemWindows="true"
-        android:theme="@style/NavigationTheme"
-        app:itemTextAppearance="@style/ItemFont"
-        app:headerLayout="@layout/notice_drawer"
-        app:menu="@menu/drawer_menu">
+        tools:context="com.example.gramoproject.view.homework.HomeworkMainActivity">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:layout_gravity="bottom">
+        <include layout="@layout/homework_appbar" />
 
-            <Button
-                android:id="@+id/hmwk_side_logout_btn"
-                style="@style/Widget.AppCompat.Button.Borderless"
+        <com.google.android.material.navigation.NavigationView
+            android:id="@+id/homework_nav_view"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_gravity="start"
+            android:background="@color/white"
+            android:fitsSystemWindows="true"
+            android:theme="@style/NavigationTheme"
+            app:headerLayout="@layout/notice_drawer"
+            app:itemTextAppearance="@style/ItemFont"
+            app:menu="@menu/drawer_menu">
+
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:backgroundTint="@color/white"
-                android:gravity="left|center_vertical"
-                android:paddingLeft="17dp"
-                android:text="로그아웃"
-                android:textColor="@color/red"
-                android:textSize="18sp" />
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:orientation="vertical">
 
-            <Button
-                android:id="@+id/hmwk_side_leave_btn"
-                style="@style/Widget.AppCompat.Button.Borderless"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:backgroundTint="@color/white"
-                android:gravity="left|center_vertical"
-                android:paddingLeft="17dp"
-                android:layout_marginBottom="10dp"
-                android:text="탈퇴하기"
-                android:textColor="@color/gray"
-                android:textSize="18sp" />
+                <Button
+                    android:id="@+id/hmwk_side_logout_btn"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:backgroundTint="@color/white"
+                    android:gravity="left|center_vertical"
+                    android:paddingLeft="17dp"
+                    android:text="로그아웃"
+                    android:textColor="@color/red"
+                    android:textSize="18sp" />
 
-        </LinearLayout>
+                <Button
+                    android:id="@+id/hmwk_side_leave_btn"
+                    style="@style/Widget.AppCompat.Button.Borderless"
+                    android:layout_width="match_parent"
+                    android:layout_height="50dp"
+                    android:layout_marginBottom="10dp"
+                    android:backgroundTint="@color/white"
+                    android:gravity="left|center_vertical"
+                    android:paddingLeft="17dp"
+                    android:text="탈퇴하기"
+                    android:textColor="@color/gray"
+                    android:textSize="18sp" />
 
-    </com.google.android.material.navigation.NavigationView>
+            </LinearLayout>
 
-</androidx.drawerlayout.widget.DrawerLayout>
+        </com.google.android.material.navigation.NavigationView>
+
+    </androidx.drawerlayout.widget.DrawerLayout>
+
+</layout>

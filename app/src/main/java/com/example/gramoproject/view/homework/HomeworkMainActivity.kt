@@ -3,25 +3,24 @@ package com.example.gramoproject.view.homework
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
-import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
+import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.gramo.R
-import com.example.gramoproject.sharedpreferences.SharedPreferencesHelper
-import com.example.gramoproject.api.LoginInterface
+import com.example.gramo.databinding.HomeworkMainActivityBinding
 import com.example.gramoproject.adapter.HomeworkAdapter
-import com.example.gramoproject.api.ApiClient
-import com.example.gramoproject.api.HomeworkInterface
 import com.example.gramoproject.model.HomeworkResponse
+import com.example.gramoproject.sharedpreferences.SharedPreferencesHelper
 import com.example.gramoproject.view.calendar.CalendarActivity
 import com.example.gramoproject.view.main.MainActivity
 import com.example.gramoproject.view.notice.NoticeActivity
 import com.example.gramoproject.view.sign.LoginActivity
+import com.example.gramoproject.viewmodel.HomeworkMainViewModel
 import com.google.android.material.navigation.NavigationView
 import kotlinx.android.synthetic.main.homework_appbar.*
 import kotlinx.android.synthetic.main.homework_list.*
@@ -31,41 +30,91 @@ import kotlinx.android.synthetic.main.logout_custom_dialog.*
 import kotlinx.android.synthetic.main.notice_activity.*
 import kotlinx.android.synthetic.main.notice_appbar.*
 import kotlinx.android.synthetic.main.notice_drawer.view.*
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class HomeworkMainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
-    companion object {
-        var logoutCheck: Boolean = false
-        var withCheck: Boolean = false
-    }
+    private val currentActivity = javaClass.simpleName.trim()
 
-    val assignedAdapter = HomeworkAdapter()
-    val orderedAdapter = HomeworkAdapter()
-    val submittedAdapter = HomeworkAdapter()
+    private lateinit var dataBinding: HomeworkMainActivityBinding
     private lateinit var LogoutDialog: Dialog
     private lateinit var LeaveDialog: Dialog
-    private var off_set = -10
+    private val assignedAdapter = HomeworkAdapter()
+    private val orderedAdapter = HomeworkAdapter()
+    private val submittedAdapter = HomeworkAdapter()
     private val sharedPreferencesHelper = SharedPreferencesHelper.getInstance()
-    private val currentActivity = javaClass.simpleName.trim()
+    private val viewModel: HomeworkMainViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.homework_main_activity)
+        dataBinding = DataBindingUtil.setContentView(this, R.layout.homework_main_activity)
+        dataBinding.lifecycleOwner = this
+        dataBinding.viewModel = viewModel
 
+        viewModel.getHomework()
         initDialog()
         swipeRefresh()
-
-        setRecyclerView(hmwk_assigned_recyclerView, orderedAdapter)
-        setRecyclerView(hmwk_ordered_recyclerView, assignedAdapter)
-        setRecyclerView(hmwk_submitted_recyclerView, submittedAdapter)
+        viewModelObserve()
 
         hmwk_add_tv.setOnClickListener {
             val intent = Intent(this, HomeworkAddActivity::class.java)
             startActivity(intent)
         }
+    }
+
+    private fun viewModelObserve() {
+        viewModel.assignLiveData.observe(this, {
+            when(it) {
+                200 -> {
+                    setRecyclerView(hmwk_ordered_recyclerView, assignedAdapter)
+                    addData(assignedAdapter, viewModel.assignHomeworkList.value!!)
+                }
+                400 -> MainActivity.toast(this@HomeworkMainActivity, R.string.notice_add_error, 0)
+            }
+        })
+        viewModel.orderLiveData.observe(this, {
+            when(it) {
+                200 -> {
+                    setRecyclerView(hmwk_assigned_recyclerView, orderedAdapter)
+                    addData(orderedAdapter, viewModel.orderHomeworkList.value!!)
+                }
+                400 -> MainActivity.toast(this@HomeworkMainActivity, R.string.notice_add_error, 0)
+            }
+        })
+        viewModel.submitLiveData.observe(this, {
+            when(it) {
+                200 -> {
+                    setRecyclerView(hmwk_submitted_recyclerView, submittedAdapter)
+                    addData(submittedAdapter, viewModel.submitHomeworkList.value!!)
+                }
+                400 -> MainActivity.toast(this@HomeworkMainActivity, R.string.notice_add_error, 0)
+            }
+        })
+        viewModel.logoutLiveData.observe(this, {
+            when(it){
+                204 -> {
+                    MainActivity.toast(this@HomeworkMainActivity, R.string.logout_success, 0)
+                    NoticeActivity.logoutCheck = true
+                    LogoutDialog.dismiss()
+                    MainActivity.intent(this@HomeworkMainActivity, LoginActivity::class.java, true)
+                }
+                401 -> MainActivity.toast(this@HomeworkMainActivity, R.string.logout_error, 0)
+
+            }
+        })
+        viewModel.withDrawLiveData.observe(this, {
+            when(it){
+                204 -> {
+                    NoticeActivity.withCheck = true
+                    MainActivity.toast(this@HomeworkMainActivity, R.string.with_success, 0)
+                    MainActivity.intent(this@HomeworkMainActivity, LoginActivity::class.java, true)
+                }
+                401 -> {
+                    NoticeActivity.withCheck = false
+                    MainActivity.toast(this@HomeworkMainActivity, R.string.with_error, 0)
+                }
+            }
+        })
     }
 
     private fun NavInitializeLayout() {
@@ -84,7 +133,6 @@ class HomeworkMainActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         hmwk_drawer_layout.addDrawerListener(actionBarDrawerToggle)
 
         val header = homework_nav_view.getHeaderView(0)
-
         header.notice_name_et3.text = sharedPreferencesHelper.name
         header.notice_major_tv.text = sharedPreferencesHelper.major
     }
@@ -93,32 +141,26 @@ class HomeworkMainActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         when (item.itemId) {
             R.id.notice_menu -> {
                 if (currentActivity.equals("NoticeActivity")) {
-                    drawer_layout.closeDrawer(GravityCompat.START)
+                    hmwk_drawer_layout.closeDrawer(GravityCompat.START)
                     return false
                 } else {
-                    val intentToNotice = Intent(this, NoticeActivity::class.java)
-                    startActivity(intentToNotice)
-                    finish()
+                    MainActivity.intent(this, NoticeActivity::class.java, false)
                 }
             }
             R.id.calender_menu -> {
                 if (currentActivity.equals("Calendar")) {
-                    drawer_layout.closeDrawer(GravityCompat.START)
+                    hmwk_drawer_layout.closeDrawer(GravityCompat.START)
                     return false
                 } else {
-                    val intentToCalendar = Intent(this, CalendarActivity::class.java)
-                    startActivity(intentToCalendar)
-                    finish()
+                    MainActivity.intent(this, CalendarActivity::class.java, false)
                 }
             }
             R.id.assignment_menu -> {
                 if (currentActivity.equals("HomeworkMainActivity")) {
-                    drawer_layout.closeDrawer(GravityCompat.START)
+                    hmwk_drawer_layout.closeDrawer(GravityCompat.START)
                     return false
                 } else {
-                    val intentToHomework = Intent(this, HomeworkMainActivity::class.java)
-                    startActivity(intentToHomework)
-                    finish()
+                    MainActivity.intent(this, HomeworkMainActivity::class.java, false)
                 }
             }
 
@@ -151,7 +193,7 @@ class HomeworkMainActivity : AppCompatActivity(), NavigationView.OnNavigationIte
             LogoutDialog.dismiss()
         }
         LogoutDialog.logout_positive_btn.setOnClickListener {
-            logout()
+            viewModel.logout()
         }
     }
 
@@ -162,99 +204,11 @@ class HomeworkMainActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         }
         LeaveDialog.leave_positive_btn.setOnClickListener {
             LeaveDialog.dismiss()
-            withDrawal()
+            viewModel.withDrawal()
         }
     }
 
-    private fun withDrawal() {
-        val accessToken = "Bearer " + sharedPreferencesHelper.accessToken
-        val withInterface = ApiClient.getFlaskClient().create(LoginInterface::class.java)
-        val withCall = withInterface.withDrawal(accessToken)
-
-        withCall.enqueue(object : Callback<Unit> {
-            override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
-                when (response.code()) {
-                    200 -> {
-                        withCheck = true
-                        sharedPreferencesHelper.accessToken = ""
-                        sharedPreferencesHelper.refreshToken = ""
-                        loginIntent()
-                    }
-                    401 -> {
-                        withCheck = false
-                        Toast.makeText(
-                            this@HomeworkMainActivity,
-                            getString(R.string.with_error),
-                            Toast.LENGTH_SHORT
-                        ).show()
-                    }
-                }
-            }
-
-            override fun onFailure(call: Call<Unit>, t: Throwable) {
-                Log.e("HomeworkMainActivity", t.toString())
-            }
-
-        })
-    }
-
-    override fun onResume() {
-        val service = ApiClient.getClient().create(HomeworkInterface::class.java)
-        service.getOrderedHomeworkList("Bearer " + sharedPreferencesHelper.accessToken!!)
-            .enqueue(object : Callback<List<HomeworkResponse>> {
-                override fun onResponse(
-                    call: Call<List<HomeworkResponse>>,
-                    response: Response<List<HomeworkResponse>>
-                ) {
-                    if (response.isSuccessful) {
-                        addData(orderedAdapter, response.body()!!)
-                    }
-                }
-
-                override fun onFailure(call: Call<List<HomeworkResponse>>, t: Throwable) {
-                }
-
-            })
-
-        service.getAssignedHomeworkList("Bearer " + sharedPreferencesHelper.accessToken!!)
-            .enqueue(object : Callback<List<HomeworkResponse>> {
-                override fun onResponse(
-                    call: Call<List<HomeworkResponse>>,
-                    response: Response<List<HomeworkResponse>>
-                ) {
-                    if (response.isSuccessful) {
-                        addData(assignedAdapter, response.body()!!)
-                    }
-                }
-
-                override fun onFailure(call: Call<List<HomeworkResponse>>, t: Throwable) {
-
-                }
-
-            })
-
-        service.getSubmittedHomeworkList("Bearer " + sharedPreferencesHelper.accessToken!!)
-            .enqueue(object : Callback<List<HomeworkResponse>> {
-                override fun onResponse(
-                    call: Call<List<HomeworkResponse>>,
-                    response: Response<List<HomeworkResponse>>
-                ) {
-                    if (response.isSuccessful) {
-                        addData(submittedAdapter, response.body()!!)
-
-                    }
-                }
-
-                override fun onFailure(call: Call<List<HomeworkResponse>>, t: Throwable) {
-
-                }
-
-            })
-
-        super.onResume()
-    }
-
-    fun setRecyclerView(recyclerView: RecyclerView, homeAdapter: HomeworkAdapter) {
+    private fun setRecyclerView(recyclerView: RecyclerView, homeAdapter: HomeworkAdapter) {
         recyclerView.run {
             this.adapter = homeAdapter
             layoutManager = LinearLayoutManager(this@HomeworkMainActivity)
@@ -262,53 +216,15 @@ class HomeworkMainActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         }
     }
 
-    fun addData(adapter: HomeworkAdapter, data: List<HomeworkResponse>) {
+    private fun addData(adapter: HomeworkAdapter, data: List<HomeworkResponse>) {
         adapter.addHomeworkData(ArrayList(data))
         adapter.notifyDataSetChanged()
     }
 
-    private fun logout() {
-        val accessToken = "Bearer " + sharedPreferencesHelper.accessToken
-        val logoutInterface = ApiClient.getFlaskClient().create(LoginInterface::class.java)
-        val logoutCall = logoutInterface.logout(accessToken)
-
-        logoutCall.enqueue(object : Callback<Unit> {
-            override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
-                when (response.code()) {
-                    204 -> {
-                        Toast.makeText(this@HomeworkMainActivity, getString(R.string.logout_success), Toast.LENGTH_SHORT).show()
-
-                        sharedPreferencesHelper.accessToken = ""
-                        sharedPreferencesHelper.refreshToken = ""
-
-                        logoutCheck = true
-                        LogoutDialog.dismiss()
-                        loginIntent()
-                    }
-                    401 -> {
-                        Toast.makeText(this@HomeworkMainActivity, getString(R.string.logout_error), Toast.LENGTH_SHORT).show()
-                    }
-                }
-            }
-
-            override fun onFailure(call: Call<Unit>, t: Throwable) {
-                Log.e("NoticeActivity", t.toString())
-            }
-
-        })
-    }
-
     private fun swipeRefresh() {
         hmwk_swipe_refresh_layout.setOnRefreshListener {
-            onResume()
-            off_set = -10
+            viewModel.getHomework()
             hmwk_swipe_refresh_layout.isRefreshing = false
         }
-    }
-
-    private fun loginIntent() {
-        val intent = Intent(this@HomeworkMainActivity, LoginActivity::class.java)
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        startActivity(intent)
     }
 }
