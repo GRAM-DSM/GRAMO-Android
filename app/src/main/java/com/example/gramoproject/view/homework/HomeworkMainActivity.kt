@@ -67,7 +67,7 @@ class HomeworkMainActivity : AppCompatActivity(), NavigationView.OnNavigationIte
             when(it) {
                 200 -> {
                     setRecyclerView(hmwk_ordered_recyclerView, assignedAdapter)
-                    addData(assignedAdapter, viewModel.homeworkList.value!!)
+                    addData(assignedAdapter, viewModel.assignHomeworkList.value!!)
                 }
                 400 -> MainActivity.toast(this@HomeworkMainActivity, R.string.notice_add_error, 0)
             }
@@ -76,7 +76,7 @@ class HomeworkMainActivity : AppCompatActivity(), NavigationView.OnNavigationIte
             when(it) {
                 200 -> {
                     setRecyclerView(hmwk_assigned_recyclerView, orderedAdapter)
-                    addData(orderedAdapter, viewModel.homeworkList.value!!)
+                    addData(orderedAdapter, viewModel.orderHomeworkList.value!!)
                 }
                 400 -> MainActivity.toast(this@HomeworkMainActivity, R.string.notice_add_error, 0)
             }
@@ -85,7 +85,7 @@ class HomeworkMainActivity : AppCompatActivity(), NavigationView.OnNavigationIte
             when(it) {
                 200 -> {
                     setRecyclerView(hmwk_submitted_recyclerView, submittedAdapter)
-                    addData(submittedAdapter, viewModel.homeworkList.value!!)
+                    addData(submittedAdapter, viewModel.submitHomeworkList.value!!)
                 }
                 400 -> MainActivity.toast(this@HomeworkMainActivity, R.string.notice_add_error, 0)
             }
@@ -141,7 +141,7 @@ class HomeworkMainActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         when (item.itemId) {
             R.id.notice_menu -> {
                 if (currentActivity.equals("NoticeActivity")) {
-                    drawer_layout.closeDrawer(GravityCompat.START)
+                    hmwk_drawer_layout.closeDrawer(GravityCompat.START)
                     return false
                 } else {
                     MainActivity.intent(this, NoticeActivity::class.java, false)
@@ -149,7 +149,7 @@ class HomeworkMainActivity : AppCompatActivity(), NavigationView.OnNavigationIte
             }
             R.id.calender_menu -> {
                 if (currentActivity.equals("Calendar")) {
-                    drawer_layout.closeDrawer(GravityCompat.START)
+                    hmwk_drawer_layout.closeDrawer(GravityCompat.START)
                     return false
                 } else {
                     MainActivity.intent(this, CalendarActivity::class.java, false)
@@ -157,7 +157,7 @@ class HomeworkMainActivity : AppCompatActivity(), NavigationView.OnNavigationIte
             }
             R.id.assignment_menu -> {
                 if (currentActivity.equals("HomeworkMainActivity")) {
-                    drawer_layout.closeDrawer(GravityCompat.START)
+                    hmwk_drawer_layout.closeDrawer(GravityCompat.START)
                     return false
                 } else {
                     MainActivity.intent(this, HomeworkMainActivity::class.java, false)
@@ -165,7 +165,7 @@ class HomeworkMainActivity : AppCompatActivity(), NavigationView.OnNavigationIte
             }
 
         }
-        drawer_layout.closeDrawer(GravityCompat.START)
+        hmwk_drawer_layout.closeDrawer(GravityCompat.START)
         return true
     }
 
@@ -212,6 +212,7 @@ class HomeworkMainActivity : AppCompatActivity(), NavigationView.OnNavigationIte
         recyclerView.run {
             this.adapter = homeAdapter
             layoutManager = LinearLayoutManager(this@HomeworkMainActivity)
+            adapter?.notifyDataSetChanged()
         }
     }
 

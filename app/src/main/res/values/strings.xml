@@ -35,7 +35,7 @@
     <string name="notice_add_success">공지사항이 등록되었습니다.</string>
     <string name="notice_add_error">오류가 발생했습니다.</string>
 
-    <string name="set_date">%d-%02d-%02d</string>
+    <string name="homework_set_date">%d-%02d-%02d</string>
     <string name="homework_add_success">숙제를 추가하였습니다.</string>
     <string name="homework_submit_success">숙제를 제출하였습니다.</string>
     <string name="homework_reject_success">숙제를 반환하였습니다.</string>

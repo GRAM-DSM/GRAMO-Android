@@ -63,7 +63,7 @@ class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         dataBinding.lifecycleOwner = this
         dataBinding.viewModel = viewModel
 
-        var layoutManager = LinearLayoutManager(this@NoticeActivity)
+        val layoutManager = LinearLayoutManager(this@NoticeActivity)
         notice_recyclerview.layoutManager = layoutManager
 
         viewModel.getNotice()

@@ -20,7 +20,9 @@ class HomeworkMainViewModel : ViewModel() {
     val assignLiveData = MutableLiveData<Int>()
     val orderLiveData = MutableLiveData<Int>()
     val submitLiveData = MutableLiveData<Int>()
-    val homeworkList = MutableLiveData<List<HomeworkResponse>>()
+    val assignHomeworkList = MutableLiveData<List<HomeworkResponse>>()
+    val orderHomeworkList = MutableLiveData<List<HomeworkResponse>>()
+    val submitHomeworkList = MutableLiveData<List<HomeworkResponse>>()
 
     fun getHomework() {
         val assignCall = homeworkInterface.getAssignedHomeworkList("Bearer " + sharedPreferencesHelper.accessToken!!)
@@ -33,9 +35,9 @@ class HomeworkMainViewModel : ViewModel() {
                 response: Response<List<HomeworkResponse>>
             ) {
                 when (response.code()) {
-                    200 -> {
+                      200 -> {
                         if (response.body() != null && response.isSuccessful) {
-                            homeworkList.value = response.body()!!
+                            orderHomeworkList.value = response.body()!!
                         }
                     }
                 }
@@ -55,7 +57,7 @@ class HomeworkMainViewModel : ViewModel() {
                 when (response.code()) {
                     200 -> {
                         if (response.body() != null && response.isSuccessful) {
-                            homeworkList.value = response.body()!!
+                            assignHomeworkList.value = response.body()!!
                         }
                     }
                 }
@@ -75,7 +77,7 @@ class HomeworkMainViewModel : ViewModel() {
                 when (response.code()) {
                     200 -> {
                         if (response.body() != null && response.isSuccessful) {
-                            homeworkList.value = response.body()!!
+                            submitHomeworkList.value = response.body()!!
                         }
                     }
                 }
