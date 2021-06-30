@@ -1,141 +1,154 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/hmwk_cancel_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="12dp"
-        android:text="취소"
-        android:textColor="@color/black"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <TextView
-        android:id="@+id/hmwk_complete_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="24dp"
-        android:text="완료"
-        android:textColor="@color/black"
-        android:textSize="16sp"
-        android:textStyle="bold"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <data>
+        <variable
+            name="viewModel"
+            type="com.example.gramoproject.viewmodel.HomeworkAddViewModel" />
+    </data>
 
-    <Spinner
-        android:id="@+id/hmwk_major_spinner"
-        android:layout_width="140dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="35dp"
-        android:layout_marginEnd="24dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/hmwk_complete_tv" />
-
-    <TextView
-        android:id="@+id/hmwk_name_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:layout_marginTop="30dp"
-        android:text="TextView"
-        android:textSize="16sp"
-        android:textColor="@color/black"
-        app:layout_constraintStart_toEndOf="@+id/hmwk_profileImage"
-        app:layout_constraintTop_toBottomOf="@+id/hmwk_cancel_tv" />
-
-    <TextView
-        android:id="@+id/hmwk_date_tv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="5dp"
-        android:text="TextView"
-        android:textSize="12sp"
-        android:textColor="@color/black"
-        app:layout_constraintStart_toEndOf="@+id/hmwk_profileImage"
-        app:layout_constraintTop_toBottomOf="@+id/hmwk_name_tv" />
-
-    <ImageView
-        android:id="@+id/hmwk_profileImage"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="30dp"
-        android:adjustViewBounds="true"
-        android:background="@drawable/homework_image"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/hmwk_cancel_tv"
-        app:srcCompat="@drawable/ic_baseline_person_24" />
-
-    <TextView
-        android:id="@+id/hmwk_endDate_tv"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="35dp"
-        android:layout_marginEnd="24dp"
-        android:background="@drawable/homework_add_tv"
-        android:text="마감일 선택하기"
-        android:textColor="@color/black"
-        android:textSize="16sp"
-        android:gravity="center"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/hmwk_date_tv" />
+        android:layout_height="match_parent">
 
-    <Spinner
-        android:id="@+id/hmwk_student_spinner"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="24dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/hmwk_endDate_tv" />
+        <TextView
+            android:id="@+id/hmwk_cancel_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="12dp"
+            android:text="취소"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
-        android:id="@+id/hmwk_title_tv"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginTop="24dp"
-        android:maxLength="50"
-        android:inputType="text"
-        android:hint="제목을 입력해주세요"
-        android:textSize="20sp"
-        android:textColor="@color/black"
-        android:textStyle="bold"
-        android:background="@android:color/transparent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/hmwk_student_spinner" />
+        <TextView
+            android:id="@+id/hmwk_complete_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="24dp"
+            android:text="완료"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
-    <EditText
-        android:id="@+id/hmwk_description_tv"
-        android:layout_width="365dp"
-        android:layout_height="250dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginTop="20dp"
-        android:inputType="textMultiLine"
-        android:scrollHorizontally="false"
-        android:gravity="start"
-        android:maxLength="1000"
-        android:hint="내용을 입력해주세요"
-        android:textColor="@color/black"
-        android:textSize="16sp"
-        android:background="@android:color/transparent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/hmwk_title_tv" />
+        <Spinner
+            android:id="@+id/hmwk_major_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="35dp"
+            android:layout_marginEnd="24dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/hmwk_complete_tv" />
+
+        <TextView
+            android:id="@+id/hmwk_name_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:layout_marginTop="30dp"
+            android:text="TextView"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            app:layout_constraintStart_toEndOf="@+id/hmwk_profileImage"
+            app:layout_constraintTop_toBottomOf="@+id/hmwk_cancel_tv" />
+
+        <TextView
+            android:id="@+id/hmwk_date_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="5dp"
+            android:text="TextView"
+            android:textColor="@color/black"
+            android:textSize="12sp"
+            app:layout_constraintStart_toEndOf="@+id/hmwk_profileImage"
+            app:layout_constraintTop_toBottomOf="@+id/hmwk_name_tv" />
+
+        <ImageView
+            android:id="@+id/hmwk_profileImage"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="30dp"
+            android:adjustViewBounds="true"
+            android:background="@drawable/homework_image"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/hmwk_cancel_tv"
+            app:srcCompat="@drawable/ic_baseline_person_24" />
+
+        <TextView
+            android:id="@+id/hmwk_endDate_tv"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="35dp"
+            android:layout_marginEnd="24dp"
+            android:background="@drawable/homework_add_tv"
+            android:gravity="center"
+            android:text="마감일 선택하기"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/hmwk_date_tv" />
+
+        <Spinner
+            android:id="@+id/hmwk_student_spinner"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="24dp"
+            android:background="@drawable/homework_add_tv"
+            android:gravity="center"
+            android:textAlignment="center"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/hmwk_endDate_tv" />
+
+        <EditText
+            android:id="@+id/hmwk_title_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="24dp"
+            android:background="@android:color/transparent"
+            android:hint="제목을 입력해주세요"
+            android:inputType="text"
+            android:maxLength="50"
+            android:textColor="@color/black"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/hmwk_student_spinner" />
+
+        <EditText
+            android:id="@+id/hmwk_description_tv"
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginEnd="24dp"
+            android:background="@android:color/transparent"
+            android:gravity="start"
+            android:hint="내용을 입력해주세요"
+            android:inputType="textMultiLine"
+            android:maxLength="1000"
+            android:scrollHorizontally="false"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/hmwk_title_tv" />
 
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</layout>
