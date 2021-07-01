@@ -20,15 +20,6 @@ class SharedPreferencesHelper {
             editor.apply()
         }
 
-    var fcmToken: String?
-        get() = prefs.getString(FCM, null)
-        set(value){
-            val editor = prefs.edit()
-            editor.putString(FCM, value)
-            editor.apply()
-        }
-
-
     var name: String?
         get() = prefs.getString(NAME, null)
         set(value) {
@@ -48,7 +39,6 @@ class SharedPreferencesHelper {
     companion object {
         private const val TOKEN = "access_Token"
         private const val REFRESH = "refresh_Token"
-        private const val FCM = "fcm_token"
         private const val NAME = "name"
         private const val MAJOR = "major"
         private var instance: SharedPreferencesHelper? = null
