@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "632656674434",
+    "project_id": "gramo-notice-notify",
+    "storage_bucket": "gramo-notice-notify.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:632656674434:android:a99d13d16b4eb540183e9b",
+        "android_client_info": {
+          "package_name": "com.example.gramo"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "632656674434-nlameosvpmjchq6ilg0ndcakkni99jc4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC5Fk2mno__w0ESPsd7QvbUac0gLk6h0qc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "632656674434-nlameosvpmjchq6ilg0ndcakkni99jc4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
