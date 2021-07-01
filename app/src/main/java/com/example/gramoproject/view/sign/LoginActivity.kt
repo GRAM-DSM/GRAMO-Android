@@ -40,7 +40,7 @@ class LoginActivity : AppCompatActivity() {
             if (login_email_et.text.toString() == "" || login_pass_et.text.toString() == "")
                 login_error_tv.text = getString(R.string.login_input_email_pass)
             else {
-                val login = Login(login_email_et.text.toString(), login_pass_et.text.toString())
+                val login = Login(login_email_et.text.toString(), login_pass_et.text.toString(), sharedPreferencesHelper.fcmToken.toString())
                 viewModel.login(login)
             }
         }
