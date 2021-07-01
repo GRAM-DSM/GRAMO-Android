@@ -36,6 +36,7 @@ class LoginActivity : AppCompatActivity() {
         binding.viewModel = viewModel
 
         activityInit()
+        getFCMToken()
 
         register_tv.setOnClickListener {
             intent(this@LoginActivity, RegisterActivity::class.java, false)
@@ -45,7 +46,6 @@ class LoginActivity : AppCompatActivity() {
             if (login_email_et.text.toString() == "" || login_pass_et.text.toString() == "")
                 login_error_tv.text = getString(R.string.login_input_email_pass)
             else {
-                fcm_token
                 val login = Login(login_email_et.text.toString(), login_pass_et.text.toString(), fcm_token)
                 viewModel.login(login)
             }
@@ -95,7 +95,6 @@ class LoginActivity : AppCompatActivity() {
                 Log.w(TAG, "Fetching FCM registration token failed", task.exception)
                 return@OnCompleteListener
             }
-
             fcm_token = task.result.toString()
         })
     }
