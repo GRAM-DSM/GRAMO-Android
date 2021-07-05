@@ -19,7 +19,7 @@ class LoginViewModel : ViewModel() {
     val loginLiveData : LiveData<Int> get() = _loginLiveData
 
     fun login(login : Login){
-        val loginCall = ApiClient.getClient().create(LoginInterface::class.java).signIn(login)
+        val loginCall = ApiClient.getFlaskClient().create(LoginInterface::class.java).signIn(login)
         loginCall.enqueue(object: Callback<LoginUser> {
             override fun onResponse(call: Call<LoginUser>, response: Response<LoginUser>) {
                 _loginLiveData.value = response.code()

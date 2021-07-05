@@ -14,6 +14,7 @@ import retrofit2.Callback
 import retrofit2.Response
 
 class RegisterViewModel : ViewModel() {
+    val registerInterface = ApiClient.getFlaskClient().create(RegisterInterface::class.java)
     private val _emailLiveData = MutableLiveData<Int>()
     private val _codeLiveData = MutableLiveData<Int>()
     private val _registerLiveData = MutableLiveData<Int>()
@@ -23,7 +24,6 @@ class RegisterViewModel : ViewModel() {
     val registerLiveData: LiveData<Int> get() = _registerLiveData
 
     fun emailAuth(email: String) {
-        val registerInterface = ApiClient.getClient().create(RegisterInterface::class.java)
         val emailObject = JsonObject()
 
         if (email.equals("")) {
@@ -48,7 +48,7 @@ class RegisterViewModel : ViewModel() {
             _codeLiveData.value = 0
         } else {
             val authInfo = EmailAuth(email, Integer.parseInt(code))
-            val registerConfirm = ApiClient.getClient().create(RegisterInterface::class.java)
+            val registerConfirm = registerInterface
                 .checkEmailAuthenticationCode(authInfo)
             registerConfirm.enqueue(object : Callback<Unit> {
                 override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
@@ -66,7 +66,7 @@ class RegisterViewModel : ViewModel() {
 
     fun register(user : RegisterUser){
         val registerCall =
-            ApiClient.getClient().create(RegisterInterface::class.java).signUp(user)
+            registerInterface.signUp(user)
         registerCall.enqueue(object : Callback<Unit> {
             override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
                 _registerLiveData.value = response.code()
