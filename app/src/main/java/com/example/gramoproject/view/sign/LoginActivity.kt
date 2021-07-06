@@ -30,6 +30,7 @@ class LoginActivity : AppCompatActivity() {
     private val viewModel: LoginViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(R.style.AppTheme)
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.login_activity)
         binding.lifecycleOwner = this
