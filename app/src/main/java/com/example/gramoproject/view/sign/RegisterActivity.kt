@@ -72,7 +72,7 @@ class RegisterActivity : AppCompatActivity() {
                     register_error_tv.text = ""
                     toast(this@RegisterActivity, R.string.register_check_emailAuth, 1)
                 }
-                400 -> toast(this@RegisterActivity, R.string.register_bad_request, 1)
+                422 -> toast(this@RegisterActivity, R.string.register_bad_request, 1)
                 409 -> register_error_tv.text = getString(R.string.register_already_used_email)
             }
         })
@@ -83,8 +83,7 @@ class RegisterActivity : AppCompatActivity() {
                     authCheck = true
                     toast(this@RegisterActivity, R.string.register_auth_success, 1)
                 }
-                404 -> register_error_tv.text = getString(R.string.register_code_not_match)
-                409 -> register_error_tv.text = getString(R.string.register_code_email_not_match)
+                404, 409 -> register_error_tv.text = getString(R.string.register_code_email_not_match)
             }
         })
         viewModel.registerLiveData.observe(this, {
@@ -93,7 +92,10 @@ class RegisterActivity : AppCompatActivity() {
                     toast(this@RegisterActivity, R.string.register_success, 0)
                     intent(this@RegisterActivity, LoginActivity::class.java, true)
                 }
-                400 -> toast(this@RegisterActivity, R.string.register_error, 0)
+                409 -> {
+                    toast(this@RegisterActivity, R.string.register_already_used_email, 0)
+                }
+                422 -> toast(this@RegisterActivity, R.string.register_error, 0)
 
             }
         })
@@ -111,7 +113,7 @@ class RegisterActivity : AppCompatActivity() {
                     .equals("") && !register_code_et.text.toString().equals("") &&
                 !register_pass_edit2.text.toString()
                     .equals("") && !register_passOverlap_edit.text.toString()
-                    .equals("") && major != null
+                    .equals("") && major != null && authCheck
             ) {
                 register_register_btn.isEnabled = true
                 register_register_btn.setBackgroundColor(Color.parseColor("#112D4E"))

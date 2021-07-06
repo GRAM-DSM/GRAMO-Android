@@ -83,7 +83,7 @@ class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                     notice_recyclerview.adapter = adapter
                     rvItemClick()
                 }
-                401 -> toast(this@NoticeActivity, R.string.notice_add_error, 0)
+                else -> toast(this@NoticeActivity, R.string.notice_add_error, 0)
             }
         })
         viewModel.itemLiveData.observe(this, {
@@ -98,14 +98,9 @@ class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
                 404 -> toast(this@NoticeActivity, R.string.notice_not_match_to_id, 0)
             }
         })
-        viewModel.loadMoreLiveData.observe(this, {
-            when (it) {
-                404 -> toast(this@NoticeActivity, R.string.notice_not_exist, 0)
-            }
-        })
         viewModel.logoutLiveData.observe(this, {
             when(it){
-                204 -> {
+                200 -> {
                     toast(this@NoticeActivity, R.string.logout_success, 0)
                     logoutCheck = true
                     LogoutDialog.dismiss()
@@ -117,12 +112,12 @@ class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         })
         viewModel.withDrawLiveData.observe(this, {
             when(it){
-                204 -> {
+                200 -> {
                     withCheck = true
                     toast(this@NoticeActivity, R.string.with_success, 0)
                     intent(this@NoticeActivity, LoginActivity::class.java, true)
                 }
-                401 -> {
+                404 -> {
                     withCheck = false
                     toast(this@NoticeActivity, R.string.with_error, 0)
                 }
@@ -130,7 +125,7 @@ class NoticeActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelec
         })
         viewModel.removeLiveData.observe(this, {
             when (it) {
-                204 -> {
+                200 -> {
                     UnloadDialog.dismiss()
                     bottomSheetDialog.dismiss()
                     toast(this@NoticeActivity, R.string.notice_delete, 0)

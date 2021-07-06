@@ -53,11 +53,11 @@ class LoginActivity : AppCompatActivity() {
 
         viewModel.loginLiveData.observe(this, {
             when (it) {
-                201 -> {
+                200 -> {
                     toast(this@LoginActivity, R.string.login_success, 0)
                     intent(this@LoginActivity, NoticeActivity::class.java, true)
                 }
-                400, 404 -> login_error_tv.text = getString(R.string.login_not_correct)
+                404 -> login_error_tv.text = getString(R.string.login_not_correct)
             }
         })
     }

@@ -21,12 +21,12 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     private val TAG = "FirebaseService"
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        sendNotification(remoteMessage.notification!!.body!!, remoteMessage.notification!!.title!!, remoteMessage.notification!!.clickAction!!)
+        sendNotification(remoteMessage.data)
     }
 
-    private fun sendNotification(messageBody: String, messageTitle: String, clickAction: String) {
+    private fun sendNotification(messageBody: MutableMap<String, String>) {
         lateinit var intent : Intent
-        when(clickAction){
+        when(messageBody.get("click_action")){
             "notice" -> {
                 intent = Intent(this, NoticeActivity::class.java).apply {
                     flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
@@ -42,6 +42,11 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                     flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
                 }
             }
+            else -> {
+                intent = Intent(this, NoticeActivity::class.java).apply {
+                    flags = Intent.FLAG_ACTIVITY_CLEAR_TOP
+                }
+            }
         }
         val pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_ONE_SHOT)
 
@@ -49,8 +54,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
         val notificationBuilder = NotificationCompat.Builder(this, channelId)
             .setSmallIcon(R.mipmap.gram)
-            .setContentTitle(messageTitle)
-            .setContentText(messageBody)
+            .setContentTitle(messageBody.get("title"))
+            .setContentText(messageBody.get("body"))
             .setAutoCancel(true)
             .setContentIntent(pendingIntent)
             .setFullScreenIntent(pendingIntent, true)
