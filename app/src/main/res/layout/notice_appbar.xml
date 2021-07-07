@@ -5,7 +5,7 @@
 
     <data>
         <import type="androidx.databinding.ObservableArrayList"/>
-        <import type="com.example.gramoproject.model.NoticeList"/>
+        <import type="com.gram.gramoproject.model.NoticeList"/>
         <variable
             name="noticeList"
             type="ObservableArrayList&lt;NoticeList&gt;"/>

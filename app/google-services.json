@@ -33,6 +33,43 @@
           ]
         }
       }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:632656674434:android:d1f5adf0891db6a9183e9b",
+        "android_client_info": {
+          "package_name": "com.gram.gramoproject"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "632656674434-h9d10ep5e8erv2qmrbmkeai0k62dn67v.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.gram.gramoproject",
+            "certificate_hash": "f3d13349f52f72b788a40f7ea3b844241866c715"
+          }
+        },
+        {
+          "client_id": "632656674434-nlameosvpmjchq6ilg0ndcakkni99jc4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC5Fk2mno__w0ESPsd7QvbUac0gLk6h0qc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "632656674434-nlameosvpmjchq6ilg0ndcakkni99jc4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
     }
   ],
   "configuration_version": "1"

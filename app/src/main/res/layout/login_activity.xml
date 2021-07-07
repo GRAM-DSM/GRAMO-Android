@@ -7,7 +7,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.example.gramoproject.viewmodel.LoginViewModel" />
+            type="com.gram.gramoproject.viewmodel.LoginViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
