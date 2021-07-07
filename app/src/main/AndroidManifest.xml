@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.gramo">
+    package="com.gram.gramo">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.USE_FULL_SCREEN_INTENT" />
 
     <application
-        android:name="com.example.gramoproject.context.GRAMOApplication"
+        android:name="com.gram.gramoproject.context.GRAMOApplication"
         android:allowBackup="true"
         android:icon="@mipmap/gram"
         android:label="GRAMO"
@@ -18,39 +18,39 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="n">
         <activity
-            android:name="com.example.gramoproject.view.sign.LoginActivity"
+            android:name="com.gram.gramoproject.view.sign.LoginActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.example.gramoproject.view.main.MainActivity" />
+        <activity android:name="com.gram.gramoproject.view.main.MainActivity" />
         <activity
-            android:name="com.example.gramoproject.activity.sign.RegisterActivity"
+            android:name="com.gram.gramoproject.activity.sign.RegisterActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.example.gramoproject.view.notice.NoticeActivity"
+            android:name="com.gram.gramoproject.view.notice.NoticeActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.example.gramoproject.activity.notice.NoticeAddActivity"
+            android:name="com.gram.gramoproject.activity.notice.NoticeAddActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.example.gramoproject.view.calendar.CalendarActivity"
+            android:name="com.gram.gramoproject.view.calendar.CalendarActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustNothing" />
         <activity
-            android:name="com.example.gramoproject.view.homework.HomeworkAddActivity"
+            android:name="com.gram.gramoproject.view.homework.HomeworkAddActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.example.gramoproject.view.homework.HomeworkShowActivity"
+            android:name="com.gram.gramoproject.view.homework.HomeworkShowActivity"
             android:screenOrientation="portrait" />
         <activity
-            android:name="com.example.gramoproject.view.homework.HomeworkMainActivity"
+            android:name="com.gram.gramoproject.view.homework.HomeworkMainActivity"
             android:screenOrientation="portrait" />
 
         <service
-            android:name="com.example.gramoproject.fcm.MyFirebaseMessagingService"
+            android:name="com.gram.gramoproject.fcm.MyFirebaseMessagingService"
             android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />

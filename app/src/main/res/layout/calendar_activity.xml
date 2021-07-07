@@ -7,7 +7,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.example.gramoproject.viewmodel.CalendarViewModel" />
+            type="com.gram.gramoproject.viewmodel.CalendarViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

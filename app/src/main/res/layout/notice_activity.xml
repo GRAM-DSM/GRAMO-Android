@@ -8,7 +8,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.example.gramoproject.viewmodel.NoticeViewModel" />
+            type="com.gram.gramoproject.viewmodel.NoticeViewModel" />
     </data>
 
     <androidx.drawerlayout.widget.DrawerLayout

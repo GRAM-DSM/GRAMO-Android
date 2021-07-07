@@ -5,7 +5,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.example.gramoproject.viewmodel.HomeworkShowViewModel" />
+            type="com.gram.gramoproject.viewmodel.HomeworkShowViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

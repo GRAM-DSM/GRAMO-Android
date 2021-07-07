@@ -8,7 +8,7 @@
     <data>
         <variable
             name="viewModel"
-            type="com.example.gramoproject.viewmodel.NoticeAddViewModel" />
+            type="com.gram.gramoproject.viewmodel.NoticeAddViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
