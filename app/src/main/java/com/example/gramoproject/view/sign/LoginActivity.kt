@@ -2,6 +2,7 @@ package com.example.gramoproject.view.sign
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.inputmethod.InputMethodManager
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
@@ -15,22 +16,28 @@ import com.example.gramoproject.view.main.MainActivity.Companion.intent
 import com.example.gramoproject.view.main.MainActivity.Companion.toast
 import com.example.gramoproject.view.notice.NoticeActivity
 import com.example.gramoproject.viewmodel.LoginViewModel
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.android.synthetic.main.login_activity.*
 
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: LoginActivityBinding
+    private val TAG = "LoginActivity"
+    private var fcm_token = ""
     private var backKeyPressedTime: Long = 0
     private val sharedPreferencesHelper = SharedPreferencesHelper.getInstance()
     private val viewModel: LoginViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(R.style.AppTheme)
         super.onCreate(savedInstanceState)
         binding = DataBindingUtil.setContentView(this, R.layout.login_activity)
         binding.lifecycleOwner = this
         binding.viewModel = viewModel
 
         activityInit()
+        getFCMToken()
 
         register_tv.setOnClickListener {
             intent(this@LoginActivity, RegisterActivity::class.java, false)
@@ -40,18 +47,18 @@ class LoginActivity : AppCompatActivity() {
             if (login_email_et.text.toString() == "" || login_pass_et.text.toString() == "")
                 login_error_tv.text = getString(R.string.login_input_email_pass)
             else {
-                val login = Login(login_email_et.text.toString(), login_pass_et.text.toString())
+                val login = Login(login_email_et.text.toString(), login_pass_et.text.toString(), fcm_token)
                 viewModel.login(login)
             }
         }
 
         viewModel.loginLiveData.observe(this, {
             when (it) {
-                201 -> {
+                200 -> {
                     toast(this@LoginActivity, R.string.login_success, 0)
                     intent(this@LoginActivity, NoticeActivity::class.java, true)
                 }
-                400, 404 -> login_error_tv.text = getString(R.string.login_not_correct)
+                404 -> login_error_tv.text = getString(R.string.login_not_correct)
             }
         })
     }
@@ -81,5 +88,15 @@ class LoginActivity : AppCompatActivity() {
         if (System.currentTimeMillis() <= backKeyPressedTime + 2500) { //2500ms = 2.5s
             finishAffinity()
         }
+    }
+
+    private fun getFCMToken(){
+        FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+            if(!task.isSuccessful){
+                Log.w(TAG, "Fetching FCM registration token failed", task.exception)
+                return@OnCompleteListener
+            }
+            fcm_token = task.result.toString()
+        })
     }
 }

@@ -45,7 +45,7 @@ class NoticeAddActivity : AppCompatActivity() {
                     intent(this@NoticeAddActivity, NoticeActivity::class.java, true)
                     // finish()
                 }
-                400 -> toast(this@NoticeAddActivity, R.string.notice_add_error, 0)
+                403 -> toast(this@NoticeAddActivity, R.string.notice_add_error, 0)
             }
         })
     }

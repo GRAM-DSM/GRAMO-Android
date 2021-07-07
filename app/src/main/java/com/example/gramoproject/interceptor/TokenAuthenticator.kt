@@ -54,7 +54,6 @@ class TokenAuthenticator : Interceptor {
                     }
 
                     else -> {
-
                         Log.e("TokenAuthenticator", "알 수 없는 오류")
                     }
                 }

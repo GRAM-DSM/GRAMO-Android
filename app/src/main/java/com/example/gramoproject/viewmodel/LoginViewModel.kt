@@ -24,7 +24,7 @@ class LoginViewModel : ViewModel() {
             override fun onResponse(call: Call<LoginUser>, response: Response<LoginUser>) {
                 _loginLiveData.value = response.code()
                 when(response.code()){
-                    201 -> managePref(response)
+                    200 -> managePref(response)
                 }
             }
 

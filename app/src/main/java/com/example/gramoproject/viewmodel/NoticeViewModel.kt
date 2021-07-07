@@ -110,7 +110,7 @@ class NoticeViewModel : ViewModel() {
         dismissCall.enqueue(object : Callback<Unit> {
             override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
                 when (response.code()) {
-                    204 -> adapter.removeItem(position)
+                    200 -> adapter.removeItem(position)
                 }
                 removeLiveData.value = response.code()
             }
@@ -127,7 +127,7 @@ class NoticeViewModel : ViewModel() {
         logoutCall.enqueue(object : Callback<Unit> {
             override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
                 when (response.code()) {
-                    204 -> {
+                    200 -> {
                         sharedPreferencesHelper.accessToken = ""
                         sharedPreferencesHelper.refreshToken = ""
                     }
@@ -147,7 +147,7 @@ class NoticeViewModel : ViewModel() {
         withCall.enqueue(object : Callback<Unit> {
             override fun onResponse(call: Call<Unit>, response: Response<Unit>) {
                 when (response.code()) {
-                    204 -> {
+                    200 -> {
                         sharedPreferencesHelper.accessToken = ""
                         sharedPreferencesHelper.refreshToken = ""
                     }
